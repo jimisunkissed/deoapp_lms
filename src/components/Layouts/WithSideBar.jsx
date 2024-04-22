@@ -8,7 +8,7 @@ function WithSideBar({ children }) {
       <Box h="100%" position="fixed">
         <SideBar />
       </Box>
-      <Box h='100%' w="calc(100% - 285px)" ml="150px">
+      <Box h='100%' w="calc(100% - 120px)" ml="120px">
         {children}
       </Box>
     </Flex>

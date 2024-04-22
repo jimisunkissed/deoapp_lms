@@ -8,7 +8,7 @@ function WithTopBar({children}) {
       <Box w='100%' position="fixed">
         <NavigationBar />
       </Box>
-      <Box h='calc(100%-200px)' w='100%' mt='100px'>
+      <Box h='calc(100%-100px)' w='100%' mt='100px'>
         {children}
       </Box>
     </Flex>
