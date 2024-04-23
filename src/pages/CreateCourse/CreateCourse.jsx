@@ -10,6 +10,7 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
+  SimpleGrid,
   Text,
   VStack,
 } from "@chakra-ui/react";
@@ -21,17 +22,7 @@ function CreateCourse() {
   const { lightgray, midgray, darkgray, lightblue1, lightblue2, darkblue2 } =
     Color;
 
-  // Heading
-  const heading = [
-    { text: "Name", width: "30%" },
-    { text: "Date", width: "15%" },
-    { text: "Sales", width: "15%" },
-    { text: "Enrollments", width: "15%" },
-    { text: "Status", width: "15%" },
-    { text: "Actions", width: "10%" },
-  ];
-
-  // const heading = ['Name', 'Date', 'Sales', 'Enrollments', 'Status', 'Actions']
+  const heading = ['Name', 'Date', 'Sales', 'Enrollments', 'Status', 'Actions']
 
   // Courses
   const course = [
@@ -41,7 +32,6 @@ function CreateCourse() {
       sale: 63,
       enrollment: 9,
       status: "Published",
-      width: ["30%", "15%", "15%", "15%", "15%", "10%"],
     },
     {
       name: "Back End Development",
@@ -49,7 +39,6 @@ function CreateCourse() {
       sale: 15,
       enrollment: 5,
       status: "Published",
-      width: ["30%", "15%", "15%", "15%", "15%", "10%"],
     },
   ];
 
@@ -88,13 +77,13 @@ function CreateCourse() {
             {heading.map((head, index) => (
               <Box
                 key={index}
-                w={head.width}
+                w={`${100 / heading.length}%`}
                 fontSize="12px"
                 fontWeight="600"
                 color={darkgray}
                 pl="10px"
               >
-                {head.text}
+                {head}
               </Box>
             ))}
           </HStack>
@@ -108,7 +97,7 @@ function CreateCourse() {
               spacing={0}
               p="2px 0px 2px 0px"
             >
-              <Box width={info.width[0]} fontSize="13px" pl="10px">
+              <Box w={`${100 / heading.length}%`} fontSize="13px" pl="10px">
                 <Text w='min-content' whiteSpace='nowrap'
                   _hover={{ textDecoration: "underline", cursor:'pointer' }}
                   onClick={() => navigate("/courses/setup")}
@@ -116,16 +105,16 @@ function CreateCourse() {
                   {info.name}
                 </Text>
               </Box>
-              <Box width={info.width[1]} fontSize="13px" pl="10px">
+              <Box w={`${100 / heading.length}%`} fontSize="13px" pl="10px">
                 <Text>{info.date.slice(4, 15)}</Text>
               </Box>
-              <Box width={info.width[2]} fontSize="13px" pl="10px">
+              <Box w={`${100 / heading.length}%`} fontSize="13px" pl="10px">
                 <Text>{info.sale}</Text>
               </Box>
-              <Box width={info.width[3]} fontSize="13px" pl="10px">
+              <Box w={`${100 / heading.length}%`} fontSize="13px" pl="10px">
                 <Text>{info.enrollment}</Text>
               </Box>
-              <Box width={info.width[4]} fontSize="13px" pl="10px">
+              <Box w={`${100 / heading.length}%`} fontSize="13px" pl="10px">
                 <Center
                   h="24px"
                   w="min-content"
@@ -138,7 +127,7 @@ function CreateCourse() {
                   {info.status}
                 </Center>
               </Box>
-              <Box width={info.width[5]} pl="10px">
+              <Box w={`${100 / heading.length}%`} pl="10px">
                 <Menu>
                   <MenuButton
                     h="24px"

@@ -4,9 +4,12 @@ import {
   Box,
   Center,
   Flex,
+  FormControl,
+  FormLabel,
   HStack,
   Icon,
   Input,
+  Select,
   SimpleGrid,
   Text,
   VStack,
@@ -16,7 +19,7 @@ import { FaPencil } from "react-icons/fa6";
 import { LuPlusCircle } from "react-icons/lu";
 import { FcGallery } from "react-icons/fc";
 
-function CourseSetup() {
+function EfileSetup() {
   // Color Palette
   const { lightgray, midgray, darkgray, lightblue1, lightblue2, midblue1 } =
     Color;
@@ -41,13 +44,13 @@ function CourseSetup() {
         p="25px"
       >
         <Text w="100%" fontSize="24px" fontWeight="600">
-          Pengaturan Kursus
+          Pengaturan Efile
         </Text>
         <Flex w="100%" gap="20px">
           {/* Left Column */}
           <VStack w="60%" spacing={2}>
             <Text w="100%" fontSize="18px" fontWeight="600">
-              Atur Kurikulum
+              Atur Detil Produk
             </Text>
             <VStack
               w="100%"
@@ -57,75 +60,48 @@ function CourseSetup() {
               p="15px"
             >
               <HStack h="35px" w="100%" justify="space-between">
-                <Text>Pratinjau Kurikulum</Text>
+                <Text fontWeight="600">Deskripsi Produk</Text>
                 <HStack
                   h="100%"
                   bg={lightblue2}
                   borderRadius="8px"
                   p="10px"
                   _hover={{ bg: midblue1, cursor: "pointer" }}
-                  onClick={() => navigate("/course/curriculum")}
                   transition="background-color 0.2s ease"
                 >
                   <Icon as={FaPencil} />
-                  <Text fontSize="14px">Ubah Kurikulum</Text>
+                  <Text fontSize="14px">Ubah Deskripsi</Text>
                 </HStack>
               </HStack>
-              <VStack
-                w="100%"
-                borderRadius="8px"
-                borderWidth="1px"
-                borderColor={midgray}
-                spacing="0px"
-                overflow="hidden"
-              >
-                {section.map((data, index) => (
-                  <>
-                    <Flex
-                      key={index}
-                      h="50px"
-                      w="100%"
-                      bg={lightgray}
-                      borderBottomWidth="1px"
-                      borderColor={midgray}
-                      align="center"
-                      p="10px"
-                    >
-                      <Text fontSize="15px" fontWeight="600">
-                        {data.title}
-                      </Text>
-                    </Flex>
-                    {data.lesson.map((head, lesIndex) => (
-                      <Flex
-                        key={lesIndex}
-                        flexDirection="column"
-                        h="50px"
-                        w="100%"
-                        bg="white"
-                        borderBottomWidth={
-                          index === section.length - 1 &&
-                          lesIndex === data.lesson.length - 1
-                            ? "0px"
-                            : "1px"
-                        }
-                        borderColor={midgray}
-                        fontSize="13px"
-                        align="baseline"
-                        justify="center"
-                        p="10px"
-                      >
-                        <Text w="100%" fontWeight="600">
-                          {head}
-                        </Text>
-                        <Text w="100%">Empty</Text>
-                      </Flex>
-                    ))}
-                  </>
-                ))}
-              </VStack>
+              <Text w="100%">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Facere
+                sit perspiciatis culpa sunt quidem! Pariatur, dicta debitis.
+                Culpa eveniet, harum rerum totam nisi reiciendis ex
+                reprehenderit laborum velit eos saepe neque, perspiciatis unde
+                sint voluptate assumenda quae, non maxime mollitia perferendis
+                corporis illo! Enim excepturi, voluptatibus dolor esse illo
+                laudantium.
+              </Text>
+              <HStack h="35px" w="100%" justify="space-between">
+                <Text fontWeight="600">Kategori Produk</Text>
+                <HStack
+                  h="100%"
+                  bg={lightblue2}
+                  borderRadius="8px"
+                  p="10px"
+                  _hover={{ bg: midblue1, cursor: "pointer" }}
+                  transition="background-color 0.2s ease"
+                >
+                  <Icon as={FaPencil} />
+                  <Text fontSize="14px">Ubah Kategori</Text>
+                </HStack>
+              </HStack>
+              <Text w="100%">
+                ebook
+              </Text>
             </VStack>
             <Text w="100%" fontSize="18px" fontWeight="600">
-              Jual kursus anda
+              Jual produk anda
             </Text>
             <VStack
               w="100%"
@@ -139,15 +115,15 @@ function CourseSetup() {
                 Harga
               </Text>
               <Text w="100%" fontSize="14px">
-                Tentukan harga kursus anda dengan beragam sistem yang berbeda
+                Tentukan harga produk anda dengan beragam sistem yang berbeda
                 sesuai dengan keinginan anda
               </Text>
               <Center
-                bg={lightblue2}
+                bg={lightblue1}
                 borderRadius="8px"
                 fontSize="14px"
                 p="5px 10px 5px 10px"
-                _hover={{ bg: midblue1, cursor:'pointer' }}
+                _hover={{ bg: lightblue2, cursor: "pointer" }}
                 transition="background-color 0.2s ease"
               >
                 Buat rencana harga
@@ -157,7 +133,7 @@ function CourseSetup() {
           {/* Right Column */}
           <VStack w="40%" spacing={2}>
             <Text w="100%" fontSize="18px" fontWeight="600">
-              Kustomisasi kursus
+              Kustomisasi produk
             </Text>
             <VStack
               w="100%"
@@ -167,13 +143,14 @@ function CourseSetup() {
               p="15px"
             >
               <HStack h="35px" w="100%" justify="space-between">
-                <Text fontWeight="600">Judul Kursus</Text>
+                <Text fontWeight="600">Nama Produk</Text>
                 <HStack
                   h="100%"
                   bg={lightblue2}
                   borderRadius="8px"
                   p="10px"
                   _hover={{ bg: midblue1, cursor: "pointer" }}
+                  onClick={() => navigate("/course/curriculum")}
                   transition="background-color 0.2s ease"
                 >
                   <Icon as={FaPencil} />
@@ -197,6 +174,7 @@ function CourseSetup() {
                   borderRadius="8px"
                   p="10px"
                   _hover={{ bg: midblue1, cursor: "pointer" }}
+                  onClick={() => navigate("/course/curriculum")}
                   transition="background-color 0.2s ease"
                 >
                   <Icon as={LuPlusCircle} />
@@ -214,4 +192,4 @@ function CourseSetup() {
   );
 }
 
-export default CourseSetup;
+export default EfileSetup;

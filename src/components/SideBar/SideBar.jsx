@@ -17,7 +17,7 @@ function SideBar() {
     { text: "Dashboard", path: "/" },
     { text: "Students", path: "/students" },
     { text: "Courses", path: "/courses" },
-    { text: "eFile", path: "/efile" },
+    { text: "E-Files", path: "/efiles" },
   ];
   return (
     <VStack h="100%" w="120px" borderRightWidth='1px' borderColor='gray.100' p="15px" >
