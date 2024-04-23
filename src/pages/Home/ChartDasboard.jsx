@@ -1,4 +1,4 @@
-import { Box, FormControl, FormLabel, Select } from '@chakra-ui/react'
+import { Box, FormControl, FormLabel, Select, Center } from '@chakra-ui/react'
 import React, { useState } from 'react'
 import Chart from 'react-apexcharts'
 
@@ -26,10 +26,10 @@ const ChartDasboard = () => {
     }])
 
     return (
-        <Box w="100%" h="80%" m={'3rem'} borderColor={'black'} alignContent={'center'} >
+        <Box w="80%" h="80%" borderColor={'black'} alignContent={'center'} >
             <Box>
-                <FormControl w='80%'>
-                    <Select placeholder='Select country' value={selectedCountry} onChange={handleCountryChange}>
+                <FormControl w='80%' m={4}>
+                    <Select placeholder='Select Option' value={selectedCountry} onChange={handleCountryChange}>
                         {countries.map((country, index) => (
                             <option key={index} value={country}>{country}</option>
                         ))}
@@ -37,8 +37,9 @@ const ChartDasboard = () => {
                 </FormControl>
             </Box>
             <Box>
-                <Chart options={options} series={series} type="line" width={800} height={500} />
+                <Chart options={options} series={series} type="line" width={'100%'} height={500} />
             </Box>
+
         </Box >
 
     )
