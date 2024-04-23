@@ -4,8 +4,8 @@ import SideBar from '../SideBar/SideBar'
 
 function WithSideBar({ children }) {
   return (
-    <Flex h="100vh" w="100vw" overflowX="hidden">
-      <Box h="100%" position="fixed">
+    <Flex minH="100vh" w="100vw" overflowX="hidden">
+      <Box h="100vh" position="fixed">
         <SideBar />
       </Box>
       <Box h='100%' w="calc(100% - 120px)" ml="120px">

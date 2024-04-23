@@ -31,6 +31,8 @@ function CreateCourse() {
     { text: "Actions", width: "10%" },
   ];
 
+  // const heading = ['Name', 'Date', 'Sales', 'Enrollments', 'Status', 'Actions']
+
   // Courses
   const course = [
     {
@@ -73,7 +75,9 @@ function CreateCourse() {
         overflowX="auto"
       >
         <VStack h="100%" w="100%" bg="white" p="15px">
-          <Text w='100%' fontSize='24px' fontWeight='600'>Courses</Text>
+          <Text w="100%" fontSize="24px" fontWeight="600">
+            Courses
+          </Text>
           <HStack
             h="40px"
             w="100%"
@@ -105,16 +109,21 @@ function CreateCourse() {
               p="2px 0px 2px 0px"
             >
               <Box width={info.width[0]} fontSize="13px" pl="10px">
-                {info.name}
+                <Text w='min-content' whiteSpace='nowrap'
+                  _hover={{ textDecoration: "underline", cursor:'pointer' }}
+                  onClick={() => navigate("/courses/setup")}
+                >
+                  {info.name}
+                </Text>
               </Box>
               <Box width={info.width[1]} fontSize="13px" pl="10px">
-                {info.date.slice(4, 15)}
+                <Text>{info.date.slice(4, 15)}</Text>
               </Box>
               <Box width={info.width[2]} fontSize="13px" pl="10px">
-                {info.sale}
+                <Text>{info.sale}</Text>
               </Box>
               <Box width={info.width[3]} fontSize="13px" pl="10px">
-                {info.enrollment}
+                <Text>{info.enrollment}</Text>
               </Box>
               <Box width={info.width[4]} fontSize="13px" pl="10px">
                 <Center
@@ -145,7 +154,13 @@ function CreateCourse() {
                   <MenuList p="3px">
                     {menu.map((text, index) => (
                       <MenuItem key={index} h="30px" borderRadius="5px" p={0}>
-                        <Text fontSize="12px" color={text === 'Delete Course' ? 'red.600' : 'black'}pl='10px'>{text}</Text>
+                        <Text
+                          fontSize="12px"
+                          color={text === "Delete Course" ? "red.600" : "black"}
+                          pl="10px"
+                        >
+                          {text}
+                        </Text>
                       </MenuItem>
                     ))}
                   </MenuList>
@@ -166,7 +181,7 @@ function CreateCourse() {
               fontSize="20px"
               color={darkgray}
               _hover={{ color: "black", cursor: "pointer" }}
-              onClick={() => navigate('/create/course/step-1')}
+              onClick={() => navigate("/courses/create/step-1")}
               transition="color 0.2s ease"
             />
           </Center>

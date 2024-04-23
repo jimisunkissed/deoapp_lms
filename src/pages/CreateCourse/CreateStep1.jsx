@@ -22,7 +22,7 @@ function CreateStep1() {
   const { lightgray, midgray, darkgray, lightblue1, midblue1 } = Color;
 
   // Navigate
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   return (
     <VStack h="100%" w="100%" bg={lightgray} justify="center">
@@ -40,7 +40,10 @@ function CreateStep1() {
           <Text fontSize="15px" fontWeight="500">
             1/4
           </Text>
-          <Center onClick={() => navigate('/create/course')}>
+          <Center
+            _hover={{ cursor: "pointer" }}
+            onClick={() => navigate("/courses")}
+          >
             <Icon as={LuX} />
           </Center>
         </Flex>
@@ -51,7 +54,7 @@ function CreateStep1() {
           We'll use this information to customize your course. You can change it
           any time.
         </Text>
-        <Text w='100%'fontSize="14px" color={darkgray}>
+        <Text w="100%" fontSize="14px" color={darkgray}>
           Course title
         </Text>
         <Input
@@ -62,15 +65,15 @@ function CreateStep1() {
           placeholder="Give it a name"
           fontSize="14px"
         />
-        <Flex w="100%" justify="space-between" mt='25px'>
+        <Flex w="100%" justify="space-between" mt="25px">
           <Center
             h="35px"
             w="70px"
             bg={lightblue1}
-            borderRadius='8px'
+            borderRadius="8px"
             fontSize="13px"
             _hover={{ bg: midblue1, cursor: "pointer" }}
-            onClick={() => navigate('/create/course')}
+            onClick={() => navigate("/courses")}
             transition="background-color 0.2s ease"
           >
             Previous
@@ -79,10 +82,10 @@ function CreateStep1() {
             h="35px"
             w="70px"
             bg={lightblue1}
-            borderRadius='8px'
+            borderRadius="8px"
             fontSize="13px"
             _hover={{ bg: midblue1, cursor: "pointer" }}
-            onClick={() => navigate('/create/course/step-2')}
+            onClick={() => navigate("/courses/create/step-2")}
             transition="background-color 0.2s ease"
           >
             Continue

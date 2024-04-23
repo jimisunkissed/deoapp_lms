@@ -4,7 +4,7 @@ import NavigationBar from '../NavigationBar/NavigationBar'
 
 function WithTopBar({children}) {
   return (
-    <Flex flexDirection='column' h="100vh" w="100vw" overflowX="hidden">
+    <Flex flexDirection='column' minH="100vh" w="100vw" overflowX="hidden">
       <Box w='100%' position="fixed">
         <NavigationBar />
       </Box>
