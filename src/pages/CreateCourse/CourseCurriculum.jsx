@@ -48,17 +48,23 @@ function CourseCurriculum() {
 
   // Page Interface
   return (
-    <VStack h="100%" w="100%" bg={lightgray} spacing="25px" p="25px">
+    <VStack
+      h="100%"
+      w="100%"
+      bg={lightgray}
+      spacing="25px"
+      p={{ base: "15px", md: "25px" }}
+    >
       <VStack
         w="100%"
         bg="white"
         borderRadius="10px"
         borderWidth="1px"
         borderColor={midgray}
-        p="25px"
+        p={{ base: "15px", md: "25px" }}
       >
         <HStack h="40px" w="100%" justify="space-between">
-          <Text fontSize="24px" fontWeight="600">
+          <Text fontSize={{ base: "20px", md: "24px" }} fontWeight="600">
             Curriculum
           </Text>
         </HStack>
@@ -88,7 +94,7 @@ function CourseCurriculum() {
               <HStack
                 h="60px"
                 w="100%"
-                p="20px"
+                p={{base:'10px', md:"20px"}}
                 borderBottomWidth="1px"
                 borderBottomColor={midgray}
               >
@@ -175,7 +181,7 @@ function CourseCurriculum() {
                   w="100%"
                   borderBottomWidth="1px"
                   borderBottomColor={midgray}
-                  pr="20px"
+                  pr={{base:'10px', md:"20px"}}
                 >
                   <Center h="100%" w="30px">
                     <Icon

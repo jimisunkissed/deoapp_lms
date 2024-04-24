@@ -6,8 +6,6 @@ import {
   Flex,
   HStack,
   Icon,
-  Input,
-  SimpleGrid,
   Text,
   VStack,
 } from "@chakra-ui/react";
@@ -31,33 +29,44 @@ function CourseSetup() {
   const navigate = useNavigate();
 
   return (
-    <VStack h="100%" w="100%" bg={lightgray} spacing="25px" p="25px">
+    <VStack
+      h="100%"
+      w="100%"
+      bg={lightgray}
+      spacing="25px"
+      p={{ base: "15px", md: "25px" }}
+    >
       <VStack
         w="100%"
         bg="white"
         borderRadius="10px"
         borderWidth="1px"
         borderColor={midgray}
-        p="25px"
+        p={{ base: "15px", md: "25px" }}
       >
-        <Text w="100%" fontSize="24px" fontWeight="600">
+        <Text w="100%" fontSize={{ base: "20px", md: "24px" }} fontWeight="600">
           Pengaturan Kursus
         </Text>
-        <Flex w="100%" gap="20px">
+        <Flex
+          flexDirection={{ base: "column", md: "row" }}
+          w="100%"
+          gap={{ base: "15px", md: "25px" }}
+        >
           {/* Left Column */}
-          <VStack w="60%" spacing={2}>
-            <Text w="100%" fontSize="18px" fontWeight="600">
+          <VStack w={{ base: "100%", md: "60%" }} spacing={2}>
+            {/* Kurikulum */}
+            <Text
+              w="100%"
+              fontSize={{ base: "16px", md: "18px" }}
+              fontWeight="600"
+            >
               Atur Kurikulum
             </Text>
-            <VStack
-              w="100%"
-              borderRadius="8px"
-              borderWidth="1px"
-              borderColor={midgray}
-              p="15px"
-            >
+            <VStack w="100%">
               <HStack h="35px" w="100%" justify="space-between">
-                <Text>Pratinjau Kurikulum</Text>
+                <Text fontSize={{ base: "14px", md: "16px" }}>
+                  Pratinjau Kurikulum
+                </Text>
                 <HStack
                   h="100%"
                   bg={lightblue2}
@@ -67,8 +76,10 @@ function CourseSetup() {
                   onClick={() => navigate("/course/curriculum")}
                   transition="background-color 0.2s ease"
                 >
-                  <Icon as={FaPencil} />
-                  <Text fontSize="14px">Ubah Kurikulum</Text>
+                  <Icon as={FaPencil} fontSize={{base:'14px', md:'16px'}} />
+                  <Text fontSize={{ base: "12px", md: "14px" }}>
+                    Ubah Kurikulum
+                  </Text>
                 </HStack>
               </HStack>
               <VStack
@@ -124,30 +135,28 @@ function CourseSetup() {
                 ))}
               </VStack>
             </VStack>
-            <Text w="100%" fontSize="18px" fontWeight="600">
+            {/* Harga */}
+            <Text
+              w="100%"
+              fontSize={{ base: "16px", md: "18px" }}
+              fontWeight="600"
+            >
               Jual kursus anda
             </Text>
-            <VStack
-              w="100%"
-              borderRadius="8px"
-              borderWidth="1px"
-              borderColor={midgray}
-              align="baseline"
-              p="15px"
-            >
-              <Text w="100%" fontWeight="500">
+            <VStack w="100%" align="baseline">
+              <Text w="100%" fontSize={{ base: "14px", md: "16px" }}>
                 Harga
               </Text>
-              <Text w="100%" fontSize="14px">
+              <Text w="100%" fontSize={{ base: "12px", md: "14px" }}>
                 Tentukan harga kursus anda dengan beragam sistem yang berbeda
                 sesuai dengan keinginan anda
               </Text>
               <Center
                 bg={lightblue2}
                 borderRadius="8px"
-                fontSize="14px"
+                fontSize={{ base: "12px", md: "14px" }}
                 p="5px 10px 5px 10px"
-                _hover={{ bg: midblue1, cursor:'pointer' }}
+                _hover={{ bg: midblue1, cursor: "pointer" }}
                 transition="background-color 0.2s ease"
               >
                 Buat rencana harga
@@ -155,19 +164,20 @@ function CourseSetup() {
             </VStack>
           </VStack>
           {/* Right Column */}
-          <VStack w="40%" spacing={2}>
-            <Text w="100%" fontSize="18px" fontWeight="600">
+          <VStack w={{ base: "100%", md: "40%" }} spacing={2}>
+            {/* Judul Kursus */}
+            <Text
+              w="100%"
+              fontSize={{ base: "16px", md: "18px" }}
+              fontWeight="600"
+            >
               Kustomisasi kursus
             </Text>
-            <VStack
-              w="100%"
-              borderRadius="8px"
-              borderWidth="1px"
-              borderColor={midgray}
-              p="15px"
-            >
+            <VStack w="100%">
               <HStack h="35px" w="100%" justify="space-between">
-                <Text fontWeight="600">Judul Kursus</Text>
+                <Text fontWeight="600" fontSize={{ base: "14px", md: "16px" }}>
+                  Judul Kursus
+                </Text>
                 <HStack
                   h="100%"
                   bg={lightblue2}
@@ -176,21 +186,21 @@ function CourseSetup() {
                   _hover={{ bg: midblue1, cursor: "pointer" }}
                   transition="background-color 0.2s ease"
                 >
-                  <Icon as={FaPencil} />
-                  <Text fontSize="14px">Ubah Judul</Text>
+                  <Icon as={FaPencil} fontSize={{base:'14px', md:'16px'}}/>
+                  <Text fontSize={{ base: "12px", md: "14px" }}>
+                    Ubah Judul
+                  </Text>
                 </HStack>
               </HStack>
-              <Text w="100%">Kursus HTML</Text>
+              <Text w="100%" fontSize={{ base: "12px", md: "14px" }}>
+                Kursus HTML
+              </Text>
             </VStack>
-            <VStack
-              w="100%"
-              borderRadius="8px"
-              borderWidth="1px"
-              borderColor={midgray}
-              p="15px"
-            >
+            <VStack w="100%">
               <HStack h="35px" w="100%" justify="space-between">
-                <Text fontWeight="600">Gambar</Text>
+                <Text fontWeight="600" fontSize={{ base: "14px", md: "16px" }}>
+                  Gambar
+                </Text>
                 <HStack
                   h="100%"
                   bg={lightblue2}
@@ -199,8 +209,10 @@ function CourseSetup() {
                   _hover={{ bg: midblue1, cursor: "pointer" }}
                   transition="background-color 0.2s ease"
                 >
-                  <Icon as={LuPlusCircle} />
-                  <Text fontSize="14px">Tambah gambar</Text>
+                  <Icon as={LuPlusCircle} fontSize={{base:'14px', md:'16px'}}/>
+                  <Text fontSize={{ base: "12px", md: "14px" }}>
+                    Tambah gambar
+                  </Text>
                 </HStack>
               </HStack>
               <Center w="100%" aspectRatio="1.77" bg={lightgray}>

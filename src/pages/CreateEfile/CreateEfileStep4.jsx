@@ -32,7 +32,13 @@ function CreateEfileStep4() {
   const [value, setValue] = React.useState("1");
 
   return (
-    <VStack h="100%" w="100%" bg={lightgray} justify="center">
+    <VStack
+      h="100%"
+      w="100%"
+      bg={lightgray}
+      justify="center"
+      p={{ base: "15px", md: "25px" }}
+    >
       <VStack
         w="100%"
         maxW="750px"
@@ -41,7 +47,7 @@ function CreateEfileStep4() {
         borderWidth="1px"
         borderColor={midgray}
         spacing={2}
-        p="25px"
+        p={{ base: "15px", md: "25px" }}
       >
         <Flex w="100%" justify="space-between">
           <Text fontSize="15px" fontWeight="500">
@@ -54,18 +60,29 @@ function CreateEfileStep4() {
             <Icon as={LuX} />
           </Center>
         </Flex>
-        <Text w="100%" fontSize="35px" fontWeight="500" textAlign="center">
+        <Text
+          w="100%"
+          fontSize={{ base: "24px", md: "35px" }}
+          fontWeight="500"
+          textAlign="center"
+        >
           Tambahkan Kontenmu
         </Text>
         <Text w="90%" fontSize="14px" color={darkgray} textAlign="center">
           Unggah konten yang ditawarkan
         </Text>
         <FormControl w="100%">
-          <FormLabel>Metode</FormLabel>
+          <FormLabel fontSize={{ base: "14px", md: "16px" }}>Metode</FormLabel>
           <RadioGroup onChange={setValue} value={value}>
             <HStack direction="row">
-              <Radio value="1">Unggah File</Radio>
-              <Radio value="2">Alihkan ke URL</Radio>
+              <Radio value="1">
+                <Text fontSize={{ base: "14px", md: "16px" }}>Unggah File</Text>
+              </Radio>
+              <Radio value="2">
+                <Text fontSize={{ base: "14px", md: "16px" }}>
+                  Alihkan ke URL
+                </Text>
+              </Radio>
             </HStack>
           </RadioGroup>
         </FormControl>
@@ -79,7 +96,10 @@ function CreateEfileStep4() {
           p="20px"
         >
           <Icon as={FcGallery} fontSize="40px" />
-          <Text fontSize="14px" w="80%">
+          <Text
+            fontSize={{ base: "12px", md: "14px" }}
+            w={{ base: "90%", md: "80%" }}
+          >
             File yang diterima: .pdf, .epub, .txt, .doc, .docx, .jpg, .gif,
             .png, .tif, .webp, .csv, .xls, .xlsx, .ppt, .pptx, .mp3, .m4a, .aac
           </Text>
@@ -92,17 +112,26 @@ function CreateEfileStep4() {
             p="15px"
             _hover={{ cursor: "pointer" }}
           >
-            <Icon as={LuUpload} />
-            <Text fontSize="15px">Unggah</Text>
+            <Icon as={LuUpload} fontSize={{ base: "14px", md: "16px" }} />
+            <Text fontSize={{ base: "13px", md: "15px" }}>Unggah</Text>
           </HStack>
         </VStack>
         <VStack display={value === "2" ? "flex" : "none"} w="100%">
           <FormControl w="100%">
-            <FormLabel>URL (Wajib)</FormLabel>
-            <Input h="35px" w="100%" placeholder="https://..." />
+            <FormLabel fontSize={{ base: "14px", md: "16px" }}>
+              URL (Wajib)
+            </FormLabel>
+            <Input
+              h="35px"
+              w="100%"
+              placeholder="https://..."
+              fontSize={{ base: "14px", md: "16px" }}
+            />
           </FormControl>
           <FormControl w="100%">
-            <FormLabel>CTA button text</FormLabel>
+            <FormLabel fontSize={{ base: "14px", md: "16px" }}>
+              CTA button text
+            </FormLabel>
             <Input h="35px" w="100%" />
           </FormControl>
         </VStack>

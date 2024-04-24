@@ -31,14 +31,14 @@ function CreateEfile() {
       date: Date(2024, 4, 18),
       sale: 63,
       enrollment: 9,
-      status: "Published"
+      status: "Published",
     },
     {
       name: "Logbook",
       date: Date(2024, 4, 21),
       sale: 15,
       enrollment: 5,
-      status: "Published"
+      status: "Published",
     },
   ];
 
@@ -55,15 +55,22 @@ function CreateEfile() {
 
   // Page Interface
   return (
-    <VStack h="100%" w="100%" bg={lightgray} spacing="25px" p="25px">
+    <VStack
+      h="100%"
+      w="100%"
+      bg={lightgray}
+      spacing="25px"
+      p={{ base: "15px", md: "25px" }}
+    >
       <Box
         w="100%"
+        bg="white"
         borderRadius="10px"
         borderWidth="1px"
         borderColor={midgray}
         overflowX="auto"
       >
-        <VStack h="100%" w="100%" bg="white" p="15px">
+        <VStack h="100%" w="100%" minW="600px" p={{ base: "15px", md: "25px" }}>
           <Text w="100%" fontSize="24px" fontWeight="600">
             eFiles
           </Text>
@@ -78,6 +85,7 @@ function CreateEfile() {
               <Box
                 key={index}
                 w={`${100 / heading.length}%`}
+                minW={head === "Name" ? "150px" : undefined}
                 fontSize="12px"
                 fontWeight="600"
                 color={darkgray}
@@ -97,12 +105,15 @@ function CreateEfile() {
               spacing={0}
               p="2px 0px 2px 0px"
             >
-              <Box w={`${100 / heading.length}%`} fontSize="13px" pl="10px">
+              <Box w={`${100 / heading.length}%`} minW='150px' fontSize="13px" pl="10px">
                 <Text
-                  w="min-content"
+                  w="100%"
+                  
+                  overflow="hidden"
                   whiteSpace="nowrap"
+                  textOverflow="ellipsis"
                   _hover={{ textDecoration: "underline", cursor: "pointer" }}
-                  onClick={() => navigate("/efiles/setup")}
+                  onClick={() => navigate("/courses/setup")}
                 >
                   {info.name}
                 </Text>

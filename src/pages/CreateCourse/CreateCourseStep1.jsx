@@ -27,7 +27,7 @@ function CreateCourseStep1() {
   const navigate = useNavigate();
 
   return (
-    <VStack h="100%" w="100%" bg={lightgray} justify="center">
+    <VStack h="100%" w="100%" bg={lightgray} justify="center" p={{base:'15px', md:"25px"}}>
       <VStack
         w="100%"
         maxW="750px"
@@ -36,7 +36,7 @@ function CreateCourseStep1() {
         borderWidth="1px"
         borderColor={midgray}
         spacing={1}
-        p="25px"
+        p={{base:'15px', md:"25px"}}
       >
         <Flex w="100%" justify="space-between">
           <Text fontSize="15px" fontWeight="500">
@@ -49,15 +49,24 @@ function CreateCourseStep1() {
             <Icon as={LuX} />
           </Center>
         </Flex>
-        <Text w="100%" fontSize="35px" fontWeight="500" textAlign="center">
-          Tell us about your course
+        <Text
+          w="100%"
+          fontSize={{ base: "24px", md: "35px" }}
+          fontWeight="500"
+          textAlign="center"
+        >
+          Informasi tentang kursus kamu
         </Text>
-        <Text w="90%" fontSize="14px" color={darkgray} textAlign="center">
-          We'll use this information to customize your course. You can change it
-          any time.
+        <Text
+          w={{ base: "100%", md: "90%" }}
+          fontSize="14px"
+          color={darkgray}
+          textAlign="center"
+        >
+          Kami menggunakan informasi ini untuk mengkustomisasi kursus anda. Anda bisa mengubahnya nanti
         </Text>
         <FormControl w="100%">
-          <FormLabel>Name Kursus</FormLabel>
+          <FormLabel fontSize='14px'>Nama Kursus</FormLabel>
           <Input h="35px" w="100%" placeholder="Berikan nama" />
         </FormControl>
         <Flex w="100%" justify="space-between" mt="25px">

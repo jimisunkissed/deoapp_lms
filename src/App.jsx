@@ -7,12 +7,12 @@ import MainRouter from './routers/MainRouter'
 function App() {
   return (
     <>
-    <Box display={{base:'none', md:'flex'}}>
+    <Box display={{base:'none', lg:'flex'}}>
       <WithSideBar>
         <MainRouter />
       </WithSideBar>
     </Box>
-    <Box display={{base:'flex', md:'none'}}>
+    <Box display={{base:'flex', lg:'none'}}>
       <WithTopBar>
         <MainRouter />
       </WithTopBar>

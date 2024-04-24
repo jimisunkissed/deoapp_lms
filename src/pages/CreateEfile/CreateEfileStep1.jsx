@@ -28,7 +28,7 @@ function CreateEfileStep1() {
   const navigate = useNavigate();
 
   return (
-    <VStack h="100%" w="100%" bg={lightgray} justify="center">
+    <VStack h="100%" w="100%" bg={lightgray} justify="center" p={{base:'15px', md:"25px"}}>
       <VStack
         w="100%"
         maxW="750px"
@@ -37,7 +37,7 @@ function CreateEfileStep1() {
         borderWidth="1px"
         borderColor={midgray}
         spacing={1}
-        p="25px"
+        p={{base:'15px', md:"25px"}}
       >
         <Flex w="100%" justify="space-between">
           <Text fontSize="15px" fontWeight="500">
@@ -50,18 +50,18 @@ function CreateEfileStep1() {
             <Icon as={LuX} />
           </Center>
         </Flex>
-        <Text w="100%" fontSize="35px" fontWeight="500" textAlign="center">
+        <Text w="100%" fontSize={{base:'24px', md:"35px"}} fontWeight="500" textAlign="center">
           Informasi tentang e-File kamu
         </Text>
         <Text w="90%" fontSize="14px" color={darkgray} textAlign="center">
           Anda bisa mengubahnya nanti
         </Text>
         <FormControl w="100%">
-          <FormLabel>Name Produk</FormLabel>
+          <FormLabel fontSize={{base:'14px', md:'16px'}}>Nama Produk</FormLabel>
           <Input h="35px" w="100%" placeholder="Berikan nama" />
         </FormControl>
         <FormControl w="100%">
-          <FormLabel>Deskripsi</FormLabel>
+          <FormLabel fontSize={{base:'14px', md:'16px'}}>Deskripsi</FormLabel>
           <Input
             h="35px"
             w="100%"
@@ -69,7 +69,7 @@ function CreateEfileStep1() {
           />
         </FormControl>
         <FormControl w="100%">
-          <FormLabel>Kategori</FormLabel>
+          <FormLabel fontSize={{base:'14px', md:'16px'}}>Kategori</FormLabel>
           <Select
             h="35px"
             placeholder="Tentukan kategori untuk produk eFile anda"

@@ -37,18 +37,30 @@ function CreateCourseStep3() {
 
   // Price Plan
   const pricePlan = [
-    { head: "One time purchase", detail: "Your customer pays once" },
-    { head: "Payment plan", detail: "Set a fixed number of monthly payments" },
-    { head: "Subscription", detail: "Set up recurring payments" },
-    { head: "Free", detail: "Allow access to your content free of charge" },
+    { head: "Sekali bayar", detail: "Pelanggan membayar sekali" },
     {
-      head: `I don't know yet`,
-      detail: "Skip this step for now, I will add it later",
+      head: "Angsur",
+      detail: "Bayar secara berangsur untuk jangka waktu yang tetap",
+    },
+    {
+      head: "Langganan",
+      detail: "Bayar setiap jangka waktu tertentu untuk mendapatkan akses ",
+    },
+    { head: "Gratis", detail: "Pelanggan mendapat akses tanpa membayar" },
+    {
+      head: `Saya belum tahu`,
+      detail: "Lewati untuk sekarang, akan saya tambahkan nanti",
     },
   ];
 
   return (
-    <VStack h="100%" w="100%" bg={lightgray} justify="center" p="25px">
+    <VStack
+      h="100%"
+      w="100%"
+      bg={lightgray}
+      justify="center"
+      p={{ base: "15px", md: "25px" }}
+    >
       <VStack
         w="100%"
         maxW="550px"
@@ -57,7 +69,7 @@ function CreateCourseStep3() {
         borderWidth="1px"
         borderColor={midgray}
         spacing={1}
-        p="25px"
+        p={{base:'15px', md:"25px"}}
       >
         <Flex w="100%" justify="space-between">
           <Text fontSize="15px" fontWeight="500">
@@ -72,11 +84,16 @@ function CreateCourseStep3() {
         </Flex>
         {/* Selection */}
         <VStack display={isDetail ? "none" : "flex"} w="100%" spacing={1}>
-          <Text w="100%" fontSize="35px" fontWeight="500" textAlign="center">
-            Set a price
+          <Text
+            w="100%"
+            fontSize={{ base: "24px", md: "35px" }}
+            fontWeight="500"
+            textAlign="center"
+          >
+            Tentukan harga
           </Text>
           <Text w="90%" fontSize="14px" color={darkgray} textAlign="center">
-            You can always change this later.
+            Anda bisa mengubahnya nanti
           </Text>
           <VStack w="100%" spacing="15px">
             {pricePlan.map((info, index) => (
@@ -88,43 +105,57 @@ function CreateCourseStep3() {
                 borderRadius="8px"
                 borderWidth="1px"
                 borderColor={index + 1 === price ? "black" : midgray}
+                textAlign="center"
                 justify="center"
                 spacing="0px"
+                p="15px"
                 _hover={{ cursor: "pointer" }}
                 onClick={() => setPrice(index + 1)}
               >
-                <Text fontSize="24px" fontWeight="600">
+                <Text fontSize={{ base: "16px", md: "24px" }} fontWeight="600">
                   {info.head}
                 </Text>
-                <Text>{info.detail}</Text>
+                <Text fontSize={{ base: "13px", md: "16px" }}>
+                  {info.detail}
+                </Text>
               </VStack>
             ))}
           </VStack>
         </VStack>
-        {/* One time purchase */}
-        <VStack display={isDetail && price === 1 ? "flex" : "none"}>
-          <Text fontSize="22px">One-time purchase</Text>
-          <Text>
-            Students can fully access your product by paying a one-time amount.
+        {/* Sekali bayar */}
+        <VStack display={isDetail && price === 1 ? "flex" : "none"} w="100%" spacing={1}>
+          <Text fontSize={{ base: "18px", md: "22px" }} fontWeight="500">
+            Sekali bayar
+          </Text>
+          <Text fontSize={{ base: "14px", md: "16px" }}>
+            Pelanggan membayar sekali
           </Text>
           <HStack w="100%" align="end">
             <FormControl w="80%">
               <FormLabel>
                 <HStack w="100%">
-                  <Text>Price</Text>
+                  <Text fontSize={{ base: "14px", md: "16px" }}>Harga</Text>
                   <Center>
                     <Icon as={TbHelpCircleFilled} />
                   </Center>
                 </HStack>
               </FormLabel>
-              <Select h="35px" placeholder="Select currency">
+              <Select
+                h="35px"
+                flexGrow={1}
+                placeholder="Pilih Mata Uang"
+                fontSize={{ base: "14px", md: "16px" }}
+              >
                 <option value="option1">IDR</option>
                 <option value="option2">USD</option>
                 <option value="option3">EUR</option>
               </Select>
             </FormControl>
-            <NumberInput>
-              <NumberInputField h="35px" />
+            <NumberInput w="30%">
+              <NumberInputField
+                h="35px"
+                fontSize={{ base: "14px", md: "16px" }}
+              />
               <NumberInputStepper>
                 <NumberIncrementStepper />
                 <NumberDecrementStepper />
@@ -132,36 +163,35 @@ function CreateCourseStep3() {
             </NumberInput>
           </HStack>
           <FormControl w="100%">
-            <FormLabel>
-              <Text>Name</Text>
+            <FormLabel fontSize={{ base: "14px", md: "16px" }}>Nama</FormLabel>
+            <Input h="35px" w="100%" />
+          </FormControl>
+          <FormControl w="100%">
+            <FormLabel fontSize={{ base: "14px", md: "16px" }}>
+              Deskripsi Singkat
             </FormLabel>
             <Input h="35px" w="100%" />
           </FormControl>
           <FormControl w="100%">
-            <FormLabel>
-              <Text>Subtitle</Text>
-            </FormLabel>
-            <Input h="35px" w="100%" />
-          </FormControl>
-          <FormControl w="100%">
-            <FormLabel>
-              <Text>Detailed Description</Text>
+            <FormLabel fontSize={{ base: "14px", md: "16px" }}>
+              Deskripsi Lengkap
             </FormLabel>
             <Textarea h="120px" w="100%" resize="none" />
           </FormControl>
         </VStack>
-        {/* Payment Plan */}
-        <VStack display={isDetail && price === 2 ? "flex" : "none"}>
-          <Text fontSize="22px">Payment Plan</Text>
-          <Text>
-            Students will pay a set amount of monthly fees for indefinite full
-            access to your product.
+        {/* Angsur */}
+        <VStack display={isDetail && price === 2 ? "flex" : "none"} w="100%" spacing={1}>
+          <Text fontSize={{ base: "18px", md: "22px" }} fontWeight="500">
+            Angsur
+          </Text>
+          <Text fontSize={{ base: "14px", md: "16px" }}>
+            Bayar secara berangsur untuk jangka waktu yang tetap
           </Text>
           <HStack w="100%" align="end">
             <FormControl w="80%">
               <FormLabel>
                 <HStack w="100%">
-                  <Text>Price</Text>
+                  <Text fontSize={{ base: "14px", md: "16px" }}>Price</Text>
                   <Center>
                     <Icon as={TbHelpCircleFilled} />
                   </Center>
@@ -174,7 +204,10 @@ function CreateCourseStep3() {
               </Select>
             </FormControl>
             <NumberInput>
-              <NumberInputField h="35px" />
+              <NumberInputField
+                h="35px"
+                fontSize={{ base: "14px", md: "16px" }}
+              />
               <NumberInputStepper>
                 <NumberIncrementStepper />
                 <NumberDecrementStepper />
@@ -182,9 +215,14 @@ function CreateCourseStep3() {
             </NumberInput>
           </HStack>
           <FormControl w="100%">
-            <FormLabel>Number of monthly payments</FormLabel>
+            <FormLabel fontSize={{ base: "14px", md: "16px" }}>
+              Banyak Pembayaran
+            </FormLabel>
             <NumberInput>
-              <NumberInputField h="35px" />
+              <NumberInputField
+                h="35px"
+                fontSize={{ base: "14px", md: "16px" }}
+              />
               <NumberInputStepper>
                 <NumberIncrementStepper />
                 <NumberDecrementStepper />
@@ -192,43 +230,48 @@ function CreateCourseStep3() {
             </NumberInput>
           </FormControl>
           <FormControl w="100%">
-            <FormLabel>Name</FormLabel>
+            <FormLabel fontSize={{ base: "14px", md: "16px" }}>Nama</FormLabel>
             <Input h="35px" w="100%" />
           </FormControl>
           <FormControl w="100%">
-            <FormLabel>Subtitle</FormLabel>
+            <FormLabel fontSize={{ base: "14px", md: "16px" }}>
+              Deskripsi Singkat
+            </FormLabel>
             <Input h="35px" w="100%" />
           </FormControl>
           <FormControl w="100%">
-            <FormLabel>Detailed Description</FormLabel>
+            <FormLabel fontSize={{ base: "14px", md: "16px" }}>
+              Deskripsi Lengkap
+            </FormLabel>
             <Textarea h="120px" w="100%" resize="none" />
           </FormControl>
         </VStack>
-        {/* Subscription */}
-        <VStack display={isDetail && price === 3 ? "flex" : "none"}>
-          <Text fontSize="22px">Subscription</Text>
-          <Text>
-            Students will have access to your product as long as they continue
-            to pay their fee.
+        {/* Langganan */}
+        <VStack display={isDetail && price === 3 ? "flex" : "none"} w="100%" spacing={1}>
+          <Text fontSize={{ base: "18px", md: "22px" }} fontWeight="500">
+            Langganan
+          </Text>
+          <Text fontSize={{ base: "14px", md: "16px" }}>
+            Bayar setiap jangka waktu tertentu untuk mendapatkan akses
           </Text>
           <HStack w="100%" align="end">
             <FormControl w="80%">
               <FormLabel>
                 <HStack w="100%">
-                  <Text>Price</Text>
+                  <Text fontSize={{ base: "14px", md: "16px" }}>Harga</Text>
                   <Center>
                     <Icon as={TbHelpCircleFilled} />
                   </Center>
                 </HStack>
               </FormLabel>
-              <Select h="35px" placeholder="Select currency">
+              <Select h="35px" placeholder="Select currency" fontSize={{ base: "14px", md: "16px" }}>
                 <option value="option1">IDR</option>
                 <option value="option2">USD</option>
                 <option value="option3">EUR</option>
               </Select>
             </FormControl>
             <NumberInput>
-              <NumberInputField h="35px" />
+              <NumberInputField h="35px" fontSize={{ base: "14px", md: "16px" }}/>
               <NumberInputStepper>
                 <NumberIncrementStepper />
                 <NumberDecrementStepper />
@@ -236,7 +279,7 @@ function CreateCourseStep3() {
             </NumberInput>
           </HStack>
           <FormControl w="100%">
-            <FormLabel>Frequency</FormLabel>
+            <FormLabel fontSize={{ base: "14px", md: "16px" }}>Frekuensi</FormLabel>
             <Select h="35px" placeholder="">
               <option value="option1">Every 2 weeks</option>
               <option value="option2">Every month</option>
@@ -244,35 +287,34 @@ function CreateCourseStep3() {
             </Select>
           </FormControl>
           <FormControl w="100%">
-            <FormLabel>Name</FormLabel>
+            <FormLabel fontSize={{ base: "14px", md: "16px" }}>Nama</FormLabel>
             <Input h="35px" w="100%" />
           </FormControl>
           <FormControl w="100%">
-            <FormLabel>Subtitle</FormLabel>
+            <FormLabel fontSize={{ base: "14px", md: "16px" }}>Deskripsi Singkat</FormLabel>
             <Input h="35px" w="100%" />
           </FormControl>
           <FormControl w="100%">
-            <FormLabel>Detailed Description</FormLabel>
+            <FormLabel fontSize={{ base: "14px", md: "16px" }}>Deskripsi Lengkap</FormLabel>
             <Textarea h="120px" w="100%" resize="none" />
           </FormControl>
         </VStack>
-        {/* Free */}
-        <VStack display={isDetail && price === 4 ? "flex" : "none"}>
-          <Text fontSize="22px">Free</Text>
-          <Text>
-            Students can access your product by signing up for an account. There
-            is no price.
+        {/* Gratis */}
+        <VStack display={isDetail && price === 4 ? "flex" : "none"} w="100%" spacing={1}>
+          <Text fontSize={{ base: "18px", md: "22px" }} fontWeight="500">
+            Gratis
           </Text>
+          <Text fontSize={{ base: "14px", md: "16px" }}>Pelanggan mendapat akses tanpa membayar</Text>
           <FormControl w="100%">
-            <FormLabel>Name</FormLabel>
+            <FormLabel fontSize={{ base: "14px", md: "16px" }}>Nama</FormLabel>
             <Input h="35px" w="100%" />
           </FormControl>
           <FormControl w="100%">
-            <FormLabel>Subtitle</FormLabel>
+            <FormLabel fontSize={{ base: "14px", md: "16px" }}>Deskripsi Singkat</FormLabel>
             <Input h="35px" w="100%" />
           </FormControl>
           <FormControl w="100%">
-            <FormLabel>Detailed Description</FormLabel>
+            <FormLabel fontSize={{ base: "14px", md: "16px" }}>Deskripsi Lengkap</FormLabel>
             <Textarea h="120px" w="100%" resize="none" />
           </FormControl>
         </VStack>
