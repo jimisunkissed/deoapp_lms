@@ -27,14 +27,14 @@ function SideBar() {
       spacing={4}
       bg={'white'}
     >
-      <Center w="60px" aspectRatio="1" borderRadius="10px" overflow="hidden">
+      <Center w="60px" aspectRatio="1" borderRadius="10px" overflow="hidden" m={5}>
         <Image
           src="https://yt3.googleusercontent.com/sVCri3mSSAK7-gjsINUBkbUGloMR7euNurduZzEvpHtjPEF6vJgE5WeWs035xHntb2BgT2qVGy0=s900-c-k-c0x00ffffff-no-rj"
           alt="Logo"
           boxSize="100%"
         />
       </Center>
-      <Box mt={5}>
+      <Box>
         {pages.map((info, index) => (
           <Box
             key={index}
