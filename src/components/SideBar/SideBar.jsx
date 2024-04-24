@@ -25,6 +25,7 @@ function SideBar() {
       borderColor='gray.100'
       p="15px"
       spacing={4}
+      bg={'white'}
     >
       <Center w="60px" aspectRatio="1" borderRadius="10px" overflow="hidden">
         <Image
@@ -45,13 +46,13 @@ function SideBar() {
             onClick={() => navigate(info.path)}
           >
             <Box m={3}>
-              <Box as={info.icon} />
-              <Box>{info.text}</Box>
+              <Box as={info.icon} boxSize={'2rem'} />
+              <Box fontSize={'xs'}>{info.text}</Box>
             </Box>
           </Box>
         ))}
       </Box>
-    </VStack>
+    </VStack >
   );
 }
 
