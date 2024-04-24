@@ -16,6 +16,7 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
+import useCourse from "../../hooks/course";
 import { LuX } from "react-icons/lu";
 import Color from "../../Color";
 
@@ -25,6 +26,10 @@ function CreateCourseStep1() {
 
   // Navigate
   const navigate = useNavigate();
+
+  // Zustand
+  const {course} = useCourse()
+  console.log(course)
 
   return (
     <VStack h="100%" w="100%" bg={lightgray} justify="center" p={{base:'15px', md:"25px"}}>

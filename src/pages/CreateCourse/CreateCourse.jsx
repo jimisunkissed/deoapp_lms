@@ -24,8 +24,7 @@ function CreateCourse() {
   const heading = ["Name", "Date", "Sales", "Enrollments", "Status", "Actions"];
 
   // Courses
-  const { course } = useCourse();
-  console.log(course.sale)
+  const { course, addCourse } = useCourse();
 
   // Menu
   const menu = [
@@ -172,7 +171,7 @@ function CreateCourse() {
               fontSize="20px"
               color={darkgray}
               _hover={{ color: "black", cursor: "pointer" }}
-              onClick={() => navigate("/courses/create/step-1")}
+              onClick={() => {navigate("/courses/create/step-1"), addCourse()}}
               transition="color 0.2s ease"
             />
           </Center>

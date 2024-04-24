@@ -62,10 +62,23 @@ const useCourse = create((set) => ({
         i === index ? { ...course, name: value } : course
       ),
     })),
-  // setAdd: () =>
-  // set((state) => ({
-  //     courses.push()
-  // }))
+  addCourse: () =>
+    set((state) => ({
+      course: [
+        ...state.course,
+        {
+          id: course.length + 1,
+          name: null,
+          date: Date(2005, 5, 5),
+          sale: null,
+          enrollment: null,
+          isPublished: false,
+          image: null,
+          pricePlan: [],
+          curriculum: [],
+        },
+      ],
+    })),
 }));
 
 export default useCourse;
