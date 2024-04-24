@@ -12,15 +12,15 @@ function SideBar() {
     { text: "Students", path: "/students", icon: FcManager },
     { text: "Courses", path: "/courses", icon: FcReadingEbook },
     { text: "E-Files", path: "/efiles", icon: FcFile },
-    { text: "Setting", path: "/setting", icon: IoMdSettings },
-    { text: "LogOut", path: "/logout", icon: IoIosLogOut },
+    { text: "Setting", path: "", icon: IoMdSettings },
+    { text: "LogOut", path: "", icon: IoIosLogOut },
 
   ];
 
   return (
     <VStack
       h="100%"
-      w="7rem"
+      w="120px"
       borderRightWidth='1px'
       borderColor='gray.100'
       p="15px"

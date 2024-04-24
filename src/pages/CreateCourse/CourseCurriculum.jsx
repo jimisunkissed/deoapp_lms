@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Center,
@@ -22,6 +23,9 @@ function CourseCurriculum() {
   // Color Palette
   const { lightgray, midgray, darkgray, lightblue1, lightblue2 } = Color;
 
+  // Navigate
+  const navigate = useNavigate();
+
   // Action
   const action = ["Ganti nama", "Duplikat bagian", "Hapus bagian"];
 
@@ -37,11 +41,12 @@ function CourseCurriculum() {
     }))
   );
 
-  function newSection () {
-    const newSect = {title:"New Section", lesson:[]}
-    setSection((prevState))
+  function newSection() {
+    const newSect = { title: "New Section", lesson: [] };
+    setSection(prevState);
   }
 
+  // Page Interface
   return (
     <VStack h="100%" w="100%" bg={lightgray} spacing="25px" p="25px">
       <VStack
@@ -50,7 +55,7 @@ function CourseCurriculum() {
         borderRadius="10px"
         borderWidth="1px"
         borderColor={midgray}
-        p="15px"
+        p="25px"
       >
         <HStack h="40px" w="100%" justify="space-between">
           <Text fontSize="24px" fontWeight="600">
@@ -193,6 +198,7 @@ function CourseCurriculum() {
                       fontWeight="600"
                       textDecoration="underline"
                       _hover={{ cursor: "pointer" }}
+                      onClick={() => navigate("/course/curriculum/content")}
                     >
                       {title}
                     </Text>

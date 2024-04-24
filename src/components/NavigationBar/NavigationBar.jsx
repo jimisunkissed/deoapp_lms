@@ -11,8 +11,8 @@ function NavigationBar() {
     { text: "Dashboard", path: "/", icon: FcHome },
     { text: "Students", path: "/students", icon: FcManager },
     { text: "Courses", path: "/courses", icon: FcReadingEbook },
-    { text: "E-File", path: "/efile", icon: FcFile },
-    { text: "Setting", path: "/setting", icon: IoMdSettings }
+    { text: "E-Files", path: "/efiles", icon: FcFile },
+    { text: "Setting", path: "", icon: IoMdSettings }
   ];
   return (
     <Flex h='100px' w='100%' align="center" gap={5} >

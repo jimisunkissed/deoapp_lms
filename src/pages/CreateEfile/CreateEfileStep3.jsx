@@ -24,7 +24,7 @@ import { LuX } from "react-icons/lu";
 import Color from "../../Color";
 import { TbHelpCircleFilled } from "react-icons/tb";
 
-function CreateStep3() {
+function CreateEfileStep3() {
   // Color Palette
   const { lightgray, midgray, darkgray, lightblue1, midblue1 } = Color;
 
@@ -39,7 +39,6 @@ function CreateStep3() {
   const pricePlan = [
     { head: "One time purchase", detail: "Your customer pays once" },
     { head: "Payment plan", detail: "Set a fixed number of monthly payments" },
-    { head: "Subscription", detail: "Set up recurring payments" },
     { head: "Free", detail: "Allow access to your content free of charge" },
     {
       head: `I don't know yet`,
@@ -204,60 +203,8 @@ function CreateStep3() {
             <Textarea h="120px" w="100%" resize="none" />
           </FormControl>
         </VStack>
-        {/* Subscription */}
-        <VStack display={isDetail && price === 3 ? "flex" : "none"}>
-          <Text fontSize="22px">Subscription</Text>
-          <Text>
-            Students will have access to your product as long as they continue
-            to pay their fee.
-          </Text>
-          <HStack w="100%" align="end">
-            <FormControl w="80%">
-              <FormLabel>
-                <HStack w="100%">
-                  <Text>Price</Text>
-                  <Center>
-                    <Icon as={TbHelpCircleFilled} />
-                  </Center>
-                </HStack>
-              </FormLabel>
-              <Select h="35px" placeholder="Select currency">
-                <option value="option1">IDR</option>
-                <option value="option2">USD</option>
-                <option value="option3">EUR</option>
-              </Select>
-            </FormControl>
-            <NumberInput>
-              <NumberInputField h="35px" />
-              <NumberInputStepper>
-                <NumberIncrementStepper />
-                <NumberDecrementStepper />
-              </NumberInputStepper>
-            </NumberInput>
-          </HStack>
-          <FormControl w="100%">
-            <FormLabel>Frequency</FormLabel>
-            <Select h="35px" placeholder="">
-              <option value="option1">Every 2 weeks</option>
-              <option value="option2">Every month</option>
-              <option value="option3">Every 3 months</option>
-            </Select>
-          </FormControl>
-          <FormControl w="100%">
-            <FormLabel>Name</FormLabel>
-            <Input h="35px" w="100%" />
-          </FormControl>
-          <FormControl w="100%">
-            <FormLabel>Subtitle</FormLabel>
-            <Input h="35px" w="100%" />
-          </FormControl>
-          <FormControl w="100%">
-            <FormLabel>Detailed Description</FormLabel>
-            <Textarea h="120px" w="100%" resize="none" />
-          </FormControl>
-        </VStack>
         {/* Free */}
-        <VStack display={isDetail && price === 4 ? "flex" : "none"}>
+        <VStack display={isDetail && price === 3 ? "flex" : "none"}>
           <Text fontSize="22px">Free</Text>
           <Text>
             Students can access your product by signing up for an account. There
@@ -280,7 +227,7 @@ function CreateStep3() {
         <Flex w="100%" justify="space-between" mt="25px">
           <Center
             h="35px"
-            w="70px"
+            w="90px"
             bg={lightblue1}
             borderRadius="8px"
             fontSize="13px"
@@ -288,29 +235,29 @@ function CreateStep3() {
             onClick={
               isDetail
                 ? () => setIsDetail(false)
-                : () => navigate("/courses/create/step-2")
+                : () => navigate("/efiles/create/step-2")
             }
             transition="background-color 0.2s ease"
           >
-            Previous
+            Sebelumnya
           </Center>
           <Center
             h="35px"
-            w="70px"
+            w="90px"
             bg={lightblue1}
             borderRadius="8px"
             fontSize="13px"
             _hover={{ bg: midblue1, cursor: "pointer" }}
             onClick={
-              isDetail || price === 5
-                ? () => navigate("/courses/setup")
+              isDetail || price === 4
+                ? () => navigate("/efiles/create/step-4")
                 : price != 0
                 ? () => setIsDetail(true)
                 : undefined
             }
             transition="background-color 0.2s ease"
           >
-            Continue
+            Selanjutnya
           </Center>
         </Flex>
       </VStack>
@@ -318,4 +265,4 @@ function CreateStep3() {
   );
 }
 
-export default CreateStep3;
+export default CreateEfileStep3;
