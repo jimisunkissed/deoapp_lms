@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Box,
@@ -22,10 +22,16 @@ function CreateEfileStep2() {
   const navigate = useNavigate();
 
   // Select
-  const [ select, setSelect ] = useState(0)
+  const [select, setSelect] = useState(0);
 
   return (
-    <VStack h="100%" w="100%" bg={lightgray} justify="center" p={{base:'15px', md:"25px"}}>
+    <VStack
+      h="100%"
+      w="100%"
+      bg={lightgray}
+      justify="center"
+      p={{ base: "15px", md: "25px" }}
+    >
       <VStack
         w="100%"
         maxW="750px"
@@ -34,7 +40,7 @@ function CreateEfileStep2() {
         borderWidth="1px"
         borderColor={midgray}
         spacing={1}
-        p={{base:'15px', md:"25px"}}
+        p={{ base: "15px", md: "25px" }}
       >
         <Flex w="100%" justify="space-between">
           <Text fontSize="15px" fontWeight="500">
@@ -47,7 +53,12 @@ function CreateEfileStep2() {
             <Icon as={LuX} />
           </Center>
         </Flex>
-        <Text w="100%" fontSize={{base:'24px', md:"35px"}} fontWeight="500" textAlign="center">
+        <Text
+          w="100%"
+          fontSize={{ base: "24px", md: "35px" }}
+          fontWeight="500"
+          textAlign="center"
+        >
           Tambahkan Gambar
         </Text>
         <Text w="90%" fontSize="14px" color={darkgray} textAlign="center">
@@ -62,17 +73,22 @@ function CreateEfileStep2() {
             borderRadius="10px"
             borderWidth="1px"
             borderColor={select === 1 ? "black" : midgray}
-            textAlign='center'
-            justify='center'
+            textAlign="center"
+            justify="center"
             spacing={1}
             p="20px"
+            _hover={{ cursor: "pointer" }}
             onClick={() => setSelect(1)}
           >
-            <Icon as={FcGallery} fontSize='30px'/>
-            <Text fontSize='14px' fontWeight="600">Unggah gambar</Text>
-            <Text fontSize='13px'>Rasio Aspek: 16:9</Text>
-            <Text fontSize='13px'>Ukuran yang direkomendasikan: 1024x576</Text>
-            <Text fontSize='13px'>Gunakan area unggah untuk mengecek gambar</Text>
+            <Icon as={FcGallery} fontSize="30px" />
+            <Text fontSize="14px" fontWeight="600">
+              Unggah gambar
+            </Text>
+            <Text fontSize="13px">Rasio Aspek: 16:9</Text>
+            <Text fontSize="13px">Ukuran yang direkomendasikan: 1024x576</Text>
+            <Text fontSize="13px">
+              Gunakan area unggah untuk mengecek gambar
+            </Text>
           </VStack>
           <VStack
             w="100%"
@@ -81,14 +97,19 @@ function CreateEfileStep2() {
             borderRadius="10px"
             borderWidth="1px"
             borderColor={select == 2 ? "black" : midgray}
-            textAlign='center'
-            justify='center'
+            textAlign="center"
+            justify="center"
             spacing={1}
             p="20px"
+            _hover={{ cursor: "pointer" }}
             onClick={() => setSelect(2)}
           >
-            <Text fontSize='16px' fontWeight='500'>Saya tidak punya gambar</Text>
-            <Text fontSize='13px'>Lewatkan sekarang, saya akan tambahkan nanti</Text>
+            <Text fontSize="16px" fontWeight="500">
+              Saya tidak punya gambar
+            </Text>
+            <Text fontSize="13px">
+              Lewatkan sekarang, saya akan tambahkan nanti
+            </Text>
           </VStack>
         </SimpleGrid>
         <Flex w="100%" justify="space-between" mt="25px">

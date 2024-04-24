@@ -12,7 +12,6 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import useCourse from "../../hooks/course";
 import { LuPlusCircle, LuMoreVertical } from "react-icons/lu";
 import Color from "../../Color";
 
@@ -24,8 +23,22 @@ function CreateCourse() {
   const heading = ["Name", "Date", "Sales", "Enrollments", "Status", "Actions"];
 
   // Courses
-  const { course } = useCourse();
-  console.log(course.sale)
+  const course = [
+    {
+      name: "Front End Development",
+      date: Date(2024, 4, 18),
+      sale: 63,
+      enrollment: 9,
+      status: "Published",
+    },
+    {
+      name: "Back End Development",
+      date: Date(2024, 4, 21),
+      sale: 15,
+      enrollment: 5,
+      status: "Published",
+    },
+  ];
 
   // Menu
   const menu = [
@@ -80,7 +93,7 @@ function CreateCourse() {
               </Box>
             ))}
           </HStack>
-          {course.map((data, index) => (
+          {course.map((info, index) => (
             <HStack
               key={index}
               h="40px"
@@ -98,23 +111,23 @@ function CreateCourse() {
               >
                 <Text
                   w="100%"
-                  overflow="hidden"
+                  overflow='hidden'
                   whiteSpace="nowrap"
-                  textOverflow="ellipsis"
+                  textOverflow='ellipsis'
                   _hover={{ textDecoration: "underline", cursor: "pointer" }}
                   onClick={() => navigate("/courses/setup")}
                 >
-                  {data.name}
+                  {info.name}
                 </Text>
               </Box>
               <Box w={`${100 / heading.length}%`} fontSize="13px" pl="10px">
-                <Text>{data.date.slice(4, 15)}</Text>
+                <Text>{info.date.slice(4, 15)}</Text>
               </Box>
               <Box w={`${100 / heading.length}%`} fontSize="13px" pl="10px">
-                <Text>{data.sale}</Text>
+                <Text>{info.sale}</Text>
               </Box>
               <Box w={`${100 / heading.length}%`} fontSize="13px" pl="10px">
-                <Text>{data.enrollment}</Text>
+                <Text>{info.enrollment}</Text>
               </Box>
               <Box w={`${100 / heading.length}%`} fontSize="13px" pl="10px">
                 <Center
@@ -126,7 +139,7 @@ function CreateCourse() {
                   color={darkblue2}
                   p="0px 8px 0px 8px"
                 >
-                  {data.isPublished ? 'Published' : 'Unpublished'}
+                  {info.status}
                 </Center>
               </Box>
               <Box w={`${100 / heading.length}%`} pl="10px">

@@ -124,7 +124,8 @@ function CourseCurriculumContent() {
                 bg={lightblue1}
                 borderRadius="8px"
                 fontSize="13px"
-                _hover={{ bg: lightblue2 }}
+                _hover={{ bg: lightblue2, cursor:'pointer' }}
+                transition="background-color 0.2s ease"
               >
                 Tambah konten
               </Center>

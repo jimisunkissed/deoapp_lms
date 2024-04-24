@@ -46,7 +46,7 @@ function EfileSetup() {
         p={{ base: "15px", md: "25px" }}
       >
         <Text w="100%" fontSize={{ base: "20px", md: "24px" }} fontWeight="600">
-          Pengaturan Kursus
+          Pengaturan Produk
         </Text>
         <Flex
           flexDirection={{ base: "column", md: "row" }}
