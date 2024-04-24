@@ -113,7 +113,7 @@ function CreateEfile() {
                   whiteSpace="nowrap"
                   textOverflow="ellipsis"
                   _hover={{ textDecoration: "underline", cursor: "pointer" }}
-                  onClick={() => navigate("/courses/setup")}
+                  onClick={() => navigate("/efiles/setup")}
                 >
                   {info.name}
                 </Text>
