@@ -14,6 +14,7 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
+import useEfile from "../../hooks/efile";
 import { LuPlusCircle, LuMoreVertical } from "react-icons/lu";
 import Color from "../../Color";
 
@@ -24,31 +25,7 @@ function CreateEfile() {
 
   const heading = ["Name", "Date", "Sales", "Enrollments", "Status", "Actions"];
 
-  // Courses
-  const course = [
-    {
-      name: "Workbook",
-      date: Date(2024, 4, 18),
-      sale: 63,
-      enrollment: 9,
-      status: "Published",
-    },
-    {
-      name: "Logbook",
-      date: Date(2024, 4, 21),
-      sale: 15,
-      enrollment: 5,
-      status: "Published",
-    },
-  ];
-
-  // Menu
-  const menu = [
-    "Publish Course",
-    "Preview Course as Student",
-    "Duplicate Course",
-    "Delete Course",
-  ];
+  const { efile, addEfile, deleteEfile, setPublish } = useEfile();
 
   // Navigate
   const navigate = useNavigate();
@@ -95,7 +72,7 @@ function CreateEfile() {
               </Box>
             ))}
           </HStack>
-          {course.map((info, index) => (
+          {efile.map((data, index) => (
             <HStack
               key={index}
               h="40px"
@@ -105,28 +82,43 @@ function CreateEfile() {
               spacing={0}
               p="2px 0px 2px 0px"
             >
-              <Box w={`${100 / heading.length}%`} minW='150px' fontSize="13px" pl="10px">
+              {/* Table Fill Name */}
+              <Box
+                w={`${100 / heading.length}%`}
+                minW="150px"
+                fontSize="13px"
+                pl="10px"
+              >
                 <Text
                   w="100%"
-                  
                   overflow="hidden"
                   whiteSpace="nowrap"
                   textOverflow="ellipsis"
                   _hover={{ textDecoration: "underline", cursor: "pointer" }}
-                  onClick={() => navigate("/efiles/setup")}
+                  onClick={() => navigate(`/efiles/${data.id}/setup`)}
                 >
-                  {info.name}
+                  {data.name ? data.name : "-"}
                 </Text>
               </Box>
+              {/* Table Fill Date */}
               <Box w={`${100 / heading.length}%`} fontSize="13px" pl="10px">
-                <Text>{info.date.slice(4, 15)}</Text>
+                <Text>
+                  {new Date(data.date).toLocaleDateString("en-US", {
+                    month: "long",
+                    day: "numeric",
+                    year: "numeric",
+                  })}
+                </Text>
               </Box>
+              {/* Table Fill Sales */}
               <Box w={`${100 / heading.length}%`} fontSize="13px" pl="10px">
-                <Text>{info.sale}</Text>
+                <Text>{data.sale ? data.sale : "-"}</Text>
               </Box>
+              {/* Table Fill Enrollment */}
               <Box w={`${100 / heading.length}%`} fontSize="13px" pl="10px">
-                <Text>{info.enrollment}</Text>
+                <Text>{data.enrollment ? data.enrollment : "-"}</Text>
               </Box>
+              {/* Table Fill Publish Status */}
               <Box w={`${100 / heading.length}%`} fontSize="13px" pl="10px">
                 <Center
                   h="24px"
@@ -137,9 +129,10 @@ function CreateEfile() {
                   color={darkblue2}
                   p="0px 8px 0px 8px"
                 >
-                  {info.status}
+                  {data.isPublished ? "Published" : "Unpublished"}
                 </Center>
               </Box>
+              {/* Table Fill Action */}
               <Box w={`${100 / heading.length}%`} pl="10px">
                 <Menu>
                   <MenuButton
@@ -154,26 +147,43 @@ function CreateEfile() {
                     </Center>
                   </MenuButton>
                   <MenuList p="3px">
-                    {menu.map((text, index) => (
-                      <MenuItem key={index} h="30px" borderRadius="5px" p={0}>
-                        <Text
-                          fontSize="12px"
-                          color={text === "Delete Course" ? "red.600" : "black"}
-                          pl="10px"
-                        >
-                          {text}
-                        </Text>
-                      </MenuItem>
-                    ))}
+                    <MenuItem
+                      h="30px"
+                      borderRadius="5px"
+                      p={0}
+                      onClick={() => setPublish(data.id)}
+                    >
+                      <Text fontSize="12px" pl="10px">
+                        {data.isPublished
+                          ? "Unpublish eFile"
+                          : "Publish eFile"}
+                      </Text>
+                    </MenuItem>
+                    <MenuItem h="30px" borderRadius="5px" p={0}>
+                      <Text fontSize="12px" pl="10px">
+                        Duplicate eFile
+                      </Text>
+                    </MenuItem>
+                    <MenuItem
+                      h="30px"
+                      borderRadius="5px"
+                      p={0}
+                      onClick={() => deleteEfile(data.id)}
+                    >
+                      <Text fontSize="12px" color="red.600" pl="10px">
+                        Delete eFile
+                      </Text>
+                    </MenuItem>
                   </MenuList>
                 </Menu>
               </Box>
             </HStack>
           ))}
+          {/* Add eFile */}
           <Center
             h="40px"
             w="100%"
-            bg={course.length % 2 === 0 ? "white" : lightblue1}
+            bg={efile.length % 2 === 0 ? "white" : lightblue1}
             borderRadius="8px"
             spacing={0}
             p="2px 0px 2px 0px"
@@ -183,7 +193,7 @@ function CreateEfile() {
               fontSize="20px"
               color={darkgray}
               _hover={{ color: "black", cursor: "pointer" }}
-              onClick={() => navigate("/efiles/create/step-1")}
+              onClick={() => {navigate("/efiles/create/step-1"); addEfile()}}
               transition="color 0.2s ease"
             />
           </Center>

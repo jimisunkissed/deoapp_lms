@@ -24,10 +24,10 @@ function MainRouter() {
     { path: "/courses/create/step-1", element: <CreateCourseStep1 /> },
     { path: "/courses/create/step-2", element: <CreateCourseStep2 /> },
     { path: "/courses/create/step-3", element: <CreateCourseStep3 /> },
-    { path: "/courses/setup", element: <CourseSetup /> },
-    { path: "/course/curriculum", element: <CourseCurriculum /> },
+    { path: "/courses/:id/setup", element: <CourseSetup /> },
+    { path: "/courses/:id/curriculum", element: <CourseCurriculum /> },
     {
-      path: "/course/curriculum/content",
+      path: "/courses/:id/curriculum/content",
       element: <CourseCurriculumContent />,
     },
     { path: "/efiles", element: <CreateEfile /> },
@@ -35,7 +35,7 @@ function MainRouter() {
     { path: "/efiles/create/step-2", element: <CreateEfileStep2 /> },
     { path: "/efiles/create/step-3", element: <CreateEfileStep3 /> },
     { path: "/efiles/create/step-4", element: <CreateEfileStep4 /> },
-    { path: "/efiles/setup", element: <EfileSetup /> },
+    { path: "/efiles/:id/setup", element: <EfileSetup /> },
   ];
 
   return (

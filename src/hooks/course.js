@@ -5,29 +5,43 @@ const useCourse = create((set) => ({
     {
       id: 1,
       name: "Front End Development",
-      date: Date(2024, 4, 18),
+      date: new Date(2024, 3, 18),
       sale: 63,
       enrollment: 9,
       isPublished: true,
       image: null,
       pricePlan: [
-        { type: "OTP", price: 7, desc: "Lorem Ipsum" },
-        { type: "INS", price: 2, nPay: 4, desc: "Lorem Ipsum Dolor Sit Amet" },
+        { type: "OTP", currency: "IDR", price: 110000, desc: "Lorem Ipsum" },
+        {
+          type: "INS",
+          currency: "IDR",
+          price: 30000,
+          nPay: 4,
+          desc: "Lorem Ipsum Dolor Sit Amet",
+        },
+        {
+          type: "SUB",
+          currency: "IDR",
+          price: 20000,
+          freq: "bulan",
+          desc: "Lorem Ipsum Dolor Sit",
+        },
+        { type: "FRE", currency: "IDR", desc: "Lorem Ipsum Dolor Sit Amet" },
       ],
       curriculum: [
         {
           sectionTitle: "HTML",
-          lessons: [
-            { title: "Basic", content: null },
-            { title: "Intermediate", content: null },
+          lesson: [
+            { title: "Basic", content: "Video" },
+            { title: "Intermediate", content: "Hands on practice" },
           ],
         },
         {
           sectionTitle: "CSS",
-          lessons: [
-            { title: "Basic", content: null },
-            { title: "Intermediate", content: null },
-            { title: "Advanced", content: null },
+          lesson: [
+            { title: "Basic", content: "Video" },
+            { title: "Intermediate", content: "Documentation" },
+            { title: "Advanced", content: "Quiz" },
           ],
         },
       ],
@@ -35,15 +49,16 @@ const useCourse = create((set) => ({
     {
       id: 2,
       name: "Back End Development",
-      date: Date(2024, 4, 21),
+      date: new Date(2024, 3, 21),
       sale: 15,
       enrollment: 5,
       isPublished: false,
       image: null,
+      pricePlan: [],
       curriculum: [
         {
           sectionTitle: "API",
-          lessons: [
+          lesson: [
             { title: "Basic", content: null },
             { title: "Intermediate", content: null },
             { title: "Advanced", content: null },
@@ -51,25 +66,19 @@ const useCourse = create((set) => ({
         },
         {
           sectionTitle: "Python",
-          lessons: [{ title: "Basic", content: null }],
+          lesson: [{ title: "Basic", content: null }],
         },
       ],
     },
   ],
-  setName: (value, index) =>
-    set((state) => ({
-      courses: state.courses.map((course, i) =>
-        i === index ? { ...course, name: value } : course
-      ),
-    })),
   addCourse: () =>
     set((state) => ({
       course: [
         ...state.course,
         {
-          id: course.length + 1,
+          id: state.course.length + 1,
           name: null,
-          date: Date(2005, 5, 5),
+          date: new Date(),
           sale: null,
           enrollment: null,
           isPublished: false,
@@ -78,6 +87,22 @@ const useCourse = create((set) => ({
           curriculum: [],
         },
       ],
+    })),
+  deleteCourse: (id) =>
+    set((state) => ({
+      course: state.course.filter((course) => course.id !== id),
+    })),
+  setPublish: (id) =>
+    set((state) => ({
+      course: state.course.map((course) =>
+        course.id  === id ? { ...course, isPublished: !course.isPublished } : course
+      ),
+    })),
+  setName: (value, id) =>
+    set((state) => ({
+      course: state.course.map((course) =>
+        course.id === id ? { ...course, name: value } : course
+      ),
     })),
 }));
 

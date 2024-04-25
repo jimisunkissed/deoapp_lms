@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   Box,
   Center,
@@ -15,6 +15,7 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
+import useCourse from "../../hooks/course";
 import Color from "../../Color";
 import { MdDragIndicator, MdOutlineMoreVert } from "react-icons/md";
 import { LuPlusCircle } from "react-icons/lu";
@@ -25,6 +26,11 @@ function CourseCurriculum() {
 
   // Navigate
   const navigate = useNavigate();
+  const { id } = useParams();
+
+  // Zustand Course
+  const { course, setNameById } = useCourse();
+  const selectedCourse = course.find((c) => c.id === parseInt(id));
 
   // Action
   const action = ["Ganti nama", "Duplikat bagian", "Hapus bagian"];
@@ -68,10 +74,10 @@ function CourseCurriculum() {
             Curriculum
           </Text>
         </HStack>
-        {/* Section Box */}
-        {section.map((info, index) => (
+        {/* Curriculum Cards Test*/}
+        {selectedCourse.curriculum.map((data, sectIdx) => (
           <Flex
-            key={index}
+            key={sectIdx}
             minH="120px"
             w="100%"
             borderRadius="8px"
@@ -88,38 +94,18 @@ function CourseCurriculum() {
                 _hover={{ cursor: "grab" }}
               />
             </VStack>
-            {/* Section Content Box */}
             <VStack w="100%" spacing={0}>
-              {/* Section Content Name */}
               <HStack
                 h="60px"
                 w="100%"
-                p={{base:'10px', md:"20px"}}
+                p={{ base: "10px", md: "20px" }}
                 borderBottomWidth="1px"
                 borderBottomColor={midgray}
               >
-                <Text display={isEdit[index].title ? "none" : "flex"}>
-                  {info.title}
-                </Text>
-                <Input
-                  display={isEdit[index].title ? "flex" : "none"}
-                  h="30px"
-                  maxW="500px"
-                  fontSize="14px"
-                  value={section[index].title}
-                  onChange={(e) =>
-                    setSection((prevState) => {
-                      const newState = [...prevState];
-                      newState[index].title = e.target.value;
-                      return newState;
-                    })
-                  }
-                />
+                <Text>{data.sectionTitle}</Text>
                 <Spacer />
-                {/* When Not Editing Section Name*/}
                 <Menu>
                   <MenuButton
-                    display={isEdit[index].title ? "none" : "flex"}
                     h="30px"
                     aspectRatio="1"
                     borderRadius="50%"
@@ -131,57 +117,32 @@ function CourseCurriculum() {
                     </Center>
                   </MenuButton>
                   <MenuList p="3px">
-                    {action.map((text, actIdx) => (
-                      <MenuItem key={actIdx} h="30px" borderRadius="5px" p={0}>
-                        <Text
-                          w="100%"
-                          fontSize="12px"
-                          color={text === "Hapus bagian" ? "red.600" : "black"}
-                          pl="10px"
-                          onClick={() =>
-                            setIsEdit((prevState) => {
-                              const newState = [...prevState];
-                              newState[index].title = true;
-                              return newState;
-                            })
-                          }
-                        >
-                          {text}
-                        </Text>
-                      </MenuItem>
-                    ))}
+                    <MenuItem h="30px" borderRadius="5px" p={0}>
+                      <Text fontSize="12px" pl="10px">
+                        Rename Section
+                      </Text>
+                    </MenuItem>
+                    <MenuItem h="30px" borderRadius="5px" p={0}>
+                      <Text fontSize="12px" pl="10px">
+                        Duplicate Section
+                      </Text>
+                    </MenuItem>
+                    <MenuItem h="30px" borderRadius="5px" p={0}>
+                      <Text fontSize="12px" color="red.600" pl="10px">
+                        Delete Section
+                      </Text>
+                    </MenuItem>
                   </MenuList>
                 </Menu>
-                {/* When Editing Section Name*/}
-                <Center
-                  display={isEdit[index].title ? "flex" : "none"}
-                  h="35px"
-                  w="70px"
-                  bg={lightblue1}
-                  borderRadius="8px"
-                  fontSize="13px"
-                  _hover={{ bg: lightblue2, cursor: "pointer" }}
-                  onClick={() =>
-                    setIsEdit((prevState) => {
-                      const newState = [...prevState];
-                      newState[index].title = false;
-                      return newState;
-                    })
-                  }
-                  transition="background-color 0.2s ease"
-                >
-                  Save
-                </Center>
               </HStack>
-              {/* Section Lesson Box */}
-              {info.lesson.map((title, lesIdx) => (
+              {data.lesson.map((child, lesIdx) => (
                 <HStack
                   key={lesIdx}
                   minH="60px"
                   w="100%"
                   borderBottomWidth="1px"
                   borderBottomColor={midgray}
-                  pr={{base:'10px', md:"20px"}}
+                  pr={{ base: "10px", md: "20px" }}
                 >
                   <Center h="100%" w="30px">
                     <Icon
@@ -199,103 +160,56 @@ function CourseCurriculum() {
                     fontSize="14px"
                   >
                     <Text
-                      display={isEdit[index].lesson[lesIdx] ? "none" : "flex"}
                       h="30%"
                       fontWeight="600"
                       textDecoration="underline"
                       _hover={{ cursor: "pointer" }}
-                      onClick={() => navigate("/course/curriculum/content")}
-                    >
-                      {title}
-                    </Text>
-                    <Input
-                      display={isEdit[index].lesson[lesIdx] ? "flex" : "none"}
-                      h="30px"
-                      maxW="500px"
-                      fontSize="14px"
-                      value={title}
-                      onChange={(e) =>
-                        setSection((prevState) => {
-                          const newState = [...prevState];
-                          newState[index].lesson[lesIdx] = e.target.value;
-                          return newState;
-                        })
+                      onClick={() =>
+                        navigate(`/courses/${id}/curriculum/content`)
                       }
-                    />
+                    >
+                      {child.title}
+                    </Text>
                     <Text
-                      display={isEdit[index].lesson[lesIdx] ? "none" : "flex"}
                       h="30%"
                     >
                       Empty
                     </Text>
                   </VStack>
                   <Spacer />
-                  <Menu>
-                    <MenuButton
-                      display={isEdit[index].lesson[lesIdx] ? "none" : "flex"}
-                      h="30px"
-                      aspectRatio="1"
-                      borderRadius="50%"
-                      _hover={{ bg: lightblue2, cursor: "pointer" }}
-                      transition="background-color 0.2s ease"
-                    >
-                      <Center h="100%" w="100%">
-                        <Icon as={MdOutlineMoreVert} fontSize="18px" />
-                      </Center>
-                    </MenuButton>
-                    <MenuList p="3px">
-                      {action.map((text, actIdx) => (
-                        <MenuItem
-                          key={actIdx}
-                          h="30px"
-                          borderRadius="5px"
-                          p={0}
-                        >
-                          <Text
-                            w="100%"
-                            fontSize="12px"
-                            color={
-                              text === "Hapus bagian" ? "red.600" : "black"
-                            }
-                            pl="10px"
-                            onClick={
-                              text === "Ganti nama"
-                                ? () =>
-                                    setIsEdit((prevState) => {
-                                      const newState = [...prevState];
-                                      newState[index].lesson[lesIdx] = true;
-                                      return newState;
-                                    })
-                                : undefined
-                            }
-                          >
-                            {text}
-                          </Text>
-                        </MenuItem>
-                      ))}
-                    </MenuList>
-                  </Menu>
-                  <Center
-                    display={isEdit[index].lesson[lesIdx] ? "flex" : "none"}
-                    h="35px"
-                    w="70px"
-                    bg={lightblue1}
-                    borderRadius="8px"
-                    fontSize="13px"
+                <Menu>
+                  <MenuButton
+                    h="30px"
+                    aspectRatio="1"
+                    borderRadius="50%"
                     _hover={{ bg: lightblue2, cursor: "pointer" }}
-                    onClick={() =>
-                      setIsEdit((prevState) => {
-                        const newState = [...prevState];
-                        newState[index].lesson[lesIdx] = false;
-                        return newState;
-                      })
-                    }
                     transition="background-color 0.2s ease"
                   >
-                    Save
-                  </Center>
+                    <Center h="100%" w="100%">
+                      <Icon as={MdOutlineMoreVert} fontSize="18px" />
+                    </Center>
+                  </MenuButton>
+                  <MenuList p="3px">
+                    <MenuItem h="30px" borderRadius="5px" p={0}>
+                      <Text fontSize="12px" pl="10px">
+                        Rename Lesson
+                      </Text>
+                    </MenuItem>
+                    <MenuItem h="30px" borderRadius="5px" p={0}>
+                      <Text fontSize="12px" pl="10px">
+                        Duplicate Lesson
+                      </Text>
+                    </MenuItem>
+                    <MenuItem h="30px" borderRadius="5px" p={0}>
+                      <Text fontSize="12px" color="red.600" pl="10px">
+                        Delete Lesson
+                      </Text>
+                    </MenuItem>
+                  </MenuList>
+                </Menu>
                 </HStack>
               ))}
+              {/* New Lesson */}
               <Center
                 h="60px"
                 w="100%"
@@ -311,6 +225,7 @@ function CourseCurriculum() {
             </VStack>
           </Flex>
         ))}
+       
         <Center
           h="60px"
           w="100%"

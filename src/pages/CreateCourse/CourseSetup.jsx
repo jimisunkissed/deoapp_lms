@@ -1,14 +1,16 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   Box,
   Center,
   Flex,
   HStack,
   Icon,
+  Input,
   Text,
   VStack,
 } from "@chakra-ui/react";
+import useCourse from "../../hooks/course";
 import Color from "../../Color";
 import { FaPencil } from "react-icons/fa6";
 import { LuPlusCircle } from "react-icons/lu";
@@ -19,18 +21,20 @@ function CourseSetup() {
   const { lightgray, midgray, darkgray, lightblue1, lightblue2, midblue1 } =
     Color;
 
-  // Curriculum
-  const [section, setSection] = useState([
-    { title: "Section1", lesson: ["Lesson1", "Lesson2"] },
-    { title: "Section2", lesson: ["Lesson1", "Lesson2", "Lesson3"] },
-  ]);
-
   // Navigate
   const navigate = useNavigate();
+  const { id } = useParams();
+
+  // Zustand Course
+  const { course, setName } = useCourse();
+  const selectedCourse = course.find((c) => c.id === parseInt(id));
+
+  // useState
+  const [editName, setEditName] = useState(false);
 
   return (
     <VStack
-      h="100%"
+      minH="100%"
       w="100%"
       bg={lightgray}
       spacing="25px"
@@ -73,10 +77,10 @@ function CourseSetup() {
                   borderRadius="8px"
                   p="10px"
                   _hover={{ bg: midblue1, cursor: "pointer" }}
-                  onClick={() => navigate("/course/curriculum")}
+                  onClick={() => navigate(`/courses/${selectedCourse.id}/curriculum`)}
                   transition="background-color 0.2s ease"
                 >
-                  <Icon as={FaPencil} fontSize={{base:'14px', md:'16px'}} />
+                  <Icon as={FaPencil} fontSize={{ base: "14px", md: "16px" }} />
                   <Text fontSize={{ base: "12px", md: "14px" }}>
                     Ubah Kurikulum
                   </Text>
@@ -90,10 +94,9 @@ function CourseSetup() {
                 spacing="0px"
                 overflow="hidden"
               >
-                {section.map((data, index) => (
+                {selectedCourse.curriculum.length === 0 ? (
                   <>
                     <Flex
-                      key={index}
                       h="50px"
                       w="100%"
                       bg={lightgray}
@@ -103,19 +106,47 @@ function CourseSetup() {
                       p="10px"
                     >
                       <Text fontSize="15px" fontWeight="600">
-                        {data.title}
+                        Seksi baru
                       </Text>
                     </Flex>
-                    {data.lesson.map((head, lesIndex) => (
+                    <Flex
+                      h="50px"
+                      w="100%"
+                      bg="white"
+                      borderColor={midgray}
+                      align="center"
+                      p="10px"
+                    >
+                      <Text fontSize="13px">kosong</Text>
+                    </Flex>
+                  </>
+                ) : undefined}
+                {selectedCourse.curriculum.map((data, sectIdx) => (
+                  <VStack key={sectIdx} w="100%" spacing={0}>
+                    <Flex
+                      key={sectIdx}
+                      h="50px"
+                      w="100%"
+                      bg={lightgray}
+                      borderBottomWidth="1px"
+                      borderColor={midgray}
+                      align="center"
+                      p="10px"
+                    >
+                      <Text fontSize="15px" fontWeight="600">
+                        {data.sectionTitle}
+                      </Text>
+                    </Flex>
+                    {data.lesson.map((info, lesIdx) => (
                       <Flex
-                        key={lesIndex}
+                        key={lesIdx}
                         flexDirection="column"
                         h="50px"
                         w="100%"
                         bg="white"
                         borderBottomWidth={
-                          index === section.length - 1 &&
-                          lesIndex === data.lesson.length - 1
+                          sectIdx === selectedCourse.curriculum.length - 1 &&
+                          lesIdx === data.lesson.length - 1
                             ? "0px"
                             : "1px"
                         }
@@ -126,12 +157,14 @@ function CourseSetup() {
                         p="10px"
                       >
                         <Text w="100%" fontWeight="600">
-                          {head}
+                          {info.title}
                         </Text>
-                        <Text w="100%">Empty</Text>
+                        <Text w="100%">
+                          {info.content ? info.content : "Kosong"}
+                        </Text>
                       </Flex>
                     ))}
-                  </>
+                  </VStack>
                 ))}
               </VStack>
             </VStack>
@@ -147,20 +180,90 @@ function CourseSetup() {
               <Text w="100%" fontSize={{ base: "14px", md: "16px" }}>
                 Harga
               </Text>
-              <Text w="100%" fontSize={{ base: "12px", md: "14px" }}>
-                Tentukan harga kursus anda dengan beragam sistem yang berbeda
-                sesuai dengan keinginan anda
-              </Text>
-              <Center
-                bg={lightblue2}
-                borderRadius="8px"
-                fontSize={{ base: "12px", md: "14px" }}
-                p="5px 10px 5px 10px"
-                _hover={{ bg: midblue1, cursor: "pointer" }}
-                transition="background-color 0.2s ease"
-              >
-                Buat rencana harga
-              </Center>
+              {selectedCourse.pricePlan.length > 0 ? (
+                <VStack
+                  w="100%"
+                  borderRadius="8px"
+                  borderWidth="1px"
+                  borderColor={midgray}
+                  spacing="0px"
+                  overflow="hidden"
+                >
+                  {selectedCourse.pricePlan.map((data, index) => (
+                    <Flex
+                      key={index}
+                      flexDirection="column"
+                      h="50px"
+                      w="100%"
+                      bg={lightgray}
+                      borderBottomWidth={
+                        index === selectedCourse.pricePlan.length - 1
+                          ? "0px"
+                          : "1px"
+                      }
+                      borderColor={midgray}
+                      fontSize="13px"
+                      align="baseline"
+                      justify="center"
+                      p="10px"
+                    >
+                      <HStack>
+                        <Text fontWeight="600">
+                          {data.type === "OTP"
+                            ? "Sekali Bayar"
+                            : data.type === "INS"
+                            ? "Angsur"
+                            : data.type === "SUB"
+                            ? "Langganan"
+                            : data.type === "FRE"
+                            ? "Gratis"
+                            : undefined}{" "}
+                        </Text>
+                        <Text>
+                          {data.type === "INS" ? `${data.nPay} x ` : undefined}
+                          {data.type === "FRE"
+                            ? undefined
+                            : data.currency === "USD"
+                            ? "$"
+                            : data.currency === "IDR"
+                            ? "Rp"
+                            : undefined}
+                          {data.type != "FRE" ? data.price : undefined}
+                          {data.type === "SUB"
+                            ? ` per ${data.freq}`
+                            : undefined}
+                        </Text>
+                      </HStack>
+                      <Text
+                        minH="20px"
+                        w="200px"
+                        overflow="hidden"
+                        whiteSpace="nowrap"
+                        textOverflow="ellipsis"
+                      >
+                        {data.desc}
+                      </Text>
+                    </Flex>
+                  ))}
+                </VStack>
+              ) : (
+                <>
+                  <Text w="100%" fontSize={{ base: "12px", md: "14px" }}>
+                    Tentukan harga kursus anda dengan beragam sistem yang
+                    berbeda sesuai dengan keinginan anda
+                  </Text>
+                  <Center
+                    bg={lightblue2}
+                    borderRadius="8px"
+                    fontSize={{ base: "12px", md: "14px" }}
+                    p="5px 10px 5px 10px"
+                    _hover={{ bg: midblue1, cursor: "pointer" }}
+                    transition="background-color 0.2s ease"
+                  >
+                    Buat rencana harga
+                  </Center>
+                </>
+              )}
             </VStack>
           </VStack>
           {/* Right Column */}
@@ -179,22 +282,49 @@ function CourseSetup() {
                   Judul Kursus
                 </Text>
                 <HStack
+                  display={editName ? "none" : "flex"}
                   h="100%"
                   bg={lightblue2}
                   borderRadius="8px"
                   p="10px"
                   _hover={{ bg: midblue1, cursor: "pointer" }}
+                  onClick={() => setEditName(true)}
                   transition="background-color 0.2s ease"
                 >
-                  <Icon as={FaPencil} fontSize={{base:'14px', md:'16px'}}/>
+                  <Icon as={FaPencil} fontSize={{ base: "14px", md: "16px" }} />
                   <Text fontSize={{ base: "12px", md: "14px" }}>
                     Ubah Judul
                   </Text>
                 </HStack>
+                <Center
+                  display={editName ? "flex" : "none"}
+                  h="100%"
+                  bg={lightblue2}
+                  borderRadius="8px"
+                  p="10px"
+                  _hover={{ bg: midblue1, cursor: "pointer" }}
+                  onClick={() => setEditName(false)}
+                  transition="background-color 0.2s ease"
+                >
+                  <Text fontSize={{ base: "12px", md: "14px" }}>Simpan</Text>
+                </Center>
               </HStack>
-              <Text w="100%" fontSize={{ base: "12px", md: "14px" }}>
-                Kursus HTML
+              <Text
+                display={editName ? "none" : "flex"}
+                h="35px"
+                w="100%"
+                fontSize={{ base: "12px", md: "14px" }}
+                alignItems="center"
+              >
+                {selectedCourse.name ? selectedCourse.name : "Belum ada nama"}
               </Text>
+              <Input
+                display={editName ? "flex" : "none"}
+                h="35px"
+                value={selectedCourse.name}
+                fontSize={{ base: "12px", md: "14px" }}
+                onChange={(e) => setName(e.target.value, parseInt(id))}
+              />
             </VStack>
             <VStack w="100%">
               <HStack h="35px" w="100%" justify="space-between">
@@ -209,7 +339,10 @@ function CourseSetup() {
                   _hover={{ bg: midblue1, cursor: "pointer" }}
                   transition="background-color 0.2s ease"
                 >
-                  <Icon as={LuPlusCircle} fontSize={{base:'14px', md:'16px'}}/>
+                  <Icon
+                    as={LuPlusCircle}
+                    fontSize={{ base: "14px", md: "16px" }}
+                  />
                   <Text fontSize={{ base: "12px", md: "14px" }}>
                     Tambah gambar
                   </Text>

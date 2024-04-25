@@ -74,9 +74,9 @@ function CreateEfileStep1() {
             h="35px"
             placeholder="Tentukan kategori untuk produk eFile anda"
           >
-            <option value="option1">eBook</option>
-            <option value="option2">Audiobook</option>
-            <option value="option3">Gambar</option>
+            <option value="ebook">eBook</option>
+            <option value="audiobook">Audiobook</option>
+            <option value="gambar">Gambar</option>
           </Select>
         </FormControl>
         <Flex w="100%" justify="space-between" mt="25px">

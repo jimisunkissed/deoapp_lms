@@ -23,16 +23,8 @@ function CreateCourse() {
 
   const heading = ["Name", "Date", "Sales", "Enrollments", "Status", "Actions"];
 
-  // Courses
-  const { course, addCourse } = useCourse();
-
-  // Menu
-  const menu = [
-    "Publish Course",
-    "Preview Course as Student",
-    "Duplicate Course",
-    "Delete Course",
-  ];
+  // Zustand Courses
+  const { course, addCourse, deleteCourse, setPublish } = useCourse();
 
   // Navigate
   const navigate = useNavigate();
@@ -46,6 +38,7 @@ function CreateCourse() {
       spacing="25px"
       p={{ base: "15px", md: "25px" }}
     >
+      {/* Overflow Box */}
       <Box
         w="100%"
         bg="white"
@@ -54,10 +47,13 @@ function CreateCourse() {
         borderColor={midgray}
         overflowX="auto"
       >
+        {/* Course Box */}
         <VStack h="100%" w="100%" minW="600px" p={{ base: "15px", md: "25px" }}>
+          {/* Course Header */}
           <Text w="100%" fontSize="24px" fontWeight="600">
             Courses
           </Text>
+          {/* Table Header */}
           <HStack
             h="40px"
             w="100%"
@@ -79,6 +75,7 @@ function CreateCourse() {
               </Box>
             ))}
           </HStack>
+          {/* Table Fill */}
           {course.map((data, index) => (
             <HStack
               key={index}
@@ -89,6 +86,7 @@ function CreateCourse() {
               spacing={0}
               p="2px 0px 2px 0px"
             >
+              {/* Table Fill Name */}
               <Box
                 w={`${100 / heading.length}%`}
                 minW="150px"
@@ -101,20 +99,30 @@ function CreateCourse() {
                   whiteSpace="nowrap"
                   textOverflow="ellipsis"
                   _hover={{ textDecoration: "underline", cursor: "pointer" }}
-                  onClick={() => navigate("/courses/setup")}
+                  onClick={() => navigate(`/courses/${data.id}/setup`)}
                 >
-                  {data.name}
+                  {data.name ? data.name : "-"}
                 </Text>
               </Box>
+              {/* Table Fill Date */}
               <Box w={`${100 / heading.length}%`} fontSize="13px" pl="10px">
-                <Text>{data.date.slice(4, 15)}</Text>
+                <Text>
+                  {new Date(data.date).toLocaleDateString("en-US", {
+                    month: "long",
+                    day: "numeric",
+                    year: "numeric",
+                  })}
+                </Text>
               </Box>
+              {/* Table Fill Sales */}
               <Box w={`${100 / heading.length}%`} fontSize="13px" pl="10px">
-                <Text>{data.sale}</Text>
+                <Text>{data.sale ? data.sale : "-"}</Text>
               </Box>
+              {/* Table Fill Enrollment */}
               <Box w={`${100 / heading.length}%`} fontSize="13px" pl="10px">
-                <Text>{data.enrollment}</Text>
+                <Text>{data.enrollment ? data.enrollment : "-"}</Text>
               </Box>
+              {/* Table Fill Publish Status */}
               <Box w={`${100 / heading.length}%`} fontSize="13px" pl="10px">
                 <Center
                   h="24px"
@@ -125,9 +133,10 @@ function CreateCourse() {
                   color={darkblue2}
                   p="0px 8px 0px 8px"
                 >
-                  {data.isPublished ? 'Published' : 'Unpublished'}
+                  {data.isPublished ? "Published" : "Unpublished"}
                 </Center>
               </Box>
+              {/* Table Fill Action */}
               <Box w={`${100 / heading.length}%`} pl="10px">
                 <Menu>
                   <MenuButton
@@ -142,22 +151,39 @@ function CreateCourse() {
                     </Center>
                   </MenuButton>
                   <MenuList p="3px">
-                    {menu.map((text, index) => (
-                      <MenuItem key={index} h="30px" borderRadius="5px" p={0}>
-                        <Text
-                          fontSize="12px"
-                          color={text === "Delete Course" ? "red.600" : "black"}
-                          pl="10px"
-                        >
-                          {text}
-                        </Text>
-                      </MenuItem>
-                    ))}
+                    <MenuItem
+                      h="30px"
+                      borderRadius="5px"
+                      p={0}
+                      onClick={() => setPublish(data.id)}
+                    >
+                      <Text fontSize="12px" pl="10px">
+                        {data.isPublished
+                          ? "Unpublish Course"
+                          : "Publish Course"}
+                      </Text>
+                    </MenuItem>
+                    <MenuItem h="30px" borderRadius="5px" p={0}>
+                      <Text fontSize="12px" pl="10px">
+                        Duplicate Course
+                      </Text>
+                    </MenuItem>
+                    <MenuItem
+                      h="30px"
+                      borderRadius="5px"
+                      p={0}
+                      onClick={() => deleteCourse(data.id)}
+                    >
+                      <Text fontSize="12px" color="red.600" pl="10px">
+                        Delete Course
+                      </Text>
+                    </MenuItem>
                   </MenuList>
                 </Menu>
               </Box>
             </HStack>
           ))}
+          {/* Add Course */}
           <Center
             h="40px"
             w="100%"
@@ -171,7 +197,10 @@ function CreateCourse() {
               fontSize="20px"
               color={darkgray}
               _hover={{ color: "black", cursor: "pointer" }}
-              onClick={() => {navigate("/courses/create/step-1"), addCourse()}}
+              onClick={() => {
+                navigate("/courses/create/step-1");
+                addCourse();
+              }}
               transition="color 0.2s ease"
             />
           </Center>

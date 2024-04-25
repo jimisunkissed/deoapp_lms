@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   Box,
   Center,
@@ -26,10 +26,11 @@ function CreateCourseStep1() {
 
   // Navigate
   const navigate = useNavigate();
+  const { id } = useParams();
 
-  // Zustand
-  const {course} = useCourse()
-  console.log(course)
+  // Zustand Course
+  const { course, setNameById } = useCourse();
+  const selectedCourse = course.find((c) => c.id === parseInt(id));
 
   return (
     <VStack h="100%" w="100%" bg={lightgray} justify="center" p={{base:'15px', md:"25px"}}>

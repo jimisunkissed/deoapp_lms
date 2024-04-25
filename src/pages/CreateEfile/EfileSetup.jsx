@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
-  Box,
   Center,
   Flex,
   FormControl,
@@ -11,23 +10,33 @@ import {
   Input,
   Radio,
   RadioGroup,
+  Select,
   Text,
   VStack,
 } from "@chakra-ui/react";
+import useEfile from "../../hooks/efile";
 import Color from "../../Color";
 import { FaPencil } from "react-icons/fa6";
 import { LuPlusCircle, LuUpload } from "react-icons/lu";
-import { FcGallery } from "react-icons/fc";
+import { FcGallery, FcFile } from "react-icons/fc";
 
 function EfileSetup() {
   // Color Palette
   const { lightgray, midgray, darkgray, lightblue1, lightblue2, midblue1 } =
     Color;
 
-  const [value, setValue] = React.useState("1");
-
   // Navigate
   const navigate = useNavigate();
+  const { id } = useParams();
+
+  // Zustand eFile
+  const { efile, setCategory, setName } = useEfile();
+  const selectedEfile = efile.find((c) => c.id === parseInt(id));
+
+  // useState
+  const [value, setValue] = React.useState("1");
+  const [editName, setEditName] = useState(false);
+  const [editCat, setEditCat] = useState(false);
 
   return (
     <VStack
@@ -94,7 +103,7 @@ function EfileSetup() {
                 borderColor={midgray}
                 p="20px"
               >
-                <Icon as={FcGallery} fontSize="40px" />
+                <Icon as={FcFile} fontSize="40px" />
                 <Text
                   fontSize={{ base: "12px", md: "14px" }}
                   w={{ base: "90%", md: "80%" }}
@@ -167,11 +176,13 @@ function EfileSetup() {
                   Kategori Produk
                 </Text>
                 <HStack
+                  display={editCat ? "none" : "flex"}
                   h="100%"
                   bg={lightblue2}
                   borderRadius="8px"
                   p="10px"
                   _hover={{ bg: midblue1, cursor: "pointer" }}
+                  onClick={() => setEditCat(true)}
                   transition="background-color 0.2s ease"
                 >
                   <Icon as={FaPencil} fontSize={{ base: "14px", md: "16px" }} />
@@ -179,10 +190,39 @@ function EfileSetup() {
                     Ubah Kategori
                   </Text>
                 </HStack>
+                <Center
+                  display={editCat ? "flex" : "none"}
+                  h="100%"
+                  bg={lightblue2}
+                  borderRadius="8px"
+                  p="10px"
+                  _hover={{ bg: midblue1, cursor: "pointer" }}
+                  onClick={() => setEditCat(false)}
+                  transition="background-color 0.2s ease"
+                >
+                  <Text fontSize={{ base: "12px", md: "14px" }}>Simpan</Text>
+                </Center>
               </HStack>
-              <Text w="100%" fontSize={{ base: "12px", md: "14px" }}>
+              <Text
+                display={editCat ? "none" : "flex"}
+                h="35px"
+                w="100%"
+                fontSize={{ base: "12px", md: "14px" }}
+                alignItems="center"
+              >
                 ebook
               </Text>
+              <Select
+                display={editCat ? "flex" : "none"}
+                h="35px"
+                placeholder="Pilih Kategori"
+                fontSize={{ base: "12px", md: "14px" }}
+                onChange={(e) => setCategory(e.target.value, parseInt(id))}
+              >
+                <option value="ebook">eBook</option>
+                <option value="audiobook">Audiobook</option>
+                <option value="gambar">Gambar</option>
+              </Select>
             </VStack>
             {/* Harga */}
             <Text
@@ -196,20 +236,90 @@ function EfileSetup() {
               <Text w="100%" fontSize={{ base: "14px", md: "16px" }}>
                 Harga
               </Text>
-              <Text w="100%" fontSize={{ base: "12px", md: "14px" }}>
-                Tentukan harga produk anda dengan beragam sistem yang berbeda
-                sesuai dengan keinginan anda
-              </Text>
-              <Center
-                bg={lightblue2}
-                borderRadius="8px"
-                fontSize={{ base: "12px", md: "14px" }}
-                p="5px 10px 5px 10px"
-                _hover={{ bg: midblue1, cursor: "pointer" }}
-                transition="background-color 0.2s ease"
-              >
-                Buat rencana harga
-              </Center>
+              {selectedEfile.pricePlan.length > 0 ? (
+                <VStack
+                  w="100%"
+                  borderRadius="8px"
+                  borderWidth="1px"
+                  borderColor={midgray}
+                  spacing="0px"
+                  overflow="hidden"
+                >
+                  {selectedEfile.pricePlan.map((data, index) => (
+                    <Flex
+                      key={index}
+                      flexDirection="column"
+                      h="50px"
+                      w="100%"
+                      bg={lightgray}
+                      borderBottomWidth={
+                        index === selectedEfile.pricePlan.length - 1
+                          ? "0px"
+                          : "1px"
+                      }
+                      borderColor={midgray}
+                      fontSize="13px"
+                      align="baseline"
+                      justify="center"
+                      p="10px"
+                    >
+                      <HStack>
+                        <Text fontWeight="600">
+                          {data.type === "OTP"
+                            ? "Sekali Bayar"
+                            : data.type === "INS"
+                            ? "Angsur"
+                            : data.type === "SUB"
+                            ? "Langganan"
+                            : data.type === "FRE"
+                            ? "Gratis"
+                            : undefined}{" "}
+                        </Text>
+                        <Text>
+                          {data.type === "INS" ? `${data.nPay} x ` : undefined}
+                          {data.type === "FRE"
+                            ? undefined
+                            : data.currency === "USD"
+                            ? "$"
+                            : data.currency === "IDR"
+                            ? "Rp"
+                            : undefined}
+                          {data.type != "FRE" ? data.price : undefined}
+                          {data.type === "SUB"
+                            ? ` per ${data.freq}`
+                            : undefined}
+                        </Text>
+                      </HStack>
+                      <Text
+                        minH="20px"
+                        w="200px"
+                        overflow="hidden"
+                        whiteSpace="nowrap"
+                        textOverflow="ellipsis"
+                      >
+                        {data.desc}
+                      </Text>
+                    </Flex>
+                  ))}
+                </VStack>
+              ) : (
+                <>
+                  <Text w="100%" fontSize={{ base: "12px", md: "14px" }}>
+                    Tentukan harga kursus anda dengan beragam sistem yang
+                    berbeda sesuai dengan keinginan anda
+                  </Text>
+                  <Center
+                    bg={lightblue2}
+                    borderRadius="8px"
+                    fontSize={{ base: "12px", md: "14px" }}
+                    p="5px 10px 5px 10px"
+                    _hover={{ bg: midblue1, cursor: "pointer" }}
+                    transition="background-color 0.2s ease"
+                  >
+                    Buat rencana harga
+                  </Center>
+                </>
+              )}
             </VStack>
           </VStack>
           {/* Right Column */}
@@ -228,11 +338,13 @@ function EfileSetup() {
                   Nama Produk
                 </Text>
                 <HStack
+                  display={editName ? "none" : "flex"}
                   h="100%"
                   bg={lightblue2}
                   borderRadius="8px"
                   p="10px"
                   _hover={{ bg: midblue1, cursor: "pointer" }}
+                  onClick={() => setEditName(true)}
                   transition="background-color 0.2s ease"
                 >
                   <Icon as={FaPencil} fontSize={{ base: "14px", md: "16px" }} />
@@ -240,10 +352,35 @@ function EfileSetup() {
                     Ubah Judul
                   </Text>
                 </HStack>
+                <Center
+                  display={editName ? "flex" : "none"}
+                  h="100%"
+                  bg={lightblue2}
+                  borderRadius="8px"
+                  p="10px"
+                  _hover={{ bg: midblue1, cursor: "pointer" }}
+                  onClick={() => setEditName(false)}
+                  transition="background-color 0.2s ease"
+                >
+                  <Text fontSize={{ base: "12px", md: "14px" }}>Simpan</Text>
+                </Center>
               </HStack>
-              <Text w="100%" fontSize={{ base: "12px", md: "14px" }}>
-                SOP & KPI
+              <Text
+                display={editName ? "none" : "flex"}
+                h="35px"
+                w="100%"
+                fontSize={{ base: "12px", md: "14px" }}
+                alignItems="center"
+              >
+                {selectedEfile.name ? selectedEfile.name : "Belum ada nama"}
               </Text>
+              <Input
+                display={editName ? "flex" : "none"}
+                h="35px"
+                value={selectedEfile.name}
+                fontSize={{ base: "12px", md: "14px" }}
+                onChange={(e) => setName(e.target.value, parseInt(id))}
+              />
             </VStack>
             <VStack w="100%">
               <HStack h="35px" w="100%" justify="space-between">
