@@ -21,7 +21,7 @@ import {
 } from "@chakra-ui/react";
 import { LuUpload, LuX } from "react-icons/lu";
 import Color from "../../Color";
-import { FcGallery } from "react-icons/fc";
+import { FcFile } from "react-icons/fc";
 
 function CreateEfileStep4() {
   // Color Palette
@@ -95,7 +95,7 @@ function CreateEfileStep4() {
           borderColor={midgray}
           p="20px"
         >
-          <Icon as={FcGallery} fontSize="40px" />
+          <Icon as={FcFile} fontSize="40px" />
           <Text
             fontSize={{ base: "12px", md: "14px" }}
             w={{ base: "90%", md: "80%" }}
@@ -155,7 +155,7 @@ function CreateEfileStep4() {
             borderRadius="8px"
             fontSize="13px"
             _hover={{ bg: midblue1, cursor: "pointer" }}
-            onClick={() => navigate("/efiles/setup")}
+            onClick={() => navigate("/efiles/1/setup")}
             transition="background-color 0.2s ease"
           >
             Selanjutnya

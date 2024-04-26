@@ -29,7 +29,7 @@ const useEfile = create((set) => ({
         { type: "FRE", currency: "IDR", desc: "Lorem Ipsum Dolor Sit Amet" },
       ],
       category: "Audiobook",
-      content: "File1, File2, File3",
+      content: {type: 'TEX', value:'Lorem Ipsum'},
     },
     {
       id: 2,
@@ -57,7 +57,8 @@ const useEfile = create((set) => ({
           isPublished: false,
           image: null,
           pricePlan: [],
-          curriculum: [],
+          category: null,
+          content: "nothing"
         },
       ],
     })),

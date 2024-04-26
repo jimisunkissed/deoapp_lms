@@ -32,25 +32,42 @@ function CourseCurriculum() {
   const { course, setNameById } = useCourse();
   const selectedCourse = course.find((c) => c.id === parseInt(id));
 
-  // Action
-  const action = ["Ganti nama", "Duplikat bagian", "Hapus bagian"];
+  // Display Content Function
+  const displayContent = (objectList) => {
+    const content = { text: 0, image: 0, audio: 0, video: 0 };
 
-  const [section, setSection] = useState([
-    { title: "Section1", lesson: ["Lesson1", "Lesson2"] },
-    { title: "Section2", lesson: ["Lesson1", "Lesson2", "Lesson3"] },
-  ]);
+    for (let i = 0; i < objectList.length; i++) {
+      if (objectList[i].type === "TEX") {
+        content.text = content.text + 1;
+      } else if (objectList[i].type === "IMG") {
+        content.image = content.image + 1;
+      } else if (objectList[i].type === "AUD") {
+        content.audio = content.audio + 1;
+      } else if (objectList[i].type === "VID") {
+        content.video = content.video + 1;
+      }
+    }
 
-  const [isEdit, setIsEdit] = useState(() =>
-    section.map(({ title, lesson }) => ({
-      title: false,
-      lesson: Array(lesson.length).fill(false),
-    }))
-  );
+    let display = "";
+    if (content.text > 0) {
+      display = display + ", " + content.text + " teks";
+    }
+    if (content.image > 0) {
+      display = display + ", " + content.image + " gambar";
+    }
+    if (content.audio > 0) {
+      display = display + ", " + content.audio + " audio";
+    }
+    if (content.video > 0) {
+      display = display + ", " + content.video + " video";
+    }
 
-  function newSection() {
-    const newSect = { title: "New Section", lesson: [] };
-    setSection(prevState);
-  }
+    if (display === "") {
+      return "Kosong";
+    } else {
+      return display.slice(1, undefined);
+    }
+  };
 
   // Page Interface
   return (
@@ -119,17 +136,17 @@ function CourseCurriculum() {
                   <MenuList p="3px">
                     <MenuItem h="30px" borderRadius="5px" p={0}>
                       <Text fontSize="12px" pl="10px">
-                        Rename Section
+                        Ganti nama seksi
                       </Text>
                     </MenuItem>
                     <MenuItem h="30px" borderRadius="5px" p={0}>
                       <Text fontSize="12px" pl="10px">
-                        Duplicate Section
+                        Duplikat seksi
                       </Text>
                     </MenuItem>
                     <MenuItem h="30px" borderRadius="5px" p={0}>
                       <Text fontSize="12px" color="red.600" pl="10px">
-                        Delete Section
+                        Hapus seksi
                       </Text>
                     </MenuItem>
                   </MenuList>
@@ -170,43 +187,39 @@ function CourseCurriculum() {
                     >
                       {child.title}
                     </Text>
-                    <Text
-                      h="30%"
-                    >
-                      Empty
-                    </Text>
+                    <Text h="30%">{displayContent(child.content)}</Text>
                   </VStack>
                   <Spacer />
-                <Menu>
-                  <MenuButton
-                    h="30px"
-                    aspectRatio="1"
-                    borderRadius="50%"
-                    _hover={{ bg: lightblue2, cursor: "pointer" }}
-                    transition="background-color 0.2s ease"
-                  >
-                    <Center h="100%" w="100%">
-                      <Icon as={MdOutlineMoreVert} fontSize="18px" />
-                    </Center>
-                  </MenuButton>
-                  <MenuList p="3px">
-                    <MenuItem h="30px" borderRadius="5px" p={0}>
-                      <Text fontSize="12px" pl="10px">
-                        Rename Lesson
-                      </Text>
-                    </MenuItem>
-                    <MenuItem h="30px" borderRadius="5px" p={0}>
-                      <Text fontSize="12px" pl="10px">
-                        Duplicate Lesson
-                      </Text>
-                    </MenuItem>
-                    <MenuItem h="30px" borderRadius="5px" p={0}>
-                      <Text fontSize="12px" color="red.600" pl="10px">
-                        Delete Lesson
-                      </Text>
-                    </MenuItem>
-                  </MenuList>
-                </Menu>
+                  <Menu>
+                    <MenuButton
+                      h="30px"
+                      aspectRatio="1"
+                      borderRadius="50%"
+                      _hover={{ bg: lightblue2, cursor: "pointer" }}
+                      transition="background-color 0.2s ease"
+                    >
+                      <Center h="100%" w="100%">
+                        <Icon as={MdOutlineMoreVert} fontSize="18px" />
+                      </Center>
+                    </MenuButton>
+                    <MenuList p="3px">
+                      <MenuItem h="30px" borderRadius="5px" p={0}>
+                        <Text fontSize="12px" pl="10px">
+                          Ganti nama materi
+                        </Text>
+                      </MenuItem>
+                      <MenuItem h="30px" borderRadius="5px" p={0}>
+                        <Text fontSize="12px" pl="10px">
+                          Duplikat materi
+                        </Text>
+                      </MenuItem>
+                      <MenuItem h="30px" borderRadius="5px" p={0}>
+                        <Text fontSize="12px" color="red.600" pl="10px">
+                          Hapus materi
+                        </Text>
+                      </MenuItem>
+                    </MenuList>
+                  </Menu>
                 </HStack>
               ))}
               {/* New Lesson */}
@@ -219,13 +232,13 @@ function CourseCurriculum() {
               >
                 <Icon as={LuPlusCircle} />
                 <Text fontSize="14px" ml="10px">
-                  Kursus Baru
+                  Materi baru
                 </Text>
               </Center>
             </VStack>
           </Flex>
         ))}
-       
+
         <Center
           h="60px"
           w="100%"

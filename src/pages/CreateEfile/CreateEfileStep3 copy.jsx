@@ -21,9 +21,8 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { LuX } from "react-icons/lu";
-import { TbHelpCircleFilled } from "react-icons/tb";
-
 import Color from "../../Color";
+import { TbHelpCircleFilled } from "react-icons/tb";
 
 function CreateEfileStep3() {
   // Color Palette
@@ -33,32 +32,26 @@ function CreateEfileStep3() {
   const navigate = useNavigate();
 
   // Select useState
-  const [editPlan, setEditPlan] = useState(false);
-  const [type, setType] = useState(null);
+  const [price, setPrice] = useState(0);
+  const [isDetail, setIsDetail] = useState(false);
 
   // Price Plan
   const pricePlan = [
-    { type: "OTP", head: "Sekali bayar", detail: "Pelanggan membayar sekali" },
+    { head: "Sekali bayar", detail: "Pelanggan membayar sekali" },
     {
-      type: "INS",
       head: "Angsur",
       detail: "Bayar secara berangsur untuk jangka waktu yang tetap",
     },
+    { head: "Gratis", detail: "Pelanggan mendapat akses tanpa membayar" },
     {
-      type: "FRE",
-      head: "Gratis",
-      detail: "Pelanggan mendapat akses tanpa membayar",
-    },
-    {
-      type: "UNC",
-      head: "Saya belum tahu",
+      head: `Saya belum tahu`,
       detail: "Lewati untuk sekarang, akan saya tambahkan nanti",
     },
   ];
 
   return (
     <VStack
-      minH="100%"
+      h="100%"
       w="100%"
       bg={lightgray}
       justify="center"
@@ -72,11 +65,11 @@ function CreateEfileStep3() {
         borderWidth="1px"
         borderColor={midgray}
         spacing={1}
-        p={{ base: "15px", md: "25px" }}
+        p={{base:'15px', md:"25px"}}
       >
         <Flex w="100%" justify="space-between">
           <Text fontSize="15px" fontWeight="500">
-            3/3
+            3/4
           </Text>
           <Center
             _hover={{ cursor: "pointer" }}
@@ -86,7 +79,7 @@ function CreateEfileStep3() {
           </Center>
         </Flex>
         {/* Selection */}
-        <VStack display={editPlan ? "none" : "flex"} w="100%" p="15px">
+        <VStack display={isDetail ? "none" : "flex"} w="100%" spacing={1}>
           <Text
             w="100%"
             fontSize={{ base: "24px", md: "35px" }}
@@ -98,51 +91,40 @@ function CreateEfileStep3() {
           <Text w="90%" fontSize="14px" color={darkgray} textAlign="center">
             Anda bisa mengubahnya nanti
           </Text>
-          {pricePlan.map((data, index) => (
-            <VStack
-              key={index}
-              h={{ base: "80px", md: "100px" }}
-              w="100%"
-              bg={lightgray}
-              borderRadius="8px"
-              borderWidth="1px"
-              borderColor={data.type === type ? "black" : midgray}
-              textAlign="center"
-              justify="center"
-              spacing="0px"
-              p="15px"
-              _hover={{ cursor: "pointer" }}
-              onClick={() => setType(data.type)}
-            >
-              <Text fontSize={{ base: "16px", md: "24px" }} fontWeight="600">
-                {data.head}
-              </Text>
-              <Text fontSize={{ base: "13px", md: "16px" }}>{data.detail}</Text>
-            </VStack>
-          ))}
+          <VStack w="100%" spacing="15px">
+            {pricePlan.map((info, index) => (
+              <VStack
+                key={index}
+                h="80px"
+                w="100%"
+                bg={lightgray}
+                borderRadius="8px"
+                borderWidth="1px"
+                borderColor={index + 1 === price ? "black" : midgray}
+                textAlign="center"
+                justify="center"
+                spacing="0px"
+                p="15px"
+                _hover={{ cursor: "pointer" }}
+                onClick={() => setPrice(index + 1)}
+              >
+                <Text fontSize={{ base: "16px", md: "24px" }} fontWeight="600">
+                  {info.head}
+                </Text>
+                <Text fontSize={{ base: "13px", md: "16px" }}>
+                  {info.detail}
+                </Text>
+              </VStack>
+            ))}
+          </VStack>
         </VStack>
-        <VStack display={editPlan ? "flex" : "none"} w="100%" p="15px">
+        {/* Sekali bayar */}
+        <VStack display={isDetail && price === 1 ? "flex" : "none"} w="100%" spacing={1}>
           <Text fontSize={{ base: "18px", md: "22px" }} fontWeight="500">
-            {type === "OTP"
-              ? "Sekali Bayar"
-              : type === "INS"
-              ? "Angsur"
-              : type === "SUB"
-              ? "Langganan"
-              : type === "FRE"
-              ? "Gratis"
-              : undefined}
+            Sekali bayar
           </Text>
           <Text fontSize={{ base: "14px", md: "16px" }}>
-            {type === "OTP"
-              ? "Pelanggan membayar sekali"
-              : type === "INS"
-              ? "Bayar secara berangsur untuk jangka waktu yang tetap"
-              : type === "SUB"
-              ? "Bayar setiap jangka waktu tertentu untuk mendapatkan akses"
-              : type === "FRE"
-              ? "Pelanggan mendapat akses tanpa membayar"
-              : undefined}
+            Pelanggan membayar sekali
           </Text>
           <HStack w="100%" align="end">
             <FormControl w="80%">
@@ -176,7 +158,59 @@ function CreateEfileStep3() {
               </NumberInputStepper>
             </NumberInput>
           </HStack>
-          <FormControl display={type === "INS" ? "flow" : "none"} w="100%">
+          <FormControl w="100%">
+            <FormLabel fontSize={{ base: "14px", md: "16px" }}>Nama</FormLabel>
+            <Input h="35px" w="100%" />
+          </FormControl>
+          <FormControl w="100%">
+            <FormLabel fontSize={{ base: "14px", md: "16px" }}>
+              Deskripsi Singkat
+            </FormLabel>
+            <Input h="35px" w="100%" />
+          </FormControl>
+          <FormControl w="100%">
+            <FormLabel fontSize={{ base: "14px", md: "16px" }}>
+              Deskripsi Lengkap
+            </FormLabel>
+            <Textarea h="120px" w="100%" resize="none" />
+          </FormControl>
+        </VStack>
+        {/* Angsur */}
+        <VStack display={isDetail && price === 2 ? "flex" : "none"} w="100%" spacing={1}>
+          <Text fontSize={{ base: "18px", md: "22px" }} fontWeight="500">
+            Angsur
+          </Text>
+          <Text fontSize={{ base: "14px", md: "16px" }}>
+            Bayar secara berangsur untuk jangka waktu yang tetap
+          </Text>
+          <HStack w="100%" align="end">
+            <FormControl w="80%">
+              <FormLabel>
+                <HStack w="100%">
+                  <Text fontSize={{ base: "14px", md: "16px" }}>Price</Text>
+                  <Center>
+                    <Icon as={TbHelpCircleFilled} />
+                  </Center>
+                </HStack>
+              </FormLabel>
+              <Select h="35px" placeholder="Select currency">
+                <option value="option1">IDR</option>
+                <option value="option2">USD</option>
+                <option value="option3">EUR</option>
+              </Select>
+            </FormControl>
+            <NumberInput>
+              <NumberInputField
+                h="35px"
+                fontSize={{ base: "14px", md: "16px" }}
+              />
+              <NumberInputStepper>
+                <NumberIncrementStepper />
+                <NumberDecrementStepper />
+              </NumberInputStepper>
+            </NumberInput>
+          </HStack>
+          <FormControl w="100%">
             <FormLabel fontSize={{ base: "14px", md: "16px" }}>
               Banyak Pembayaran
             </FormLabel>
@@ -191,24 +225,39 @@ function CreateEfileStep3() {
               </NumberInputStepper>
             </NumberInput>
           </FormControl>
-          <FormControl display={type === "SUB" ? "flow" : "none"} w="100%">
-            <FormLabel fontSize={{ base: "14px", md: "16px" }}>
-              Frekuensi
-            </FormLabel>
-            <Select h="35px" placeholder="">
-              <option value="option1">Every 2 weeks</option>
-              <option value="option2">Every month</option>
-              <option value="option3">Every 3 months</option>
-            </Select>
-          </FormControl>
           <FormControl w="100%">
             <FormLabel fontSize={{ base: "14px", md: "16px" }}>Nama</FormLabel>
             <Input h="35px" w="100%" />
           </FormControl>
           <FormControl w="100%">
             <FormLabel fontSize={{ base: "14px", md: "16px" }}>
-              Deskripsi
+              Deskripsi Singkat
             </FormLabel>
+            <Input h="35px" w="100%" />
+          </FormControl>
+          <FormControl w="100%">
+            <FormLabel fontSize={{ base: "14px", md: "16px" }}>
+              Deskripsi Lengkap
+            </FormLabel>
+            <Textarea h="120px" w="100%" resize="none" />
+          </FormControl>
+        </VStack>
+        {/* Gratis */}
+        <VStack display={isDetail && price === 3 ? "flex" : "none"} w="100%" spacing={1}>
+          <Text fontSize={{ base: "18px", md: "22px" }} fontWeight="500">
+            Gratis
+          </Text>
+          <Text fontSize={{ base: "14px", md: "16px" }}>Pelanggan mendapat akses tanpa membayar</Text>
+          <FormControl w="100%">
+            <FormLabel fontSize={{ base: "14px", md: "16px" }}>Nama</FormLabel>
+            <Input h="35px" w="100%" />
+          </FormControl>
+          <FormControl w="100%">
+            <FormLabel fontSize={{ base: "14px", md: "16px" }}>Deskripsi Singkat</FormLabel>
+            <Input h="35px" w="100%" />
+          </FormControl>
+          <FormControl w="100%">
+            <FormLabel fontSize={{ base: "14px", md: "16px" }}>Deskripsi Lengkap</FormLabel>
             <Textarea h="120px" w="100%" resize="none" />
           </FormControl>
         </VStack>
@@ -222,8 +271,8 @@ function CreateEfileStep3() {
             fontSize="13px"
             _hover={{ bg: midblue1, cursor: "pointer" }}
             onClick={
-              editPlan
-                ? () => setEditPlan(false)
+              isDetail
+                ? () => setIsDetail(false)
                 : () => navigate("/efiles/create/step-2")
             }
             transition="background-color 0.2s ease"
@@ -238,13 +287,11 @@ function CreateEfileStep3() {
             fontSize="13px"
             _hover={{ bg: midblue1, cursor: "pointer" }}
             onClick={
-              editPlan
-                ? () => navigate("/efiles/1/setup")
-                : type === "UNC"
-                ? () => navigate("/efiles/1/setup")
-                : type === null ?
-                undefined
-                : () => setEditPlan(true)
+              isDetail || price === 4
+                ? () => navigate("/efiles/create/step-4")
+                : price != 0
+                ? () => setIsDetail(true)
+                : undefined
             }
             transition="background-color 0.2s ease"
           >

@@ -21,13 +21,25 @@ function CreateCourse() {
   const { lightgray, midgray, darkgray, lightblue1, lightblue2, darkblue2 } =
     Color;
 
-  const heading = ["Name", "Date", "Sales", "Enrollments", "Status", "Actions"];
+  // Navigate
+  const navigate = useNavigate();
 
   // Zustand Courses
   const { course, addCourse, deleteCourse, setPublish } = useCourse();
 
-  // Navigate
-  const navigate = useNavigate();
+  const heading = ["Name", "Date", "Sales", "Enrollments", "Status", "Actions"];
+
+  // ID generator
+  const genId = (objectList) => {
+    let max = 0
+    for (let i = 0; i < objectList.length; i++) {
+      if (objectList.id > max) {
+        max = objectList.id
+      }
+    }
+
+    return max + 1
+  }
 
   // Page Interface
   return (
@@ -105,7 +117,12 @@ function CreateCourse() {
                 </Text>
               </Box>
               {/* Table Fill Date */}
-              <Box w={`${100 / heading.length}%`} fontSize="13px" pl="10px">
+              <Box
+                w={`${100 / heading.length}%`}
+                minW=""
+                fontSize="13px"
+                pl="10px"
+              >
                 <Text>
                   {new Date(data.date).toLocaleDateString("en-US", {
                     month: "long",
@@ -198,8 +215,8 @@ function CreateCourse() {
               color={darkgray}
               _hover={{ color: "black", cursor: "pointer" }}
               onClick={() => {
-                navigate("/courses/create/step-1");
                 addCourse();
+                navigate("/courses/create/step-1");
               }}
               transition="color 0.2s ease"
             />

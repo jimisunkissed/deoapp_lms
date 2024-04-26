@@ -32,16 +32,43 @@ const useCourse = create((set) => ({
         {
           sectionTitle: "HTML",
           lesson: [
-            { title: "Basic", content: "Video" },
-            { title: "Intermediate", content: "Hands on practice" },
+            {
+              title: "Basic",
+              content: [
+                { type: "TEX", value: "Lorem Ipsum" },
+                { type: "IMG", value: "https://abc" },
+                { type: "AUD", value: "https://abc" },
+                { type: "VID", value: "https://abc" },
+              ],
+            },
+            { title: "Intermediate", content: [{type:"VID", value: "https://abcd"}] },
           ],
         },
         {
           sectionTitle: "CSS",
           lesson: [
-            { title: "Basic", content: "Video" },
-            { title: "Intermediate", content: "Documentation" },
-            { title: "Advanced", content: "Quiz" },
+            {
+              title: "Basic",
+              content: [
+                { type: "VID", value: "https://abc" },
+                { type: "VID", value: "https://abc" },
+              ],
+            },
+            {
+              title: "Intermediate",
+              content: [
+                { type: "TEX", value: "Lorem Ipsum" },
+                { type: "AUD", value: "https://abc" },
+              ],
+            },
+            {
+              title: "Advanced",
+              content: [
+                { type: "VID", value: "https://abc" },
+                { type: "VID", value: "https://abc" },
+                { type: "IMG", value: "https://abc" },
+              ],
+            },
           ],
         },
       ],
@@ -59,14 +86,14 @@ const useCourse = create((set) => ({
         {
           sectionTitle: "API",
           lesson: [
-            { title: "Basic", content: null },
-            { title: "Intermediate", content: null },
-            { title: "Advanced", content: null },
+            { title: "Basic", content: [] },
+            { title: "Intermediate", content: [] },
+            { title: "Advanced", content: [] },
           ],
         },
         {
           sectionTitle: "Python",
-          lesson: [{ title: "Basic", content: null }],
+          lesson: [{ title: "Basic", content: [] }],
         },
       ],
     },
@@ -95,7 +122,9 @@ const useCourse = create((set) => ({
   setPublish: (id) =>
     set((state) => ({
       course: state.course.map((course) =>
-        course.id  === id ? { ...course, isPublished: !course.isPublished } : course
+        course.id === id
+          ? { ...course, isPublished: !course.isPublished }
+          : course
       ),
     })),
   setName: (value, id) =>
