@@ -22,21 +22,14 @@ import {
   ModalContent,
   ModalOverlay,
   Select,
-  Skeleton,
   Text,
   Textarea,
   VStack,
   useDisclosure,
 } from "@chakra-ui/react";
+import useCourse from "../../hooks/course";
 import { db } from "../../../firebaseconfig";
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  where,
-  query,
-} from "firebase/firestore";
+import { collection, getDocs, getDoc } from "firebase/firestore";
 import Color from "../../Color";
 import { FaPencil } from "react-icons/fa6";
 import { LuPlusCircle, LuMoreVertical } from "react-icons/lu";
@@ -52,108 +45,9 @@ function CourseSetup() {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  // Fetch Data Course
-  const [course, setCourse] = useState(null);
-
-  const getCourse = async (collectionName, key) => {
-    try {
-      const docRef = doc(db, collectionName, key);
-      const docSnapshot = await getDoc(docRef);
-
-      if (docSnapshot.exists()) {
-        const courseData = docSnapshot.data();
-        setCourse(courseData);
-      } else {
-        console.log("No such document exists!");
-      }
-    } catch (error) {
-      console.error("Error fetching product: ", error);
-    }
-  };
-
-  useEffect(() => {
-    getCourse("lms_course", id);
-  }, [id]);
-
-  // Fetch Data Section
-  const [sectionList, setSectionList] = useState(null);
-  const [isSectionSorted, setIsSectionSorted] = useState(false);
-
-  const getSectionById = async (collectionName, key) => {
-    try {
-      const q = query(
-        collection(db, collectionName),
-        where("courseId", "==", key)
-      );
-      const querySnapshot = await getDocs(q);
-      if (!querySnapshot.empty) {
-        const sections = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setSectionList(sections);
-      } else {
-        console.log("No such document exists!");
-      }
-    } catch (error) {
-      console.error("Error getting sections:", error);
-    }
-  };
-
-  useEffect(() => {
-    getSectionById("lms_section", id);
-  }, [id]);
-
-  useEffect(() => {
-    if (sectionList && !isSectionSorted) {
-      const sortedSections = [...sectionList].sort((a, b) => a.sort - b.sort);
-      setSectionList(sortedSections);
-      setIsSectionSorted(true);
-    } else if (sectionList && isSectionSorted) {
-      {
-        sectionList.map((data) => {
-          getLessonById("lms_lesson", data.id);
-        });
-      }
-    }
-  }, [sectionList, isSectionSorted]);
-
-  // Fetch Data Lesson
-  const [lessonList, setLessonList] = useState([]);
-  const [isLessonSorted, setIsLessonSorted] = useState(false);
-
-  const getLessonById = async (collectionName, key) => {
-    try {
-      const q = query(
-        collection(db, collectionName),
-        where("sectionId", "==", key)
-      );
-      const querySnapshot = await getDocs(q);
-      if (!querySnapshot.empty) {
-        const lessons = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setLessonList((prev) => {
-          const temp = [...prev];
-          temp.push(lessons);
-          return temp;
-        });
-      } else {
-        console.log("No such document exists!");
-      }
-    } catch (error) {
-      console.error("Error getting lessons:", error);
-    }
-  };
-
-  // useEffect(() => {
-  //   if (lessonList && !isLessonSorted) {
-  //     const sortedLessons = [...lessonList].sort((a, b) => a.sort - b.sort);
-  //     setLessonList(sortedLessons);
-  //     setIsLessonSorted(true);
-  //   }
-  // }, [lessonList, isLessonSorted]);
+  // Zustand Course
+  const { course, setName } = useCourse();
+  const selectedCourse = course.find((c) => c.id === parseInt(id));
 
   // useState
   const [editName, setEditName] = useState(false);
@@ -218,6 +112,29 @@ function CourseSetup() {
     },
   ];
 
+  // Fetch Data
+  const [courseView, setCourseView] = useState(null)
+
+  const getCourseView = async (collection, key) => {
+    try {
+      const docRef = doc(db, collection, key);
+      const docSnapshot = await getDoc(docRef);
+
+      if (docSnapshot.exists()) {
+        const courseData = docSnapshot.data()
+        setCourseView(courseData);
+      } else {
+        console.log("No such document exists!");
+      }
+    } catch (error) {
+      console.error("Error fetching product: ", error);
+    }
+  };
+
+  useEffect(() => {
+    getCourseView('lms_course', id)
+  })
+
   return (
     <VStack
       minH="100%"
@@ -263,7 +180,9 @@ function CourseSetup() {
                   borderRadius="8px"
                   p="10px"
                   _hover={{ bg: midblue1, cursor: "pointer" }}
-                  onClick={() => navigate(`/courses/1/curriculum`)}
+                  onClick={() =>
+                    navigate(`/courses/${selectedCourse.id}/curriculum`)
+                  }
                   transition="background-color 0.2s ease"
                 >
                   <Icon as={FaPencil} fontSize={{ base: "14px", md: "16px" }} />
@@ -272,100 +191,85 @@ function CourseSetup() {
                   </Text>
                 </HStack>
               </HStack>
-              {!course ? (
-                <VStack h="70px" w="100%" spacing="5px">
-                  <Skeleton height="20px" w="100%" borderRadius="5px" />
-                  <Skeleton height="20px" w="100%" />
-                  <Skeleton height="20px" w="100%" />
-                </VStack>
-              ) : (
-                <VStack
-                  w="100%"
-                  borderRadius="8px"
-                  borderWidth="1px"
-                  borderColor={midgray}
-                  spacing="0px"
-                  overflow="hidden"
-                >
-                  {course.section.length === 0 ? (
-                    <>
+              <VStack
+                w="100%"
+                borderRadius="8px"
+                borderWidth="1px"
+                borderColor={midgray}
+                spacing="0px"
+                overflow="hidden"
+              >
+                {selectedCourse.curriculum.length === 0 ? (
+                  <>
+                    <Flex
+                      h="50px"
+                      w="100%"
+                      bg={lightgray}
+                      borderBottomWidth="1px"
+                      borderColor={midgray}
+                      align="center"
+                      p="10px"
+                    >
+                      <Text fontSize="15px" fontWeight="600">
+                        Seksi baru
+                      </Text>
+                    </Flex>
+                    <Flex
+                      h="50px"
+                      w="100%"
+                      bg="white"
+                      borderColor={midgray}
+                      align="center"
+                      p="10px"
+                    >
+                      <Text fontSize="13px">kosong</Text>
+                    </Flex>
+                  </>
+                ) : undefined}
+                {selectedCourse.curriculum.map((data, sectIdx) => (
+                  <VStack key={sectIdx} w="100%" spacing={0}>
+                    <Flex
+                      key={sectIdx}
+                      h="50px"
+                      w="100%"
+                      bg={lightgray}
+                      borderBottomWidth="1px"
+                      borderColor={midgray}
+                      align="center"
+                      p="10px"
+                    >
+                      <Text fontSize="15px" fontWeight="600">
+                        {data.sectionTitle}
+                      </Text>
+                    </Flex>
+                    {data.lesson.map((child, lesIdx) => (
                       <Flex
-                        h="50px"
-                        w="100%"
-                        bg={lightgray}
-                        borderBottomWidth="1px"
-                        borderColor={midgray}
-                        align="center"
-                        p="10px"
-                      >
-                        <Text fontSize="15px" fontWeight="600">
-                          Seksi baru
-                        </Text>
-                      </Flex>
-                      <Flex
+                        key={lesIdx}
+                        flexDirection="column"
                         h="50px"
                         w="100%"
                         bg="white"
+                        borderBottomWidth={
+                          sectIdx === selectedCourse.curriculum.length - 1 &&
+                          lesIdx === data.lesson.length - 1
+                            ? "0px"
+                            : "1px"
+                        }
                         borderColor={midgray}
-                        align="center"
+                        fontSize="13px"
+                        align="baseline"
+                        justify="center"
                         p="10px"
                       >
-                        <Text fontSize="13px">kosong</Text>
+                        <Text w="100%" fontWeight="600">
+                          {child.title}
+                        </Text>
+                        <Text w="100%">{displayContent(child.content)}</Text>
                       </Flex>
-                    </>
-                  ) : (
-                    sectionList &&
-                    sectionList.map((data, sectIdx) => (
-                      <VStack key={sectIdx} w="100%" spacing={0}>
-                        <Flex
-                          h="50px"
-                          w="100%"
-                          bg={lightgray}
-                          borderBottomWidth="1px"
-                          borderColor={midgray}
-                          align="center"
-                          p="10px"
-                        >
-                          <Text fontSize="15px" fontWeight="600">
-                            {data.sectionTitle}
-                          </Text>
-                        </Flex>
-                        {lessonList
-                          ? lessonList.length === 0
-                            ? undefined
-                            : lessonList[sectIdx].map((child, lesIdx) => (
-                                <Flex
-                                  key={lesIdx}
-                                  flexDirection="column"
-                                  h="50px"
-                                  w="100%"
-                                  bg="white"
-                                  borderBottomWidth={
-                                    sectIdx === sectionList.length - 1 &&
-                                    lesIdx === lessonList[sectIdx].length - 1
-                                      ? "0px"
-                                      : "1px"
-                                  }
-                                  borderColor={midgray}
-                                  fontSize="13px"
-                                  align="baseline"
-                                  justify="center"
-                                  p="10px"
-                                >
-                                  <Text w="100%" fontWeight="600">
-                                    {child.lessonTitle}
-                                  </Text>
-                                  <Text w="100%">
-                                    {displayContent(child.content)}
-                                  </Text>
-                                </Flex>
-                              ))
-                          : undefined}
-                      </VStack>
-                    ))
-                  )}
-                </VStack>
-              )}
+                    ))}
+                  </VStack>
+                ))}
+              </VStack>
             </VStack>
             {/* Harga */}
             <Text
@@ -404,7 +308,7 @@ function CourseSetup() {
                   </Text>
                 </HStack>
               </HStack>
-              {course && course.pricePlan.length > 0 ? (
+              {selectedCourse.pricePlan.length > 0 ? (
                 <VStack
                   w="100%"
                   borderRadius="8px"
@@ -413,14 +317,16 @@ function CourseSetup() {
                   spacing="0px"
                   overflow="hidden"
                 >
-                  {course.pricePlan.map((data, index) => (
+                  {selectedCourse.pricePlan.map((data, index) => (
                     <Flex
                       key={index}
                       h="50px"
                       w="100%"
                       bg={lightgray}
                       borderBottomWidth={
-                        index === course.pricePlan.length - 1 ? "0px" : "1px"
+                        index === selectedCourse.pricePlan.length - 1
+                          ? "0px"
+                          : "1px"
                       }
                       borderColor={midgray}
                       align="center"
@@ -781,7 +687,7 @@ function CourseSetup() {
                   borderRadius="8px"
                   p="10px"
                   _hover={{ bg: midblue1, cursor: "pointer" }}
-                  // onClick={() => setEditName(true)}
+                  onClick={() => setEditName(true)}
                   transition="background-color 0.2s ease"
                 >
                   <Icon as={FaPencil} fontSize={{ base: "14px", md: "16px" }} />
@@ -809,19 +715,15 @@ function CourseSetup() {
                 fontSize={{ base: "12px", md: "14px" }}
                 alignItems="center"
               >
-                {course ? (
-                  course.name
-                ) : (
-                  <Skeleton h="20px" w="100%" borderRadius="5px" />
-                )}
+                {selectedCourse.name ? selectedCourse.name : "Belum ada nama"}
               </Text>
-              {/* <Input
+              <Input
                 display={editName ? "flex" : "none"}
                 h="35px"
-                value={course.name}
+                value={selectedCourse.name}
                 fontSize={{ base: "12px", md: "14px" }}
                 onChange={(e) => setName(e.target.value, parseInt(id))}
-              /> */}
+              />
             </VStack>
             <VStack w="100%">
               <HStack h="35px" w="100%" justify="space-between">

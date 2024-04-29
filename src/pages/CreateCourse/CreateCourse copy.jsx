@@ -26,6 +26,25 @@ function CreateCourse() {
   // Navigate
   const navigate = useNavigate();
 
+  // Zustand Courses
+  const { course, addCourse, deleteCourse, setPublish } = useCourse();
+
+  const heading = ["Name", "Date", "Sales", "Enrollments", "Status", "Actions"];
+
+  // Date Function
+  const displayDate = (timestamp) => {
+    const dateObject = timestamp.toDate();
+
+    // Extract components
+    const formattedDate = dateObject.toLocaleDateString('en-US', {
+      month: 'short', // Short month name (e.g., "Apr")
+      day: '2-digit', // Two-digit day (e.g., "18")
+      year: 'numeric' // Full year (e.g., "2024")
+    });
+    
+    return(formattedDate);
+  };
+
   // Fetch Data
   const [courseList, setCourseList] = useState(null);
 
@@ -46,22 +65,9 @@ function CreateCourse() {
     getCourseList("lms_course");
   }, []);
 
-  // Table header
-  const heading = ["Name", "Date", "Sales", "Enrollments", "Status", "Actions"];
-
-  // Date Function
-  const displayDate = (timestamp) => {
-    const dateObject = timestamp.toDate();
-
-    // Extract components
-    const formattedDate = dateObject.toLocaleDateString("en-US", {
-      month: "short", // Short month name (e.g., "Apr")
-      day: "2-digit", // Two-digit day (e.g., "18")
-      year: "numeric", // Full year (e.g., "2024")
-    });
-
-    return formattedDate;
-  };
+  useEffect(() => {
+    console.log(courseList);
+  }, [courseList]);
 
   // Page Interface
   return (
@@ -152,7 +158,9 @@ function CreateCourse() {
                   fontSize="13px"
                   pl="10px"
                 >
-                  <Text>{displayDate(data.date)}</Text>
+                  <Text>
+                    {displayDate(data.date)}
+                  </Text>
                 </Box>
                 {/* Table Fill Sales */}
                 <Box w={`${100 / heading.length}%`} fontSize="13px" pl="10px">
@@ -195,7 +203,7 @@ function CreateCourse() {
                         h="30px"
                         borderRadius="5px"
                         p={0}
-                        // onClick={() => setPublish(data.id)}
+                        onClick={() => setPublish(data.id)}
                       >
                         <Text fontSize="12px" pl="10px">
                           {data.isPublished
@@ -212,7 +220,7 @@ function CreateCourse() {
                         h="30px"
                         borderRadius="5px"
                         p={0}
-                        // onClick={() => deleteCourse(data.id)}
+                        onClick={() => deleteCourse(data.id)}
                       >
                         <Text fontSize="12px" color="red.600" pl="10px">
                           Delete Course
@@ -227,13 +235,7 @@ function CreateCourse() {
           <Center
             h="40px"
             w="100%"
-            bg={
-              courseList
-                ? courseList.length % 2 === 0
-                  ? "white"
-                  : lightblue1
-                : "white"
-            }
+            bg={course.length % 2 === 0 ? "white" : lightblue1}
             borderRadius="8px"
             spacing={0}
             p="2px 0px 2px 0px"
@@ -244,7 +246,7 @@ function CreateCourse() {
               color={darkgray}
               _hover={{ color: "black", cursor: "pointer" }}
               onClick={() => {
-                // addCourse();
+                addCourse();
                 navigate("/courses/create/step-1");
               }}
               transition="color 0.2s ease"

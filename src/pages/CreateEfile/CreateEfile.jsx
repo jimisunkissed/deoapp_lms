@@ -47,8 +47,8 @@ function CreateEfile() {
         borderColor={midgray}
         overflowX="auto"
       >
-        <VStack h="100%" w="100%" minW="600px" p={{ base: "15px", md: "25px" }}>
-          <Text w="100%" fontSize="24px" fontWeight="600">
+        <VStack h="100%" w="100%" minW="600px" spacing='2px' p={{ base: "15px", md: "25px" }}>
+          <Text w="100%" fontSize="24px" fontWeight="600" mb='10px'>
             eFiles
           </Text>
           <HStack
@@ -75,7 +75,7 @@ function CreateEfile() {
           {efile.map((data, index) => (
             <HStack
               key={index}
-              h="40px"
+              h="50px"
               w="100%"
               bg={index % 2 === 0 ? "white" : lightblue1}
               borderRadius="8px"
