@@ -336,10 +336,10 @@ function CourseSetup() {
                 </HStack>
               </HStack>
               {!sectionList ? (
-                <VStack h="70px" w="100%" spacing="5px">
-                  <Skeleton height="20px" w="100%" borderRadius="5px" />
-                  <Skeleton height="20px" w="100%" borderRadius="5px" />
-                  <Skeleton height="20px" w="100%" borderRadius="5px" />
+                <VStack w="100%" spacing="5px">
+                  <Skeleton height="60px" w="100%" borderRadius="5px" />
+                  <Skeleton height="60px" w="100%" borderRadius="5px" />
+                  <Skeleton height="60px" w="100%" borderRadius="5px" />
                 </VStack>
               ) : (
                 <VStack
