@@ -122,7 +122,8 @@ function CourseSetup() {
 
   // Fetch Data Lesson
   const [lessonList, setLessonList] = useState([]);
-  const [isLessonSorted, setIsLessonSorted] = useState(null);
+  const [isLessonElementSorted, setIsLessonElementSorted] = useState(null);
+  const [isLessonSorted, setIsLessonSorted] = useState(false)
 
   const getLessonById = async (collectionName, key) => {
     try {
@@ -156,14 +157,14 @@ function CourseSetup() {
 
   const sortLessonList = () => {
     for (let i = 0; i < lessonList.length; i++) {
-      if (!isLessonSorted[i]) {
+      if (!isLessonElementSorted[i]) {
         const sortedLesson = [...lessonList[i]].sort((a, b) => a.sort - b.sort);
         setLessonList((prev) => {
           const newState = [...prev];
           newState[i] = sortedLesson;
           return newState;
         });
-        setIsLessonSorted((prev) => {
+        setIsLessonElementSorted((prev) => {
           const newState = [...prev];
           newState[i] = true;
           return newState;
@@ -174,12 +175,12 @@ function CourseSetup() {
 
   const lessonSorted = () => {
     let temp = true;
-    if (isLessonSorted === null) {
+    if (isLessonElementSorted === null) {
       return false;
     } else {
-      for (let i = 0; i < isLessonSorted; i++) {
-        if (isLessonSorted[i] === false) {
-          temp = isLessonSorted[i];
+      for (let i = 0; i < isLessonElementSorted; i++) {
+        if (isLessonElementSorted[i] === false) {
+          temp = isLessonElementSorted[i];
         }
       }
       return temp;
@@ -191,8 +192,9 @@ function CourseSetup() {
     for (let i = 0; i < lessonList.length; i++) {
       newState.push(false);
     }
-    setIsLessonSorted(newState);
+    setIsLessonElementSorted(newState);
     sortLessonList();
+    setIsLessonSorted(lessonSorted())
   }, [lessonList]);
 
   // useState
@@ -380,7 +382,7 @@ function CourseSetup() {
                             {data.sectionTitle}
                           </Text>
                         </Flex>
-                        {lessonList && lessonSorted() ? (
+                        {lessonList && isLessonSorted ? (
                           lessonList.length === 0 ? undefined : lessonList[
                               sectIdx
                             ] ? (
@@ -882,8 +884,13 @@ function CourseSetup() {
                   p="10px"
                   _hover={{ bg: "green.500", cursor: "pointer" }}
                   onClick={() => {
-                    setEditName(false);
-                    saveName(id, tempName);
+                    saveName(id, tempName)
+                      .then(() => {
+                        setEditName(false);
+                      })
+                      .catch((error) => {
+                        console.error("Error getting lessons:", error);
+                      });
                   }}
                   transition="background-color 0.2s ease"
                 >

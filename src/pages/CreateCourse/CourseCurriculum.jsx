@@ -35,29 +35,6 @@ function CourseCurriculum() {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  // Fetch Data Course
-  // const [course, setCourse] = useState(null);
-
-  // const getCourse = async (collectionName, key) => {
-  //   try {
-  //     const docRef = doc(db, collectionName, key);
-  //     const docSnapshot = await getDoc(docRef);
-
-  //     if (docSnapshot.exists()) {
-  //       const courseData = docSnapshot.data();
-  //       setCourse(courseData);
-  //     } else {
-  //       console.log("No such document exists!");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching product: ", error);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   getCourse("lms_course", id);
-  // }, [id]);
-
   // Fetch Data Section
   const [sectionList, setSectionList] = useState(null);
   const [isSectionSorted, setIsSectionSorted] = useState(false);
@@ -104,7 +81,8 @@ function CourseCurriculum() {
 
   // Fetch Data Lesson
   const [lessonList, setLessonList] = useState([]);
-  const [isLessonSorted, setIsLessonSorted] = useState(null);
+  const [IsLessonElementSorted, setIsLessonElementSorted] = useState(null);
+  const [isLessonSorted, setIsLessonSorted] = useState(false);
 
   const getLessonById = async (collectionName, key) => {
     try {
@@ -138,14 +116,14 @@ function CourseCurriculum() {
 
   const sortLessonList = () => {
     for (let i = 0; i < lessonList.length; i++) {
-      if (!isLessonSorted[i]) {
+      if (!IsLessonElementSorted[i]) {
         const sortedLesson = [...lessonList[i]].sort((a, b) => a.sort - b.sort);
         setLessonList((prev) => {
           const newState = [...prev];
           newState[i] = sortedLesson;
           return newState;
         });
-        setIsLessonSorted((prev) => {
+        setIsLessonElementSorted((prev) => {
           const newState = [...prev];
           newState[i] = true;
           return newState;
@@ -156,12 +134,12 @@ function CourseCurriculum() {
 
   const lessonSorted = () => {
     let temp = true;
-    if (isLessonSorted === null) {
+    if (IsLessonElementSorted === null) {
       return false;
     } else {
-      for (let i = 0; i < isLessonSorted; i++) {
-        if (isLessonSorted[i] === false) {
-          temp = isLessonSorted[i];
+      for (let i = 0; i < IsLessonElementSorted; i++) {
+        if (IsLessonElementSorted[i] === false) {
+          temp = IsLessonElementSorted[i];
         }
       }
       return temp;
@@ -173,8 +151,9 @@ function CourseCurriculum() {
     for (let i = 0; i < lessonList.length; i++) {
       newState.push(false);
     }
-    setIsLessonSorted(newState);
+    setIsLessonElementSorted(newState);
     sortLessonList();
+    setIsLessonSorted(lessonSorted());
   }, [lessonList]);
 
   // Display Content Function
@@ -304,7 +283,7 @@ function CourseCurriculum() {
                       </MenuList>
                     </Menu>
                   </HStack>
-                  {lessonList && lessonSorted()
+                  {lessonList && isLessonSorted
                     ? lessonList.length === 0
                       ? undefined
                       : lessonList[sectIdx].map((child, lesIdx) => (
