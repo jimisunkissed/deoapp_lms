@@ -1,4 +1,3 @@
-import React from "react";
 import { Box } from "@chakra-ui/react";
 import useAuthLogin from "./hooks/authLogin";
 import Login from "./pages/Authentication/Login";

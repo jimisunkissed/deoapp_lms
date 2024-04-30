@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   Center,
@@ -94,6 +94,7 @@ function CourseSetup() {
         }));
         setSectionList(sections);
       } else {
+        setSectionList([]);
         console.log("No such document exists!");
       }
     } catch (error) {
@@ -143,7 +144,7 @@ function CourseSetup() {
       } else {
         setLessonList((prev) => {
           const temp = [...prev];
-          temp.push([null]);
+          temp.push([]);
           return temp;
         });
         console.log("No such document exists!");
@@ -192,7 +193,6 @@ function CourseSetup() {
     }
     setIsLessonSorted(newState);
     sortLessonList();
-    console.log(lessonList);
   }, [lessonList]);
 
   // useState
@@ -351,31 +351,17 @@ function CourseSetup() {
                   overflow="hidden"
                 >
                   {sectionList.length === 0 ? (
-                    <>
-                      <Flex
-                        h="50px"
-                        w="100%"
-                        bg={lightgray}
-                        borderBottomWidth="1px"
-                        borderColor={midgray}
-                        align="center"
-                        p="10px"
-                      >
-                        <Text fontSize="15px" fontWeight="600">
-                          Buat Seksi Baru
-                        </Text>
-                      </Flex>
-                      <Flex
-                        h="50px"
-                        w="100%"
-                        bg="white"
-                        borderColor={midgray}
-                        align="center"
-                        p="10px"
-                      >
-                        <Text fontSize="13px">Tambahkan materi</Text>
-                      </Flex>
-                    </>
+                    <Center
+                      h="50px"
+                      w="100%"
+                      bg={lightgray}
+                      fontSize="15px"
+                      fontWeight="600"
+                      align="center"
+                      p="10px"
+                    >
+                      Kurikulum masih kosong
+                    </Center>
                   ) : (
                     sectionList &&
                     isSectionSorted &&
@@ -395,37 +381,50 @@ function CourseSetup() {
                           </Text>
                         </Flex>
                         {lessonList && lessonSorted() ? (
-                          lessonList.length === 0 ? undefined : lessonList[sectIdx][0] === null ? (
-                            <Flex h='50px' w='100%' fontSize='13px' align='center' p='10px' fontWeight='600'>Belum ada materi</Flex>
-                          ) : (
-                            lessonList[sectIdx].map((child, lesIdx) => (
+                          lessonList.length === 0 ? undefined : lessonList[
+                              sectIdx
+                            ] ? (
+                            lessonList[sectIdx].length === 0 ? (
                               <Flex
-                                key={lesIdx}
-                                flexDirection="column"
                                 h="50px"
                                 w="100%"
-                                bg="white"
-                                borderBottomWidth={
-                                  sectIdx === sectionList.length - 1 &&
-                                  lesIdx === lessonList[sectIdx].length - 1
-                                    ? "0px"
-                                    : "1px"
-                                }
-                                borderColor={midgray}
                                 fontSize="13px"
-                                align="baseline"
-                                justify="center"
+                                align="center"
                                 p="10px"
+                                fontWeight="600"
                               >
-                                <Text w="100%" fontWeight="600">
-                                  {child.lessonTitle}
-                                </Text>
-                                <Text w="100%">
-                                  {displayContent(child.content)}
-                                </Text>
+                                Belum ada materi
                               </Flex>
-                            ))
-                          )
+                            ) : (
+                              lessonList[sectIdx].map((child, lesIdx) => (
+                                <Flex
+                                  key={lesIdx}
+                                  flexDirection="column"
+                                  h="50px"
+                                  w="100%"
+                                  bg="white"
+                                  borderBottomWidth={
+                                    sectIdx === sectionList.length - 1 &&
+                                    lesIdx === lessonList[sectIdx].length - 1
+                                      ? "0px"
+                                      : "1px"
+                                  }
+                                  borderColor={midgray}
+                                  fontSize="13px"
+                                  align="baseline"
+                                  justify="center"
+                                  p="10px"
+                                >
+                                  <Text w="100%" fontWeight="600">
+                                    {child.lessonTitle}
+                                  </Text>
+                                  <Text w="100%">
+                                    {displayContent(child.content)}
+                                  </Text>
+                                </Flex>
+                              ))
+                            )
+                          ) : undefined
                         ) : undefined}
                       </VStack>
                     ))
@@ -917,7 +916,7 @@ function CourseSetup() {
                 <Text fontWeight="600" fontSize={{ base: "14px", md: "16px" }}>
                   Gambar
                 </Text>
-                <HStack
+                {/* <HStack
                   h="100%"
                   bg={lightblue2}
                   borderRadius="8px"
@@ -929,16 +928,48 @@ function CourseSetup() {
                   <Text fontSize={{ base: "12px", md: "14px" }}>
                     Atur gambar
                   </Text>
-                </HStack>
+                </HStack> */}
               </HStack>
-              <Input
-                type="file"
-                onChange={(e) => handleChangeImage(e.target.files)}
-              />
               {course ? (
-                <Center w="100%" aspectRatio="1.77" bg={lightgray}>
+                <VStack
+                  w="100%"
+                  aspectRatio="1.77"
+                  bg={lightgray}
+                  justify="center"
+                >
                   <Icon as={FcGallery} fontSize="50px" />
-                </Center>
+                  {/* <Box position="relative">
+                    <Input
+                      type="file"
+                      h="35px"
+                      w="210px"
+                      borderWidth="0px"
+                      p="2px"
+                      opacity="0"
+                      onChange={(e) => handleChangeImage(e.target.files)}
+                      position="absolute"
+                      zIndex="-1"
+                    />
+                    <Button
+                      as="label"
+                      htmlFor="fileInput"
+                      h="35px"
+                      w="210px"
+                      borderWidth="0px"
+                      p="2px"
+                    >
+                      {"Choose File"}
+                    </Button>
+                  </Box> */}
+                  <Input
+                    type="file"
+                    h="35px"
+                    w="210px"
+                    borderWidth="0px"
+                    p="2px"
+                    onChange={(e) => handleChangeImage(e.target.files)}
+                  />
+                </VStack>
               ) : (
                 <Skeleton w="100%" aspectRatio="1.77" borderRadius="5px" />
               )}

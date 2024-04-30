@@ -1,12 +1,10 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
-  Box,
   Center,
   Flex,
   HStack,
   Icon,
-  Input,
   Menu,
   MenuButton,
   MenuList,
@@ -19,8 +17,8 @@ import {
 import { db } from "../../../firebaseconfig";
 import {
   collection,
-  doc,
-  getDoc,
+  // doc,
+  // getDoc,
   getDocs,
   where,
   query,
@@ -31,34 +29,34 @@ import { LuPlusCircle } from "react-icons/lu";
 
 function CourseCurriculum() {
   // Color Palette
-  const { lightgray, midgray, darkgray, lightblue1, lightblue2 } = Color;
+  const { lightgray, midgray, darkgray, lightblue2 } = Color;
 
   // Navigate
   const navigate = useNavigate();
   const { id } = useParams();
 
   // Fetch Data Course
-  const [course, setCourse] = useState(null);
+  // const [course, setCourse] = useState(null);
 
-  const getCourse = async (collectionName, key) => {
-    try {
-      const docRef = doc(db, collectionName, key);
-      const docSnapshot = await getDoc(docRef);
+  // const getCourse = async (collectionName, key) => {
+  //   try {
+  //     const docRef = doc(db, collectionName, key);
+  //     const docSnapshot = await getDoc(docRef);
 
-      if (docSnapshot.exists()) {
-        const courseData = docSnapshot.data();
-        setCourse(courseData);
-      } else {
-        console.log("No such document exists!");
-      }
-    } catch (error) {
-      console.error("Error fetching product: ", error);
-    }
-  };
+  //     if (docSnapshot.exists()) {
+  //       const courseData = docSnapshot.data();
+  //       setCourse(courseData);
+  //     } else {
+  //       console.log("No such document exists!");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching product: ", error);
+  //   }
+  // };
 
-  useEffect(() => {
-    getCourse("lms_course", id);
-  }, [id]);
+  // useEffect(() => {
+  //   getCourse("lms_course", id);
+  // }, [id]);
 
   // Fetch Data Section
   const [sectionList, setSectionList] = useState(null);
@@ -78,6 +76,7 @@ function CourseCurriculum() {
         }));
         setSectionList(sections);
       } else {
+        setSectionList([]);
         console.log("No such document exists!");
       }
     } catch (error) {
@@ -125,6 +124,11 @@ function CourseCurriculum() {
           return temp;
         });
       } else {
+        setLessonList((prev) => {
+          const temp = [...prev];
+          temp.push([]);
+          return temp;
+        });
         console.log("No such document exists!");
       }
     } catch (error) {
@@ -235,8 +239,8 @@ function CourseCurriculum() {
         {/* Curriculum Cards Test*/}
         {sectionList ? (
           sectionList.length === 0 ? (
-            <Center minH="120px" w="100%">
-              Kurikulum anda masih kosong
+            <Center minH="60px" w="100%">
+              Yuk isi kurikulum kamu
             </Center>
           ) : (
             sectionList &&
@@ -404,8 +408,8 @@ function CourseCurriculum() {
         ) : (
           <VStack w="100%" spacing="5px">
             <Skeleton h="60px" w="100%" borderRadius="5px" />
-            <Skeleton h="60px" w="100%" borderRadius="5px"/>
-            <Skeleton h="60px" w="100%" borderRadius="5px"/>
+            <Skeleton h="60px" w="100%" borderRadius="5px" />
+            <Skeleton h="60px" w="100%" borderRadius="5px" />
           </VStack>
         )}
         <Center
