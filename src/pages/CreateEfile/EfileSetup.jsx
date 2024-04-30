@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
+  Box,
   Center,
   Flex,
   FormControl,
@@ -23,12 +24,14 @@ import {
   Radio,
   RadioGroup,
   Select,
+  Skeleton,
   Text,
   Textarea,
   VStack,
   useDisclosure,
 } from "@chakra-ui/react";
-import useEfile from "../../hooks/efile";
+import { db } from "../../../firebaseconfig";
+import { doc, getDoc } from "firebase/firestore";
 import Color from "../../Color";
 import { FaPencil } from "react-icons/fa6";
 import { LuPlusCircle, LuUpload, LuMoreVertical } from "react-icons/lu";
@@ -44,9 +47,28 @@ function EfileSetup() {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  // Zustand eFile
-  const { efile, setCategory, setName } = useEfile();
-  const selectedEfile = efile.find((c) => c.id === parseInt(id));
+  // Fetch Data Efile
+  const [efile, setEfile] = useState(null);
+
+  const getEfile = async (collectionName, key) => {
+    try {
+      const docRef = doc(db, collectionName, key);
+      const docSnapshot = await getDoc(docRef);
+
+      if (docSnapshot.exists()) {
+        const efileData = docSnapshot.data();
+        setEfile(efileData);
+      } else {
+        console.log("No such document exists!");
+      }
+    } catch (error) {
+      console.error("Error fetching product: ", error);
+    }
+  };
+
+  useEffect(() => {
+    getEfile("lms_efile", id);
+  }, [id]);
 
   // useState
   const [value, setValue] = React.useState("1");
@@ -191,19 +213,21 @@ function EfileSetup() {
                 >
                   <Icon as={FaPencil} fontSize={{ base: "14px", md: "16px" }} />
                   <Text fontSize={{ base: "12px", md: "14px" }}>
-                    Ubah Deskripsi
+                    Atur Deskripsi
                   </Text>
                 </HStack>
               </HStack>
-              <Text fontSize={{ base: "12px", md: "14px" }} w="100%">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Facere
-                sit perspiciatis culpa sunt quidem! Pariatur, dicta debitis.
-                Culpa eveniet, harum rerum totam nisi reiciendis ex
-                reprehenderit laborum velit eos saepe neque, perspiciatis unde
-                sint voluptate assumenda quae, non maxime mollitia perferendis
-                corporis illo! Enim excepturi, voluptatibus dolor esse illo
-                laudantium.
-              </Text>
+              <Box fontSize={{ base: "12px", md: "14px" }} w="100%">
+                {efile ? (
+                  efile.description === "" ? (
+                    "Belum ada deskripsi"
+                  ) : (
+                    <Text>{efile.description}</Text>
+                  )
+                ) : (
+                  <Skeleton h="80px" w="100%" borderRadius="5px" />
+                )}
+              </Box>
               <HStack h="35px" w="100%" justify="space-between">
                 <Text fontSize={{ base: "14px", md: "16px" }}>
                   Kategori Produk
@@ -215,12 +239,12 @@ function EfileSetup() {
                   borderRadius="8px"
                   p="10px"
                   _hover={{ bg: midblue1, cursor: "pointer" }}
-                  onClick={() => setEditCat(true)}
+                  // onClick={() => setEditCat(true)}
                   transition="background-color 0.2s ease"
                 >
                   <Icon as={FaPencil} fontSize={{ base: "14px", md: "16px" }} />
                   <Text fontSize={{ base: "12px", md: "14px" }}>
-                    Ubah Kategori
+                    Atur Kategori
                   </Text>
                 </HStack>
                 <Center
@@ -230,23 +254,29 @@ function EfileSetup() {
                   borderRadius="8px"
                   p="10px"
                   _hover={{ bg: midblue1, cursor: "pointer" }}
-                  onClick={() => setEditCat(false)}
+                  // onClick={() => setEditCat(false)}
                   transition="background-color 0.2s ease"
                 >
                   <Text fontSize={{ base: "12px", md: "14px" }}>Simpan</Text>
                 </Center>
               </HStack>
-              <Text
+              <Box
                 display={editCat ? "none" : "flex"}
                 h="35px"
                 w="100%"
                 fontSize={{ base: "12px", md: "14px" }}
                 alignItems="center"
               >
-                {selectedEfile.category
-                  ? selectedEfile.category
-                  : "Belum pilih kategori"}
-              </Text>
+                {efile ? (
+                  efile.category === "" ? (
+                    "Belum pilih kategori"
+                  ) : (
+                    <Text>{efile.category}</Text>
+                  )
+                ) : (
+                  <Skeleton h="25px" w="100%" borderRadius="5px" />
+                )}
+              </Box>
               <Select
                 display={editCat ? "flex" : "none"}
                 h="35px"
@@ -265,7 +295,7 @@ function EfileSetup() {
               fontSize={{ base: "16px", md: "18px" }}
               fontWeight="600"
             >
-              Jual produk anda
+              Jual kursus anda
             </Text>
             <VStack w="100%" align="baseline">
               <HStack h="35px" w="100%" justify="space-between">
@@ -296,52 +326,73 @@ function EfileSetup() {
                   </Text>
                 </HStack>
               </HStack>
-              {selectedEfile.pricePlan.length > 0 ? (
-                <VStack
-                  w="100%"
-                  borderRadius="8px"
-                  borderWidth="1px"
-                  borderColor={midgray}
-                  spacing="0px"
-                  overflow="hidden"
-                >
-                  {selectedEfile.pricePlan.map((data, index) => (
-                    <Flex
-                      key={index}
-                      h="50px"
-                      w="100%"
-                      bg={lightgray}
-                      borderBottomWidth={
-                        index === selectedEfile.pricePlan.length - 1
-                          ? "0px"
-                          : "1px"
-                      }
-                      borderColor={midgray}
-                      align="center"
-                      justify="space-between"
-                      p="10px"
-                    >
+              {efile ? (
+                efile.pricePlan.length > 0 ? (
+                  <VStack
+                    w="100%"
+                    borderRadius="8px"
+                    borderWidth="1px"
+                    borderColor={midgray}
+                    spacing="0px"
+                    overflow="hidden"
+                  >
+                    {efile.pricePlan.map((data, index) => (
                       <Flex
-                        flexDirection="column"
-                        h="100%"
-                        w="50%"
-                        fontSize="13px"
-                        align="baseline"
-                        justify="center"
+                        key={index}
+                        h="50px"
+                        w="100%"
+                        bg={lightgray}
+                        borderBottomWidth={
+                          index === efile.pricePlan.length - 1 ? "0px" : "1px"
+                        }
+                        borderColor={midgray}
+                        align="center"
+                        justify="space-between"
+                        p="10px"
                       >
-                        <HStack>
-                          <Text fontWeight="600">
-                            {data.type === "OTP"
-                              ? "Sekali Bayar"
-                              : data.type === "INS"
-                              ? "Angsur"
-                              : data.type === "SUB"
-                              ? "Langganan"
-                              : data.type === "FRE"
-                              ? "Gratis"
-                              : undefined}{" "}
+                        <Flex
+                          flexDirection="column"
+                          h="100%"
+                          w="50%"
+                          fontSize="13px"
+                          align="baseline"
+                          justify="center"
+                        >
+                          <HStack>
+                            <Text fontWeight="600">
+                              {data.type === "OTP"
+                                ? "Sekali Bayar"
+                                : data.type === "INS"
+                                ? "Angsur"
+                                : data.type === "SUB"
+                                ? "Langganan"
+                                : data.type === "FRE"
+                                ? "Gratis"
+                                : undefined}{" "}
+                            </Text>
+                            <Text display={{ base: "none", sm: "flex" }}>
+                              {data.type === "INS"
+                                ? `${data.nPay} x `
+                                : undefined}
+                              {data.type === "FRE"
+                                ? undefined
+                                : data.currency === "USD"
+                                ? "$"
+                                : data.currency === "IDR"
+                                ? "Rp"
+                                : undefined}
+                              {data.type != "FRE" ? data.price : undefined}
+                              {data.type === "SUB"
+                                ? ` per ${data.freq}`
+                                : undefined}
+                            </Text>
+                          </HStack>
+                          <Text
+                            display={{ base: "none", sm: "flex" }}
+                          >
+                            {data.desc.length > 30 ? `${data.desc.slice(0, 30)}...` : data.desc}
                           </Text>
-                          <Text display={{ base: "none", sm: "flex" }}>
+                          <Text display={{ base: "flex", sm: "none" }}>
                             {data.type === "INS"
                               ? `${data.nPay} x `
                               : undefined}
@@ -357,76 +408,52 @@ function EfileSetup() {
                               ? ` per ${data.freq}`
                               : undefined}
                           </Text>
-                        </HStack>
-                        <Text
-                          display={{ base: "none", sm: "flex" }}
-                          minH="20px"
-                          w="200px"
-                          overflow="hidden"
-                          whiteSpace="nowrap"
-                          textOverflow="ellipsis"
-                        >
-                          {data.desc}
-                        </Text>
-                        <Text display={{ base: "flex", sm: "none" }}>
-                          {data.type === "INS" ? `${data.nPay} x ` : undefined}
-                          {data.type === "FRE"
-                            ? undefined
-                            : data.currency === "USD"
-                            ? "$"
-                            : data.currency === "IDR"
-                            ? "Rp"
-                            : undefined}
-                          {data.type != "FRE" ? data.price : undefined}
-                          {data.type === "SUB"
-                            ? ` per ${data.freq}`
-                            : undefined}
-                        </Text>
-                      </Flex>
-                      <Menu>
-                        <MenuButton
-                          h="24px"
-                          aspectRatio="1"
-                          borderRadius="50%"
-                          _hover={{ bg: lightblue2, cursor: "pointer" }}
-                          transition="background-color 0.2s ease"
-                        >
-                          <Center h="100%" w="100%">
-                            <Icon as={LuMoreVertical} />
-                          </Center>
-                        </MenuButton>
-                        <MenuList p="3px">
-                          <MenuItem
-                            h="30px"
-                            borderRadius="5px"
-                            p={0}
-                            onClick={() => {
-                              setType(data.type);
-                              setEditPlan(true);
-                              onOpen();
-                            }}
+                        </Flex>
+                        <Menu>
+                          <MenuButton
+                            h="24px"
+                            aspectRatio="1"
+                            borderRadius="50%"
+                            _hover={{ bg: lightblue2, cursor: "pointer" }}
+                            transition="background-color 0.2s ease"
                           >
-                            <Text fontSize="12px" pl="10px">
-                              Ganti rencana
-                            </Text>
-                          </MenuItem>
-                          <MenuItem h="30px" borderRadius="5px" p={0}>
-                            <Text fontSize="12px" color="red.600" pl="10px">
-                              Hapus Rencana
-                            </Text>
-                          </MenuItem>
-                        </MenuList>
-                      </Menu>
-                    </Flex>
-                  ))}
-                </VStack>
-              ) : (
-                <>
+                            <Center h="100%" w="100%">
+                              <Icon as={LuMoreVertical} />
+                            </Center>
+                          </MenuButton>
+                          <MenuList p="3px">
+                            <MenuItem
+                              h="30px"
+                              borderRadius="5px"
+                              p={0}
+                              onClick={() => {
+                                setType(data.type);
+                                setEditPlan(true);
+                                onOpen();
+                              }}
+                            >
+                              <Text fontSize="12px" pl="10px">
+                                Ganti rencana
+                              </Text>
+                            </MenuItem>
+                            <MenuItem h="30px" borderRadius="5px" p={0}>
+                              <Text fontSize="12px" color="red.600" pl="10px">
+                                Hapus Rencana
+                              </Text>
+                            </MenuItem>
+                          </MenuList>
+                        </Menu>
+                      </Flex>
+                    ))}
+                  </VStack>
+                ) : (
                   <Text w="100%" fontSize={{ base: "12px", md: "14px" }}>
                     Tentukan harga kursus anda dengan beragam sistem yang
                     berbeda sesuai dengan keinginan anda
                   </Text>
-                </>
+                )
+              ) : (
+                <Skeleton h="50px" w="100%" borderRadius="5px" />
               )}
             </VStack>
             {/* Price Pop Up */}
@@ -675,12 +702,12 @@ function EfileSetup() {
                   borderRadius="8px"
                   p="10px"
                   _hover={{ bg: midblue1, cursor: "pointer" }}
-                  onClick={() => setEditName(true)}
+                  // onClick={() => setEditName(true)}
                   transition="background-color 0.2s ease"
                 >
                   <Icon as={FaPencil} fontSize={{ base: "14px", md: "16px" }} />
                   <Text fontSize={{ base: "12px", md: "14px" }}>
-                    Ubah Judul
+                    Atur Judul
                   </Text>
                 </HStack>
                 <Center
@@ -690,28 +717,32 @@ function EfileSetup() {
                   borderRadius="8px"
                   p="10px"
                   _hover={{ bg: midblue1, cursor: "pointer" }}
-                  onClick={() => setEditName(false)}
+                  // onClick={() => setEditName(false)}
                   transition="background-color 0.2s ease"
                 >
                   <Text fontSize={{ base: "12px", md: "14px" }}>Simpan</Text>
                 </Center>
               </HStack>
-              <Text
-                display={editName ? "none" : "flex"}
-                h="35px"
-                w="100%"
-                fontSize={{ base: "12px", md: "14px" }}
-                alignItems="center"
-              >
-                {selectedEfile.name ? selectedEfile.name : "Belum ada nama"}
-              </Text>
-              <Input
+              {efile ? (
+                <Text
+                  display={editName ? "none" : "flex"}
+                  h="35px"
+                  w="100%"
+                  fontSize={{ base: "12px", md: "14px" }}
+                  alignItems="center"
+                >
+                  {efile.name === "" ? "Belum ada judul" : efile.name}
+                </Text>
+              ) : (
+                <Skeleton h="25px" w="100%" borderRadius="5px" />
+              )}
+              {/* <Input
                 display={editName ? "flex" : "none"}
                 h="35px"
                 value={selectedEfile.name}
                 fontSize={{ base: "12px", md: "14px" }}
                 onChange={(e) => setName(e.target.value, parseInt(id))}
-              />
+              /> */}
             </VStack>
             <VStack w="100%">
               <HStack h="35px" w="100%" justify="space-between">
@@ -735,9 +766,13 @@ function EfileSetup() {
                   </Text>
                 </HStack>
               </HStack>
-              <Center w="100%" aspectRatio="1.77" bg={lightgray}>
-                <Icon as={FcGallery} fontSize="50px" />
-              </Center>
+              {efile ? (
+                <Center w="100%" aspectRatio="1.77" bg={lightgray}>
+                  <Icon as={FcGallery} fontSize="50px" />
+                </Center>
+              ) : (
+                <Skeleton w="100%" aspectRatio="1.77" borderRadius="5px" />
+              )}
             </VStack>
           </VStack>
         </Flex>

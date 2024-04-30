@@ -33,7 +33,7 @@ const useEfile = create((set) => ({
     },
     {
       id: 2,
-      name: "Back End Development",
+      name: "Presentation",
       date: new Date(2024, 3, 22),
       sale: 5,
       enrollment: 1,

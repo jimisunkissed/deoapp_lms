@@ -1,20 +1,19 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Box,
   Center,
-  Flex,
   HStack,
   Icon,
   Menu,
   MenuButton,
   MenuList,
   MenuItem,
-  SimpleGrid,
   Text,
   VStack,
 } from "@chakra-ui/react";
-import useEfile from "../../hooks/efile";
+import { db } from "../../../firebaseconfig";
+import { collection, getDocs } from "firebase/firestore";
 import { LuPlusCircle, LuMoreVertical } from "react-icons/lu";
 import Color from "../../Color";
 
@@ -23,12 +22,45 @@ function CreateEfile() {
   const { lightgray, midgray, darkgray, lightblue1, lightblue2, darkblue2 } =
     Color;
 
-  const heading = ["Name", "Date", "Sales", "Enrollments", "Status", "Actions"];
-
-  const { efile, addEfile, deleteEfile, setPublish } = useEfile();
-
   // Navigate
   const navigate = useNavigate();
+
+  // Fetch Data
+  const [efileList, setEfileList] = useState(null);
+
+  const getEfileList = async (collectionName) => {
+    try {
+      const querySnapshot = await getDocs(collection(db, collectionName));
+      const efiles = [];
+      querySnapshot.forEach((doc) => {
+        efiles.push({ id: doc.id, ...doc.data() });
+      });
+      setEfileList(efiles);
+    } catch (error) {
+      console.error("Error fetching efile list: ", error);
+    }
+  };
+
+  useEffect(() => {
+    getEfileList("lms_efile");
+  }, []);
+
+  // Table header
+  const heading = ["Name", "Date", "Sales", "Enrollments", "Status", "Actions"];
+
+  // Date Function
+  const displayDate = (timestamp) => {
+    const dateObject = timestamp.toDate();
+
+    // Extract components
+    const formattedDate = dateObject.toLocaleDateString("en-US", {
+      month: "short", // Short month name (e.g., "Apr")
+      day: "2-digit", // Two-digit day (e.g., "18")
+      year: "numeric", // Full year (e.g., "2024")
+    });
+
+    return formattedDate;
+  };
 
   // Page Interface
   return (
@@ -39,6 +71,7 @@ function CreateEfile() {
       spacing="25px"
       p={{ base: "15px", md: "25px" }}
     >
+      {/* Overflow Box */}
       <Box
         w="100%"
         bg="white"
@@ -47,10 +80,19 @@ function CreateEfile() {
         borderColor={midgray}
         overflowX="auto"
       >
-        <VStack h="100%" w="100%" minW="600px" spacing='2px' p={{ base: "15px", md: "25px" }}>
-          <Text w="100%" fontSize="24px" fontWeight="600" mb='10px'>
-            eFiles
+        {/* Efile Box */}
+        <VStack
+          h="100%"
+          w="100%"
+          minW="600px"
+          spacing="2px"
+          p={{ base: "15px", md: "25px" }}
+        >
+          {/* Efile Header */}
+          <Text w="100%" fontSize="24px" fontWeight="600" mb="10px">
+            Efiles
           </Text>
+          {/* Table Header */}
           <HStack
             h="40px"
             w="100%"
@@ -72,118 +114,125 @@ function CreateEfile() {
               </Box>
             ))}
           </HStack>
-          {efile.map((data, index) => (
-            <HStack
-              key={index}
-              h="50px"
-              w="100%"
-              bg={index % 2 === 0 ? "white" : lightblue1}
-              borderRadius="8px"
-              spacing={0}
-              p="2px 0px 2px 0px"
-            >
-              {/* Table Fill Name */}
-              <Box
-                w={`${100 / heading.length}%`}
-                minW="150px"
-                fontSize="13px"
-                pl="10px"
+          {/* Table Fill */}
+          {efileList &&
+            efileList.map((data, index) => (
+              <HStack
+                key={index}
+                h="50px"
+                w="100%"
+                bg={index % 2 === 0 ? "white" : lightblue1}
+                borderRadius="8px"
+                spacing={0}
+                p="2px 0px 2px 0px"
               >
-                <Text
-                  w="100%"
-                  overflow="hidden"
-                  whiteSpace="nowrap"
-                  textOverflow="ellipsis"
-                  _hover={{ textDecoration: "underline", cursor: "pointer" }}
-                  onClick={() => navigate(`/efiles/${data.id}/setup`)}
+                {/* Table Fill Name */}
+                <Box
+                  w={`${100 / heading.length}%`}
+                  minW="150px"
+                  fontSize="13px"
+                  pl="10px"
                 >
-                  {data.name ? data.name : "-"}
-                </Text>
-              </Box>
-              {/* Table Fill Date */}
-              <Box w={`${100 / heading.length}%`} fontSize="13px" pl="10px">
-                <Text>
-                  {new Date(data.date).toLocaleDateString("en-US", {
-                    month: "long",
-                    day: "numeric",
-                    year: "numeric",
-                  })}
-                </Text>
-              </Box>
-              {/* Table Fill Sales */}
-              <Box w={`${100 / heading.length}%`} fontSize="13px" pl="10px">
-                <Text>{data.sale ? data.sale : "-"}</Text>
-              </Box>
-              {/* Table Fill Enrollment */}
-              <Box w={`${100 / heading.length}%`} fontSize="13px" pl="10px">
-                <Text>{data.enrollment ? data.enrollment : "-"}</Text>
-              </Box>
-              {/* Table Fill Publish Status */}
-              <Box w={`${100 / heading.length}%`} fontSize="13px" pl="10px">
-                <Center
-                  h="24px"
-                  w="min-content"
-                  bg={lightblue2}
-                  borderRadius="12px"
-                  fontSize="12px"
-                  color={darkblue2}
-                  p="0px 8px 0px 8px"
-                >
-                  {data.isPublished ? "Published" : "Unpublished"}
-                </Center>
-              </Box>
-              {/* Table Fill Action */}
-              <Box w={`${100 / heading.length}%`} pl="10px">
-                <Menu>
-                  <MenuButton
-                    h="24px"
-                    aspectRatio="1"
-                    borderRadius="50%"
-                    _hover={{ bg: lightblue2, cursor: "pointer" }}
-                    transition="background-color 0.2s ease"
+                  <Text
+                    w="100%"
+                    overflow="hidden"
+                    whiteSpace="nowrap"
+                    textOverflow="ellipsis"
+                    _hover={{ textDecoration: "underline", cursor: "pointer" }}
+                    onClick={() => navigate(`/efiles/${data.id}/setup`)}
                   >
-                    <Center h="100%" w="100%">
-                      <Icon as={LuMoreVertical} />
-                    </Center>
-                  </MenuButton>
-                  <MenuList p="3px">
-                    <MenuItem
-                      h="30px"
-                      borderRadius="5px"
-                      p={0}
-                      onClick={() => setPublish(data.id)}
+                    {data.name ? data.name : "-"}
+                  </Text>
+                </Box>
+                {/* Table Fill Date */}
+                <Box
+                  w={`${100 / heading.length}%`}
+                  minW=""
+                  fontSize="13px"
+                  pl="10px"
+                >
+                  <Text>{displayDate(data.date)}</Text>
+                </Box>
+                {/* Table Fill Sales */}
+                <Box w={`${100 / heading.length}%`} fontSize="13px" pl="10px">
+                  <Text>{data.sale ? data.sale : "-"}</Text>
+                </Box>
+                {/* Table Fill Enrollment */}
+                <Box w={`${100 / heading.length}%`} fontSize="13px" pl="10px">
+                  <Text>{data.enrollment ? data.enrollment : "-"}</Text>
+                </Box>
+                {/* Table Fill Publish Status */}
+                <Box w={`${100 / heading.length}%`} fontSize="13px" pl="10px">
+                  <Center
+                    h="24px"
+                    w="min-content"
+                    bg={lightblue2}
+                    borderRadius="12px"
+                    fontSize="12px"
+                    color={darkblue2}
+                    p="0px 8px 0px 8px"
+                  >
+                    {data.isPublished ? "Published" : "Unpublished"}
+                  </Center>
+                </Box>
+                {/* Table Fill Action */}
+                <Box w={`${100 / heading.length}%`} pl="10px">
+                  <Menu>
+                    <MenuButton
+                      h="24px"
+                      aspectRatio="1"
+                      borderRadius="50%"
+                      _hover={{ bg: lightblue2, cursor: "pointer" }}
+                      transition="background-color 0.2s ease"
                     >
-                      <Text fontSize="12px" pl="10px">
-                        {data.isPublished
-                          ? "Unpublish eFile"
-                          : "Publish eFile"}
-                      </Text>
-                    </MenuItem>
-                    <MenuItem h="30px" borderRadius="5px" p={0}>
-                      <Text fontSize="12px" pl="10px">
-                        Duplicate eFile
-                      </Text>
-                    </MenuItem>
-                    <MenuItem
-                      h="30px"
-                      borderRadius="5px"
-                      p={0}
-                      onClick={() => deleteEfile(data.id)}
-                    >
-                      <Text fontSize="12px" color="red.600" pl="10px">
-                        Delete eFile
-                      </Text>
-                    </MenuItem>
-                  </MenuList>
-                </Menu>
-              </Box>
-            </HStack>
-          ))}
-          {/* Add eFile */}
+                      <Center h="100%" w="100%">
+                        <Icon as={LuMoreVertical} />
+                      </Center>
+                    </MenuButton>
+                    <MenuList p="3px">
+                      <MenuItem
+                        h="30px"
+                        borderRadius="5px"
+                        p={0}
+                        // onClick={() => setPublish(data.id)}
+                      >
+                        <Text fontSize="12px" pl="10px">
+                          {data.isPublished
+                            ? "Unpublish Efile"
+                            : "Publish Efile"}
+                        </Text>
+                      </MenuItem>
+                      <MenuItem h="30px" borderRadius="5px" p={0}>
+                        <Text fontSize="12px" pl="10px">
+                          Duplicate Efile
+                        </Text>
+                      </MenuItem>
+                      <MenuItem
+                        h="30px"
+                        borderRadius="5px"
+                        p={0}
+                        // onClick={() => deleteEfile(data.id)}
+                      >
+                        <Text fontSize="12px" color="red.600" pl="10px">
+                          Delete Efile
+                        </Text>
+                      </MenuItem>
+                    </MenuList>
+                  </Menu>
+                </Box>
+              </HStack>
+            ))}
+          {/* Add Efile */}
           <Center
             h="40px"
             w="100%"
-            bg={efile.length % 2 === 0 ? "white" : lightblue1}
+            bg={
+              efileList
+                ? efileList.length % 2 === 0
+                  ? "white"
+                  : lightblue1
+                : "white"
+            }
             borderRadius="8px"
             spacing={0}
             p="2px 0px 2px 0px"
@@ -193,7 +242,10 @@ function CreateEfile() {
               fontSize="20px"
               color={darkgray}
               _hover={{ color: "black", cursor: "pointer" }}
-              onClick={() => {navigate("/efiles/create/step-1"); addEfile()}}
+              onClick={() => {
+                // addEfile();
+                navigate("/efiles/create/step-1");
+              }}
               transition="color 0.2s ease"
             />
           </Center>

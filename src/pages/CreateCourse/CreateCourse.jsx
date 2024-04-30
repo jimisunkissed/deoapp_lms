@@ -12,7 +12,6 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import useCourse from "../../hooks/course";
 import { db } from "../../../firebaseconfig";
 import { collection, getDocs } from "firebase/firestore";
 import { LuPlusCircle, LuMoreVertical } from "react-icons/lu";

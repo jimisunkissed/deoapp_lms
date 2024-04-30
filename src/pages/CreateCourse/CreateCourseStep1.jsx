@@ -16,7 +16,7 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import useCourse from "../../hooks/course";
+import newCourse from "../../hooks/newCourse";
 import { LuX } from "react-icons/lu";
 import Color from "../../Color";
 
@@ -26,11 +26,9 @@ function CreateCourseStep1() {
 
   // Navigate
   const navigate = useNavigate();
-  const { id } = useParams();
 
-  // Zustand Course
-  const { course, setNameById } = useCourse();
-  const selectedCourse = course.find((c) => c.id === parseInt(id));
+  // Zustand
+  const {course, setName, reset} = newCourse()
 
   return (
     <VStack h="100%" w="100%" bg={lightgray} justify="center" p={{base:'15px', md:"25px"}}>
@@ -50,7 +48,7 @@ function CreateCourseStep1() {
           </Text>
           <Center
             _hover={{ cursor: "pointer" }}
-            onClick={() => navigate("/courses")}
+            onClick={() => {navigate("/courses"); reset()}}
           >
             <Icon as={LuX} />
           </Center>
@@ -73,7 +71,7 @@ function CreateCourseStep1() {
         </Text>
         <FormControl w="100%">
           <FormLabel fontSize='14px'>Nama Kursus</FormLabel>
-          <Input h="35px" w="100%" placeholder="Berikan nama" />
+          <Input h="35px" w="100%" placeholder="Berikan nama" value={course.name} onChange={(e) => setName(e.target.value)}/>
         </FormControl>
         <Flex w="100%" justify="space-between" mt="25px">
           <Center
@@ -83,7 +81,7 @@ function CreateCourseStep1() {
             borderRadius="8px"
             fontSize="13px"
             _hover={{ bg: midblue1, cursor: "pointer" }}
-            onClick={() => navigate("/courses")}
+            onClick={() => {navigate("/courses"); reset()}}
             transition="background-color 0.2s ease"
           >
             Sebelumnya

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Center, Flex, Icon, SimpleGrid, Text, VStack } from "@chakra-ui/react";
+import newCourse from "../../hooks/newCourse";
 import { LuX } from "react-icons/lu";
 import Color from "../../Color";
 import { FcGallery } from "react-icons/fc";
@@ -11,6 +12,9 @@ function CreateCourseStep2() {
 
   // Navigate
   const navigate = useNavigate();
+
+  // Zustand
+  const { course, reset } = newCourse();
 
   // Select
   const [select, setSelect] = useState(0);
@@ -39,7 +43,7 @@ function CreateCourseStep2() {
           </Text>
           <Center
             _hover={{ cursor: "pointer" }}
-            onClick={() => navigate("/courses")}
+            onClick={() => {navigate("/courses"); reset()}}
           >
             <Icon as={LuX} />
           </Center>

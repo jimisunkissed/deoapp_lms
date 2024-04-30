@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
-  Box,
   Center,
   Flex,
   FormControl,
@@ -23,6 +22,7 @@ import {
   ModalOverlay,
   Select,
   Skeleton,
+  Spacer,
   Text,
   Textarea,
   VStack,
@@ -34,8 +34,9 @@ import {
   doc,
   getDoc,
   getDocs,
-  where,
+  updateDoc,
   query,
+  where,
 } from "firebase/firestore";
 import Color from "../../Color";
 import { FaPencil } from "react-icons/fa6";
@@ -120,7 +121,7 @@ function CourseSetup() {
 
   // Fetch Data Lesson
   const [lessonList, setLessonList] = useState([]);
-  const [isLessonSorted, setIsLessonSorted] = useState(false);
+  const [isLessonSorted, setIsLessonSorted] = useState(null);
 
   const getLessonById = async (collectionName, key) => {
     try {
@@ -147,13 +148,46 @@ function CourseSetup() {
     }
   };
 
-  // useEffect(() => {
-  //   if (lessonList && !isLessonSorted) {
-  //     const sortedLessons = [...lessonList].sort((a, b) => a.sort - b.sort);
-  //     setLessonList(sortedLessons);
-  //     setIsLessonSorted(true);
-  //   }
-  // }, [lessonList, isLessonSorted]);
+  const sortLessonList = () => {
+    for (let i = 0; i < lessonList.length; i++) {
+      if (!isLessonSorted[i]) {
+        const sortedLesson = [...lessonList[i]].sort((a, b) => a.sort - b.sort);
+        setLessonList((prev) => {
+          const newState = [...prev];
+          newState[i] = sortedLesson;
+          return newState;
+        });
+        setIsLessonSorted((prev) => {
+          const newState = [...prev];
+          newState[i] = true;
+          return newState;
+        });
+      }
+    }
+  };
+
+  const lessonSorted = () => {
+    let temp = true;
+    if (isLessonSorted === null) {
+      return false;
+    } else {
+      for (let i = 0; i < isLessonSorted; i++) {
+        if (isLessonSorted[i] === false) {
+          temp = isLessonSorted[i];
+        }
+      }
+      return temp;
+    }
+  };
+
+  useEffect(() => {
+    const newState = [];
+    for (let i = 0; i < lessonList.length; i++) {
+      newState.push(false);
+    }
+    setIsLessonSorted(newState);
+    sortLessonList();
+  }, [lessonList]);
 
   // useState
   const [editName, setEditName] = useState(false);
@@ -161,7 +195,25 @@ function CourseSetup() {
   const [type, setType] = useState(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  // Display Content FunctionF
+  // Change Course Name
+  const [tempName, setTempName] = useState("");
+
+  const saveName = async (id, newName) => {
+    try {
+      const docRef = doc(db, "lms_course", id);
+      await updateDoc(docRef, { name: newName });
+      console.log("Document updated with ID: ", id);
+      setCourse((prev) => {
+        const newState = { ...prev };
+        newState.name = newName;
+        return newState;
+      });
+    } catch (e) {
+      console.error("Error updating document: ", e);
+    }
+  };
+
+  // Display Content Function
   const displayContent = (objectList) => {
     const content = { text: 0, image: 0, audio: 0, video: 0 };
 
@@ -218,6 +270,7 @@ function CourseSetup() {
     },
   ];
 
+  // Page Interface
   return (
     <VStack
       minH="100%"
@@ -250,7 +303,7 @@ function CourseSetup() {
               fontSize={{ base: "16px", md: "18px" }}
               fontWeight="600"
             >
-              Atur Kurikulum
+              Kurikulum
             </Text>
             <VStack w="100%">
               <HStack h="35px" w="100%" justify="space-between">
@@ -263,7 +316,7 @@ function CourseSetup() {
                   borderRadius="8px"
                   p="10px"
                   _hover={{ bg: midblue1, cursor: "pointer" }}
-                  onClick={() => navigate(`/courses/1/curriculum`)}
+                  onClick={() => navigate(`/courses/${id}/curriculum`)}
                   transition="background-color 0.2s ease"
                 >
                   <Icon as={FaPencil} fontSize={{ base: "14px", md: "16px" }} />
@@ -272,11 +325,11 @@ function CourseSetup() {
                   </Text>
                 </HStack>
               </HStack>
-              {!course ? (
+              {!sectionList ? (
                 <VStack h="70px" w="100%" spacing="5px">
                   <Skeleton height="20px" w="100%" borderRadius="5px" />
-                  <Skeleton height="20px" w="100%" />
-                  <Skeleton height="20px" w="100%" />
+                  <Skeleton height="20px" w="100%" borderRadius="5px" />
+                  <Skeleton height="20px" w="100%" borderRadius="5px" />
                 </VStack>
               ) : (
                 <VStack
@@ -287,7 +340,7 @@ function CourseSetup() {
                   spacing="0px"
                   overflow="hidden"
                 >
-                  {course.section.length === 0 ? (
+                  {sectionList.length === 0 ? (
                     <>
                       <Flex
                         h="50px"
@@ -299,7 +352,7 @@ function CourseSetup() {
                         p="10px"
                       >
                         <Text fontSize="15px" fontWeight="600">
-                          Seksi baru
+                          Buat Seksi Baru
                         </Text>
                       </Flex>
                       <Flex
@@ -310,11 +363,12 @@ function CourseSetup() {
                         align="center"
                         p="10px"
                       >
-                        <Text fontSize="13px">kosong</Text>
+                        <Text fontSize="13px">Tambahkan materi</Text>
                       </Flex>
                     </>
                   ) : (
                     sectionList &&
+                    isSectionSorted &&
                     sectionList.map((data, sectIdx) => (
                       <VStack key={sectIdx} w="100%" spacing={0}>
                         <Flex
@@ -330,7 +384,7 @@ function CourseSetup() {
                             {data.sectionTitle}
                           </Text>
                         </Flex>
-                        {lessonList
+                        {lessonList && lessonSorted()
                           ? lessonList.length === 0
                             ? undefined
                             : lessonList[sectIdx].map((child, lesIdx) => (
@@ -404,50 +458,73 @@ function CourseSetup() {
                   </Text>
                 </HStack>
               </HStack>
-              {course && course.pricePlan.length > 0 ? (
-                <VStack
-                  w="100%"
-                  borderRadius="8px"
-                  borderWidth="1px"
-                  borderColor={midgray}
-                  spacing="0px"
-                  overflow="hidden"
-                >
-                  {course.pricePlan.map((data, index) => (
-                    <Flex
-                      key={index}
-                      h="50px"
-                      w="100%"
-                      bg={lightgray}
-                      borderBottomWidth={
-                        index === course.pricePlan.length - 1 ? "0px" : "1px"
-                      }
-                      borderColor={midgray}
-                      align="center"
-                      justify="space-between"
-                      p="10px"
-                    >
+              {course ? (
+                course.pricePlan.length > 0 ? (
+                  <VStack
+                    w="100%"
+                    borderRadius="8px"
+                    borderWidth="1px"
+                    borderColor={midgray}
+                    spacing="0px"
+                    overflow="hidden"
+                  >
+                    {course.pricePlan.map((data, index) => (
                       <Flex
-                        flexDirection="column"
-                        h="100%"
-                        w="50%"
-                        fontSize="13px"
-                        align="baseline"
-                        justify="center"
+                        key={index}
+                        h="50px"
+                        w="100%"
+                        bg={lightgray}
+                        borderBottomWidth={
+                          index === course.pricePlan.length - 1 ? "0px" : "1px"
+                        }
+                        borderColor={midgray}
+                        align="center"
+                        justify="space-between"
+                        p="10px"
                       >
-                        <HStack>
-                          <Text fontWeight="600">
-                            {data.type === "OTP"
-                              ? "Sekali Bayar"
-                              : data.type === "INS"
-                              ? "Angsur"
-                              : data.type === "SUB"
-                              ? "Langganan"
-                              : data.type === "FRE"
-                              ? "Gratis"
-                              : undefined}{" "}
-                          </Text>
+                        <Flex
+                          flexDirection="column"
+                          h="100%"
+                          w="50%"
+                          fontSize="13px"
+                          align="baseline"
+                          justify="center"
+                        >
+                          <HStack>
+                            <Text fontWeight="600">
+                              {data.type === "OTP"
+                                ? "Sekali Bayar"
+                                : data.type === "INS"
+                                ? "Angsur"
+                                : data.type === "SUB"
+                                ? "Langganan"
+                                : data.type === "FRE"
+                                ? "Gratis"
+                                : undefined}{" "}
+                            </Text>
+                            <Text display={{ base: "none", sm: "flex" }}>
+                              {data.type === "INS"
+                                ? `${data.nPay} x `
+                                : undefined}
+                              {data.type === "FRE"
+                                ? undefined
+                                : data.currency === "USD"
+                                ? "$"
+                                : data.currency === "IDR"
+                                ? "Rp"
+                                : undefined}
+                              {data.type != "FRE" ? data.price : undefined}
+                              {data.type === "SUB"
+                                ? ` per ${data.freq}`
+                                : undefined}
+                            </Text>
+                          </HStack>
                           <Text display={{ base: "none", sm: "flex" }}>
+                            {data.desc.length > 30
+                              ? `${data.desc.slice(0, 30)}...`
+                              : data.desc}
+                          </Text>
+                          <Text display={{ base: "flex", sm: "none" }}>
                             {data.type === "INS"
                               ? `${data.nPay} x `
                               : undefined}
@@ -463,76 +540,52 @@ function CourseSetup() {
                               ? ` per ${data.freq}`
                               : undefined}
                           </Text>
-                        </HStack>
-                        <Text
-                          display={{ base: "none", sm: "flex" }}
-                          minH="20px"
-                          w="200px"
-                          overflow="hidden"
-                          whiteSpace="nowrap"
-                          textOverflow="ellipsis"
-                        >
-                          {data.desc}
-                        </Text>
-                        <Text display={{ base: "flex", sm: "none" }}>
-                          {data.type === "INS" ? `${data.nPay} x ` : undefined}
-                          {data.type === "FRE"
-                            ? undefined
-                            : data.currency === "USD"
-                            ? "$"
-                            : data.currency === "IDR"
-                            ? "Rp"
-                            : undefined}
-                          {data.type != "FRE" ? data.price : undefined}
-                          {data.type === "SUB"
-                            ? ` per ${data.freq}`
-                            : undefined}
-                        </Text>
-                      </Flex>
-                      <Menu>
-                        <MenuButton
-                          h="24px"
-                          aspectRatio="1"
-                          borderRadius="50%"
-                          _hover={{ bg: lightblue2, cursor: "pointer" }}
-                          transition="background-color 0.2s ease"
-                        >
-                          <Center h="100%" w="100%">
-                            <Icon as={LuMoreVertical} />
-                          </Center>
-                        </MenuButton>
-                        <MenuList p="3px">
-                          <MenuItem
-                            h="30px"
-                            borderRadius="5px"
-                            p={0}
-                            onClick={() => {
-                              setType(data.type);
-                              setEditPlan(true);
-                              onOpen();
-                            }}
+                        </Flex>
+                        <Menu>
+                          <MenuButton
+                            h="24px"
+                            aspectRatio="1"
+                            borderRadius="50%"
+                            _hover={{ bg: lightblue2, cursor: "pointer" }}
+                            transition="background-color 0.2s ease"
                           >
-                            <Text fontSize="12px" pl="10px">
-                              Ganti rencana
-                            </Text>
-                          </MenuItem>
-                          <MenuItem h="30px" borderRadius="5px" p={0}>
-                            <Text fontSize="12px" color="red.600" pl="10px">
-                              Hapus Rencana
-                            </Text>
-                          </MenuItem>
-                        </MenuList>
-                      </Menu>
-                    </Flex>
-                  ))}
-                </VStack>
-              ) : (
-                <>
+                            <Center h="100%" w="100%">
+                              <Icon as={LuMoreVertical} />
+                            </Center>
+                          </MenuButton>
+                          <MenuList p="3px">
+                            <MenuItem
+                              h="30px"
+                              borderRadius="5px"
+                              p={0}
+                              onClick={() => {
+                                setType(data.type);
+                                setEditPlan(true);
+                                onOpen();
+                              }}
+                            >
+                              <Text fontSize="12px" pl="10px">
+                                Ganti rencana
+                              </Text>
+                            </MenuItem>
+                            <MenuItem h="30px" borderRadius="5px" p={0}>
+                              <Text fontSize="12px" color="red.600" pl="10px">
+                                Hapus Rencana
+                              </Text>
+                            </MenuItem>
+                          </MenuList>
+                        </Menu>
+                      </Flex>
+                    ))}
+                  </VStack>
+                ) : (
                   <Text w="100%" fontSize={{ base: "12px", md: "14px" }}>
                     Tentukan harga kursus anda dengan beragam sistem yang
                     berbeda sesuai dengan keinginan anda
                   </Text>
-                </>
+                )
+              ) : (
+                <Skeleton h="50px" w="100%" borderRadius="5px" />
               )}
             </VStack>
             {/* Price Pop Up */}
@@ -767,13 +820,14 @@ function CourseSetup() {
               fontSize={{ base: "16px", md: "18px" }}
               fontWeight="600"
             >
-              Kustomisasi kursus
+              Detil
             </Text>
             <VStack w="100%">
               <HStack h="35px" w="100%" justify="space-between">
                 <Text fontWeight="600" fontSize={{ base: "14px", md: "16px" }}>
                   Judul Kursus
                 </Text>
+                <Spacer />
                 <HStack
                   display={editName ? "none" : "flex"}
                   h="100%"
@@ -781,7 +835,10 @@ function CourseSetup() {
                   borderRadius="8px"
                   p="10px"
                   _hover={{ bg: midblue1, cursor: "pointer" }}
-                  // onClick={() => setEditName(true)}
+                  onClick={() => {
+                    setEditName(true);
+                    setTempName(course?.name || "");
+                  }}
                   transition="background-color 0.2s ease"
                 >
                   <Icon as={FaPencil} fontSize={{ base: "14px", md: "16px" }} />
@@ -792,36 +849,56 @@ function CourseSetup() {
                 <Center
                   display={editName ? "flex" : "none"}
                   h="100%"
-                  bg={lightblue2}
+                  bg="red.400"
                   borderRadius="8px"
+                  color="white"
                   p="10px"
-                  _hover={{ bg: midblue1, cursor: "pointer" }}
-                  onClick={() => setEditName(false)}
+                  _hover={{ bg: "red.500", cursor: "pointer" }}
+                  onClick={() => {
+                    setEditName(false);
+                    setTempName("");
+                  }}
+                  transition="background-color 0.2s ease"
+                >
+                  <Text fontSize={{ base: "12px", md: "14px" }}>Batal</Text>
+                </Center>
+                <Center
+                  display={editName ? "flex" : "none"}
+                  h="100%"
+                  bg="green.400"
+                  borderRadius="8px"
+                  color="white"
+                  p="10px"
+                  _hover={{ bg: "green.500", cursor: "pointer" }}
+                  onClick={() => {
+                    setEditName(false);
+                    saveName(id, tempName);
+                  }}
                   transition="background-color 0.2s ease"
                 >
                   <Text fontSize={{ base: "12px", md: "14px" }}>Simpan</Text>
                 </Center>
               </HStack>
-              <Text
-                display={editName ? "none" : "flex"}
-                h="35px"
-                w="100%"
-                fontSize={{ base: "12px", md: "14px" }}
-                alignItems="center"
-              >
-                {course ? (
-                  course.name
-                ) : (
-                  <Skeleton h="20px" w="100%" borderRadius="5px" />
-                )}
-              </Text>
-              {/* <Input
+              {course ? (
+                <Text
+                  display={editName ? "none" : "flex"}
+                  h="35px"
+                  w="100%"
+                  fontSize={{ base: "12px", md: "14px" }}
+                  alignItems="center"
+                >
+                  {course.name === "" ? "Belum ada judul" : course.name}
+                </Text>
+              ) : (
+                <Skeleton h="25px" w="100%" borderRadius="5px" />
+              )}
+              <Input
                 display={editName ? "flex" : "none"}
                 h="35px"
-                value={course.name}
+                value={tempName}
                 fontSize={{ base: "12px", md: "14px" }}
-                onChange={(e) => setName(e.target.value, parseInt(id))}
-              /> */}
+                onChange={(e) => setTempName(e.target.value)}
+              />
             </VStack>
             <VStack w="100%">
               <HStack h="35px" w="100%" justify="space-between">
@@ -842,9 +919,13 @@ function CourseSetup() {
                   </Text>
                 </HStack>
               </HStack>
-              <Center w="100%" aspectRatio="1.77" bg={lightgray}>
-                <Icon as={FcGallery} fontSize="50px" />
-              </Center>
+              {course ? (
+                <Center w="100%" aspectRatio="1.77" bg={lightgray}>
+                  <Icon as={FcGallery} fontSize="50px" />
+                </Center>
+              ) : (
+                <Skeleton w="100%" aspectRatio="1.77" borderRadius="5px" />
+              )}
             </VStack>
           </VStack>
         </Flex>

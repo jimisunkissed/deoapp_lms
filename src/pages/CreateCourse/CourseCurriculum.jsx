@@ -11,11 +11,20 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
+  Skeleton,
   Spacer,
   Text,
   VStack,
 } from "@chakra-ui/react";
-import useCourse from "../../hooks/course";
+import { db } from "../../../firebaseconfig";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  where,
+  query,
+} from "firebase/firestore";
 import Color from "../../Color";
 import { MdDragIndicator, MdOutlineMoreVert } from "react-icons/md";
 import { LuPlusCircle } from "react-icons/lu";
@@ -28,9 +37,141 @@ function CourseCurriculum() {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  // Zustand Course
-  const { course, setNameById } = useCourse();
-  const selectedCourse = course.find((c) => c.id === parseInt(id));
+  // Fetch Data Course
+  const [course, setCourse] = useState(null);
+
+  const getCourse = async (collectionName, key) => {
+    try {
+      const docRef = doc(db, collectionName, key);
+      const docSnapshot = await getDoc(docRef);
+
+      if (docSnapshot.exists()) {
+        const courseData = docSnapshot.data();
+        setCourse(courseData);
+      } else {
+        console.log("No such document exists!");
+      }
+    } catch (error) {
+      console.error("Error fetching product: ", error);
+    }
+  };
+
+  useEffect(() => {
+    getCourse("lms_course", id);
+  }, [id]);
+
+  // Fetch Data Section
+  const [sectionList, setSectionList] = useState(null);
+  const [isSectionSorted, setIsSectionSorted] = useState(false);
+
+  const getSectionById = async (collectionName, key) => {
+    try {
+      const q = query(
+        collection(db, collectionName),
+        where("courseId", "==", key)
+      );
+      const querySnapshot = await getDocs(q);
+      if (!querySnapshot.empty) {
+        const sections = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setSectionList(sections);
+      } else {
+        console.log("No such document exists!");
+      }
+    } catch (error) {
+      console.error("Error getting sections:", error);
+    }
+  };
+
+  useEffect(() => {
+    getSectionById("lms_section", id);
+  }, [id]);
+
+  useEffect(() => {
+    if (sectionList && !isSectionSorted) {
+      const sortedSections = [...sectionList].sort((a, b) => a.sort - b.sort);
+      setSectionList(sortedSections);
+      setIsSectionSorted(true);
+    } else if (sectionList && isSectionSorted) {
+      {
+        sectionList.map((data) => {
+          getLessonById("lms_lesson", data.id);
+        });
+      }
+    }
+  }, [sectionList, isSectionSorted]);
+
+  // Fetch Data Lesson
+  const [lessonList, setLessonList] = useState([]);
+  const [isLessonSorted, setIsLessonSorted] = useState(null);
+
+  const getLessonById = async (collectionName, key) => {
+    try {
+      const q = query(
+        collection(db, collectionName),
+        where("sectionId", "==", key)
+      );
+      const querySnapshot = await getDocs(q);
+      if (!querySnapshot.empty) {
+        const lessons = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setLessonList((prev) => {
+          const temp = [...prev];
+          temp.push(lessons);
+          return temp;
+        });
+      } else {
+        console.log("No such document exists!");
+      }
+    } catch (error) {
+      console.error("Error getting lessons:", error);
+    }
+  };
+
+  const sortLessonList = () => {
+    for (let i = 0; i < lessonList.length; i++) {
+      if (!isLessonSorted[i]) {
+        const sortedLesson = [...lessonList[i]].sort((a, b) => a.sort - b.sort);
+        setLessonList((prev) => {
+          const newState = [...prev];
+          newState[i] = sortedLesson;
+          return newState;
+        });
+        setIsLessonSorted((prev) => {
+          const newState = [...prev];
+          newState[i] = true;
+          return newState;
+        });
+      }
+    }
+  };
+
+  const lessonSorted = () => {
+    let temp = true;
+    if (isLessonSorted === null) {
+      return false;
+    } else {
+      for (let i = 0; i < isLessonSorted; i++) {
+        if (isLessonSorted[i] === false) {
+          temp = isLessonSorted[i];
+        }
+      }
+      return temp;
+    }
+  };
+
+  useEffect(() => {
+    const newState = [];
+    for (let i = 0; i < lessonList.length; i++) {
+      newState.push(false);
+    }
+    setIsLessonSorted(newState);
+    sortLessonList();
+  }, [lessonList]);
 
   // Display Content Function
   const displayContent = (objectList) => {
@@ -92,153 +233,181 @@ function CourseCurriculum() {
           </Text>
         </HStack>
         {/* Curriculum Cards Test*/}
-        {selectedCourse.curriculum.map((data, sectIdx) => (
-          <Flex
-            key={sectIdx}
-            minH="120px"
-            w="100%"
-            borderRadius="8px"
-            borderWidth="1px"
-            borderColor={midgray}
-            overflow="hidden"
-          >
-            {/* Section Drag Box */}
-            <VStack h="100%" w="30px" bg={lightblue2} pt="15px">
-              <Icon
-                as={MdDragIndicator}
-                fontSize="18px"
-                color={darkgray}
-                _hover={{ cursor: "grab" }}
-              />
-            </VStack>
-            <VStack w="100%" spacing={0}>
-              <HStack
-                h="60px"
+        {sectionList ? (
+          sectionList.length === 0 ? (
+            <Center minH="120px" w="100%">
+              Kurikulum anda masih kosong
+            </Center>
+          ) : (
+            sectionList &&
+            isSectionSorted &&
+            sectionList.map((data, sectIdx) => (
+              <Flex
+                key={sectIdx}
+                minH="120px"
                 w="100%"
-                p={{ base: "10px", md: "20px" }}
-                borderBottomWidth="1px"
-                borderBottomColor={midgray}
+                borderRadius="8px"
+                borderWidth="1px"
+                borderColor={midgray}
+                overflow="hidden"
               >
-                <Text>{data.sectionTitle}</Text>
-                <Spacer />
-                <Menu>
-                  <MenuButton
-                    h="30px"
-                    aspectRatio="1"
-                    borderRadius="50%"
-                    _hover={{ bg: lightblue2, cursor: "pointer" }}
-                    transition="background-color 0.2s ease"
+                <VStack h="100%" w="30px" bg={lightblue2} pt="15px">
+                  <Icon
+                    as={MdDragIndicator}
+                    fontSize="18px"
+                    color={darkgray}
+                    _hover={{ cursor: "grab" }}
+                  />
+                </VStack>
+                <VStack w="100%" spacing={0}>
+                  <HStack
+                    h="60px"
+                    w="100%"
+                    p={{ base: "10px", md: "20px" }}
+                    borderBottomWidth="1px"
+                    borderBottomColor={midgray}
                   >
-                    <Center h="100%" w="100%">
-                      <Icon as={MdOutlineMoreVert} fontSize="18px" />
-                    </Center>
-                  </MenuButton>
-                  <MenuList p="3px">
-                    <MenuItem h="30px" borderRadius="5px" p={0}>
-                      <Text fontSize="12px" pl="10px">
-                        Ganti nama seksi
-                      </Text>
-                    </MenuItem>
-                    <MenuItem h="30px" borderRadius="5px" p={0}>
-                      <Text fontSize="12px" pl="10px">
-                        Duplikat seksi
-                      </Text>
-                    </MenuItem>
-                    <MenuItem h="30px" borderRadius="5px" p={0}>
-                      <Text fontSize="12px" color="red.600" pl="10px">
-                        Hapus seksi
-                      </Text>
-                    </MenuItem>
-                  </MenuList>
-                </Menu>
-              </HStack>
-              {data.lesson.map((child, lesIdx) => (
-                <HStack
-                  key={lesIdx}
-                  minH="60px"
-                  w="100%"
-                  borderBottomWidth="1px"
-                  borderBottomColor={midgray}
-                  pr={{ base: "10px", md: "20px" }}
-                >
-                  <Center h="100%" w="30px">
-                    <Icon
-                      as={MdDragIndicator}
-                      fontSize="18px"
-                      color={darkgray}
-                      _hover={{ cursor: "grab" }}
-                    />
-                  </Center>
-                  <VStack
-                    h="100%"
-                    spacing={0}
-                    align="baseline"
-                    justify="center"
-                    fontSize="14px"
+                    <Text>{data.sectionTitle}</Text>
+                    <Spacer />
+                    <Menu>
+                      <MenuButton
+                        h="30px"
+                        aspectRatio="1"
+                        borderRadius="50%"
+                        _hover={{ bg: lightblue2, cursor: "pointer" }}
+                        transition="background-color 0.2s ease"
+                      >
+                        <Center h="100%" w="100%">
+                          <Icon as={MdOutlineMoreVert} fontSize="18px" />
+                        </Center>
+                      </MenuButton>
+                      <MenuList p="3px">
+                        <MenuItem h="30px" borderRadius="5px" p={0}>
+                          <Text fontSize="12px" pl="10px">
+                            Ganti nama seksi
+                          </Text>
+                        </MenuItem>
+                        <MenuItem h="30px" borderRadius="5px" p={0}>
+                          <Text fontSize="12px" pl="10px">
+                            Duplikat seksi
+                          </Text>
+                        </MenuItem>
+                        <MenuItem h="30px" borderRadius="5px" p={0}>
+                          <Text fontSize="12px" color="red.600" pl="10px">
+                            Hapus seksi
+                          </Text>
+                        </MenuItem>
+                      </MenuList>
+                    </Menu>
+                  </HStack>
+                  {lessonList && lessonSorted()
+                    ? lessonList.length === 0
+                      ? undefined
+                      : lessonList[sectIdx].map((child, lesIdx) => (
+                          <HStack
+                            key={lesIdx}
+                            minH="60px"
+                            w="100%"
+                            borderBottomWidth="1px"
+                            borderBottomColor={midgray}
+                            pr={{ base: "10px", md: "20px" }}
+                          >
+                            <Center h="100%" w="30px">
+                              <Icon
+                                as={MdDragIndicator}
+                                fontSize="18px"
+                                color={darkgray}
+                                _hover={{ cursor: "grab" }}
+                              />
+                            </Center>
+                            <VStack
+                              h="100%"
+                              spacing={0}
+                              align="baseline"
+                              justify="center"
+                              fontSize="14px"
+                            >
+                              <Text
+                                h="30%"
+                                fontWeight="600"
+                                textDecoration="underline"
+                                _hover={{ cursor: "pointer" }}
+                                onClick={() =>
+                                  navigate(
+                                    `/courses/${child.id}/curriculum/content`
+                                  )
+                                }
+                              >
+                                {child.lessonTitle}
+                              </Text>
+                              <Text h="30%">
+                                {displayContent(child.content)}
+                              </Text>
+                            </VStack>
+                            <Spacer />
+                            <Menu>
+                              <MenuButton
+                                h="30px"
+                                aspectRatio="1"
+                                borderRadius="50%"
+                                _hover={{ bg: lightblue2, cursor: "pointer" }}
+                                transition="background-color 0.2s ease"
+                              >
+                                <Center h="100%" w="100%">
+                                  <Icon
+                                    as={MdOutlineMoreVert}
+                                    fontSize="18px"
+                                  />
+                                </Center>
+                              </MenuButton>
+                              <MenuList p="3px">
+                                <MenuItem h="30px" borderRadius="5px" p={0}>
+                                  <Text fontSize="12px" pl="10px">
+                                    Ganti nama materi
+                                  </Text>
+                                </MenuItem>
+                                <MenuItem h="30px" borderRadius="5px" p={0}>
+                                  <Text fontSize="12px" pl="10px">
+                                    Duplikat materi
+                                  </Text>
+                                </MenuItem>
+                                <MenuItem h="30px" borderRadius="5px" p={0}>
+                                  <Text
+                                    fontSize="12px"
+                                    color="red.600"
+                                    pl="10px"
+                                  >
+                                    Hapus materi
+                                  </Text>
+                                </MenuItem>
+                              </MenuList>
+                            </Menu>
+                          </HStack>
+                        ))
+                    : undefined}
+                  <Center
+                    h="60px"
+                    w="100%"
+                    color={darkgray}
+                    _hover={{ color: "black", cursor: "pointer" }}
+                    transition="color 0.2s ease"
                   >
-                    <Text
-                      h="30%"
-                      fontWeight="600"
-                      textDecoration="underline"
-                      _hover={{ cursor: "pointer" }}
-                      onClick={() =>
-                        navigate(`/courses/${id}/curriculum/content`)
-                      }
-                    >
-                      {child.title}
+                    <Icon as={LuPlusCircle} />
+                    <Text fontSize="14px" ml="10px">
+                      Materi baru
                     </Text>
-                    <Text h="30%">{displayContent(child.content)}</Text>
-                  </VStack>
-                  <Spacer />
-                  <Menu>
-                    <MenuButton
-                      h="30px"
-                      aspectRatio="1"
-                      borderRadius="50%"
-                      _hover={{ bg: lightblue2, cursor: "pointer" }}
-                      transition="background-color 0.2s ease"
-                    >
-                      <Center h="100%" w="100%">
-                        <Icon as={MdOutlineMoreVert} fontSize="18px" />
-                      </Center>
-                    </MenuButton>
-                    <MenuList p="3px">
-                      <MenuItem h="30px" borderRadius="5px" p={0}>
-                        <Text fontSize="12px" pl="10px">
-                          Ganti nama materi
-                        </Text>
-                      </MenuItem>
-                      <MenuItem h="30px" borderRadius="5px" p={0}>
-                        <Text fontSize="12px" pl="10px">
-                          Duplikat materi
-                        </Text>
-                      </MenuItem>
-                      <MenuItem h="30px" borderRadius="5px" p={0}>
-                        <Text fontSize="12px" color="red.600" pl="10px">
-                          Hapus materi
-                        </Text>
-                      </MenuItem>
-                    </MenuList>
-                  </Menu>
-                </HStack>
-              ))}
-              {/* New Lesson */}
-              <Center
-                h="60px"
-                w="100%"
-                color={darkgray}
-                _hover={{ color: "black", cursor: "pointer" }}
-                transition="color 0.2s ease"
-              >
-                <Icon as={LuPlusCircle} />
-                <Text fontSize="14px" ml="10px">
-                  Materi baru
-                </Text>
-              </Center>
-            </VStack>
-          </Flex>
-        ))}
-
+                  </Center>
+                </VStack>
+              </Flex>
+            ))
+          )
+        ) : (
+          <VStack w="100%" spacing="5px">
+            <Skeleton h="60px" w="100%" borderRadius="5px" />
+            <Skeleton h="60px" w="100%" borderRadius="5px"/>
+            <Skeleton h="60px" w="100%" borderRadius="5px"/>
+          </VStack>
+        )}
         <Center
           h="60px"
           w="100%"

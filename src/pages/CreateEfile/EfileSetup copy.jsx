@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
-  Box,
   Center,
   Flex,
   FormControl,
@@ -9,11 +8,6 @@ import {
   HStack,
   Icon,
   Input,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
   Menu,
   MenuButton,
   MenuItem,
@@ -21,22 +15,27 @@ import {
   Modal,
   ModalContent,
   ModalOverlay,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  NumberDecrementStepper,
+  NumberIncrementStepper,
+  Radio,
+  RadioGroup,
   Select,
   Text,
   Textarea,
   VStack,
   useDisclosure,
 } from "@chakra-ui/react";
-import useCourse from "../../hooks/course";
-import { db } from "../../../firebaseconfig";
-import { collection, getDocs, getDoc } from "firebase/firestore";
+import useEfile from "../../hooks/efile";
 import Color from "../../Color";
 import { FaPencil } from "react-icons/fa6";
-import { LuPlusCircle, LuMoreVertical } from "react-icons/lu";
-import { FcGallery } from "react-icons/fc";
+import { LuPlusCircle, LuUpload, LuMoreVertical } from "react-icons/lu";
+import { FcGallery, FcFile } from "react-icons/fc";
 import { TbHelpCircleFilled } from "react-icons/tb";
 
-function CourseSetup() {
+function EfileSetup() {
   // Color Palette
   const { lightgray, midgray, darkgray, lightblue1, lightblue2, midblue1 } =
     Color;
@@ -45,52 +44,17 @@ function CourseSetup() {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  // Zustand Course
-  const { course, setName } = useCourse();
-  const selectedCourse = course.find((c) => c.id === parseInt(id));
+  // Zustand eFile
+  const { efile, setCategory, setName } = useEfile();
+  const selectedEfile = efile.find((c) => c.id === parseInt(id));
 
   // useState
+  const [value, setValue] = React.useState("1");
   const [editName, setEditName] = useState(false);
+  const [editCat, setEditCat] = useState(false);
   const [editPlan, setEditPlan] = useState(false);
   const [type, setType] = useState(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
-
-  // Display Content FunctionF
-  const displayContent = (objectList) => {
-    const content = { text: 0, image: 0, audio: 0, video: 0 };
-
-    for (let i = 0; i < objectList.length; i++) {
-      if (objectList[i].type === "TEX") {
-        content.text = content.text + 1;
-      } else if (objectList[i].type === "IMG") {
-        content.image = content.image + 1;
-      } else if (objectList[i].type === "AUD") {
-        content.audio = content.audio + 1;
-      } else if (objectList[i].type === "VID") {
-        content.video = content.video + 1;
-      }
-    }
-
-    let display = "";
-    if (content.text > 0) {
-      display = display + ", " + content.text + " teks";
-    }
-    if (content.image > 0) {
-      display = display + ", " + content.image + " gambar";
-    }
-    if (content.audio > 0) {
-      display = display + ", " + content.audio + " audio";
-    }
-    if (content.video > 0) {
-      display = display + ", " + content.video + " video";
-    }
-
-    if (display === "") {
-      return "Kosong";
-    } else {
-      return display.slice(1, undefined);
-    }
-  };
 
   // Price Plan List
   const pricePlan = [
@@ -101,43 +65,15 @@ function CourseSetup() {
       detail: "Bayar secara berangsur untuk jangka waktu yang tetap",
     },
     {
-      type: "SUB",
-      head: "Langganan",
-      detail: "Bayar setiap jangka waktu tertentu untuk mendapatkan akses",
-    },
-    {
       type: "FRE",
       head: "Gratis",
       detail: "Pelanggan mendapat akses tanpa membayar",
     },
   ];
 
-  // Fetch Data
-  const [courseView, setCourseView] = useState(null)
-
-  const getCourseView = async (collection, key) => {
-    try {
-      const docRef = doc(db, collection, key);
-      const docSnapshot = await getDoc(docRef);
-
-      if (docSnapshot.exists()) {
-        const courseData = docSnapshot.data()
-        setCourseView(courseData);
-      } else {
-        console.log("No such document exists!");
-      }
-    } catch (error) {
-      console.error("Error fetching product: ", error);
-    }
-  };
-
-  useEffect(() => {
-    getCourseView('lms_course', id)
-  })
-
   return (
     <VStack
-      minH="100%"
+      h="100%"
       w="100%"
       bg={lightgray}
       spacing="25px"
@@ -152,7 +88,7 @@ function CourseSetup() {
         p={{ base: "15px", md: "25px" }}
       >
         <Text w="100%" fontSize={{ base: "20px", md: "24px" }} fontWeight="600">
-          Pengaturan Kursus
+          Pengaturan Produk
         </Text>
         <Flex
           flexDirection={{ base: "column", md: "row" }}
@@ -161,18 +97,89 @@ function CourseSetup() {
         >
           {/* Left Column */}
           <VStack w={{ base: "100%", md: "60%" }} spacing={2}>
-            {/* Kurikulum */}
             <Text
               w="100%"
               fontSize={{ base: "16px", md: "18px" }}
               fontWeight="600"
             >
-              Atur Kurikulum
+              Atur Detil Produk
             </Text>
             <VStack w="100%">
+              <FormControl w="100%">
+                <FormLabel
+                  fontSize={{ base: "14px", md: "16px" }}
+                  fontWeight="400"
+                >
+                  Metode Unggah
+                </FormLabel>
+                <RadioGroup onChange={setValue} value={value}>
+                  <HStack direction="row">
+                    <Radio value="1">
+                      <Text fontSize={{ base: "14px", md: "16px" }}>
+                        Unggah File
+                      </Text>
+                    </Radio>
+                    <Radio value="2">
+                      <Text fontSize={{ base: "14px", md: "16px" }}>
+                        Alihkan ke URL
+                      </Text>
+                    </Radio>
+                  </HStack>
+                </RadioGroup>
+              </FormControl>
+              <VStack
+                display={value === "1" ? "flex" : "none"}
+                w="100%"
+                bg={lightgray}
+                borderRadius="8px"
+                borderWidth="1px"
+                borderColor={midgray}
+                p="20px"
+              >
+                <Icon as={FcFile} fontSize="40px" />
+                <Text
+                  fontSize={{ base: "12px", md: "14px" }}
+                  w={{ base: "90%", md: "80%" }}
+                >
+                  File yang diterima: .pdf, .epub, .txt, .doc, .docx, .jpg,
+                  .gif, .png, .tif, .webp, .csv, .xls, .xlsx, .ppt, .pptx, .mp3,
+                  .m4a, .aac
+                </Text>
+                <HStack
+                  h="25px"
+                  bg="white"
+                  borderRadius="8px"
+                  borderWidth="1px"
+                  borderColor={midgray}
+                  p="15px"
+                  _hover={{ cursor: "pointer" }}
+                >
+                  <Icon as={LuUpload} fontSize={{ base: "14px", md: "16px" }} />
+                  <Text fontSize={{ base: "13px", md: "15px" }}>Unggah</Text>
+                </HStack>
+              </VStack>
+              <VStack display={value === "2" ? "flex" : "none"} w="100%">
+                <FormControl w="100%">
+                  <FormLabel fontSize={{ base: "14px", md: "16px" }}>
+                    URL (Wajib)
+                  </FormLabel>
+                  <Input
+                    h="35px"
+                    w="100%"
+                    placeholder="https://..."
+                    fontSize={{ base: "14px", md: "16px" }}
+                  />
+                </FormControl>
+                <FormControl w="100%">
+                  <FormLabel fontSize={{ base: "14px", md: "16px" }}>
+                    CTA button text
+                  </FormLabel>
+                  <Input h="35px" w="100%" />
+                </FormControl>
+              </VStack>
               <HStack h="35px" w="100%" justify="space-between">
                 <Text fontSize={{ base: "14px", md: "16px" }}>
-                  Pratinjau Kurikulum
+                  Deskripsi Produk
                 </Text>
                 <HStack
                   h="100%"
@@ -180,96 +187,77 @@ function CourseSetup() {
                   borderRadius="8px"
                   p="10px"
                   _hover={{ bg: midblue1, cursor: "pointer" }}
-                  onClick={() =>
-                    navigate(`/courses/${selectedCourse.id}/curriculum`)
-                  }
                   transition="background-color 0.2s ease"
                 >
                   <Icon as={FaPencil} fontSize={{ base: "14px", md: "16px" }} />
                   <Text fontSize={{ base: "12px", md: "14px" }}>
-                    Atur Kurikulum
+                    Ubah Deskripsi
                   </Text>
                 </HStack>
               </HStack>
-              <VStack
+              <Text fontSize={{ base: "12px", md: "14px" }} w="100%">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Facere
+                sit perspiciatis culpa sunt quidem! Pariatur, dicta debitis.
+                Culpa eveniet, harum rerum totam nisi reiciendis ex
+                reprehenderit laborum velit eos saepe neque, perspiciatis unde
+                sint voluptate assumenda quae, non maxime mollitia perferendis
+                corporis illo! Enim excepturi, voluptatibus dolor esse illo
+                laudantium.
+              </Text>
+              <HStack h="35px" w="100%" justify="space-between">
+                <Text fontSize={{ base: "14px", md: "16px" }}>
+                  Kategori Produk
+                </Text>
+                <HStack
+                  display={editCat ? "none" : "flex"}
+                  h="100%"
+                  bg={lightblue2}
+                  borderRadius="8px"
+                  p="10px"
+                  _hover={{ bg: midblue1, cursor: "pointer" }}
+                  onClick={() => setEditCat(true)}
+                  transition="background-color 0.2s ease"
+                >
+                  <Icon as={FaPencil} fontSize={{ base: "14px", md: "16px" }} />
+                  <Text fontSize={{ base: "12px", md: "14px" }}>
+                    Ubah Kategori
+                  </Text>
+                </HStack>
+                <Center
+                  display={editCat ? "flex" : "none"}
+                  h="100%"
+                  bg={lightblue2}
+                  borderRadius="8px"
+                  p="10px"
+                  _hover={{ bg: midblue1, cursor: "pointer" }}
+                  onClick={() => setEditCat(false)}
+                  transition="background-color 0.2s ease"
+                >
+                  <Text fontSize={{ base: "12px", md: "14px" }}>Simpan</Text>
+                </Center>
+              </HStack>
+              <Text
+                display={editCat ? "none" : "flex"}
+                h="35px"
                 w="100%"
-                borderRadius="8px"
-                borderWidth="1px"
-                borderColor={midgray}
-                spacing="0px"
-                overflow="hidden"
+                fontSize={{ base: "12px", md: "14px" }}
+                alignItems="center"
               >
-                {selectedCourse.curriculum.length === 0 ? (
-                  <>
-                    <Flex
-                      h="50px"
-                      w="100%"
-                      bg={lightgray}
-                      borderBottomWidth="1px"
-                      borderColor={midgray}
-                      align="center"
-                      p="10px"
-                    >
-                      <Text fontSize="15px" fontWeight="600">
-                        Seksi baru
-                      </Text>
-                    </Flex>
-                    <Flex
-                      h="50px"
-                      w="100%"
-                      bg="white"
-                      borderColor={midgray}
-                      align="center"
-                      p="10px"
-                    >
-                      <Text fontSize="13px">kosong</Text>
-                    </Flex>
-                  </>
-                ) : undefined}
-                {selectedCourse.curriculum.map((data, sectIdx) => (
-                  <VStack key={sectIdx} w="100%" spacing={0}>
-                    <Flex
-                      key={sectIdx}
-                      h="50px"
-                      w="100%"
-                      bg={lightgray}
-                      borderBottomWidth="1px"
-                      borderColor={midgray}
-                      align="center"
-                      p="10px"
-                    >
-                      <Text fontSize="15px" fontWeight="600">
-                        {data.sectionTitle}
-                      </Text>
-                    </Flex>
-                    {data.lesson.map((child, lesIdx) => (
-                      <Flex
-                        key={lesIdx}
-                        flexDirection="column"
-                        h="50px"
-                        w="100%"
-                        bg="white"
-                        borderBottomWidth={
-                          sectIdx === selectedCourse.curriculum.length - 1 &&
-                          lesIdx === data.lesson.length - 1
-                            ? "0px"
-                            : "1px"
-                        }
-                        borderColor={midgray}
-                        fontSize="13px"
-                        align="baseline"
-                        justify="center"
-                        p="10px"
-                      >
-                        <Text w="100%" fontWeight="600">
-                          {child.title}
-                        </Text>
-                        <Text w="100%">{displayContent(child.content)}</Text>
-                      </Flex>
-                    ))}
-                  </VStack>
-                ))}
-              </VStack>
+                {selectedEfile.category
+                  ? selectedEfile.category
+                  : "Belum pilih kategori"}
+              </Text>
+              <Select
+                display={editCat ? "flex" : "none"}
+                h="35px"
+                placeholder="Pilih Kategori"
+                fontSize={{ base: "12px", md: "14px" }}
+                onChange={(e) => setCategory(e.target.value, parseInt(id))}
+              >
+                <option value="eBook">eBook</option>
+                <option value="Audiobook">Audiobook</option>
+                <option value="Gambar">Gambar</option>
+              </Select>
             </VStack>
             {/* Harga */}
             <Text
@@ -277,7 +265,7 @@ function CourseSetup() {
               fontSize={{ base: "16px", md: "18px" }}
               fontWeight="600"
             >
-              Jual kursus anda
+              Jual produk anda
             </Text>
             <VStack w="100%" align="baseline">
               <HStack h="35px" w="100%" justify="space-between">
@@ -308,7 +296,7 @@ function CourseSetup() {
                   </Text>
                 </HStack>
               </HStack>
-              {selectedCourse.pricePlan.length > 0 ? (
+              {selectedEfile.pricePlan.length > 0 ? (
                 <VStack
                   w="100%"
                   borderRadius="8px"
@@ -317,14 +305,14 @@ function CourseSetup() {
                   spacing="0px"
                   overflow="hidden"
                 >
-                  {selectedCourse.pricePlan.map((data, index) => (
+                  {selectedEfile.pricePlan.map((data, index) => (
                     <Flex
                       key={index}
                       h="50px"
                       w="100%"
                       bg={lightgray}
                       borderBottomWidth={
-                        index === selectedCourse.pricePlan.length - 1
+                        index === selectedEfile.pricePlan.length - 1
                           ? "0px"
                           : "1px"
                       }
@@ -678,7 +666,7 @@ function CourseSetup() {
             <VStack w="100%">
               <HStack h="35px" w="100%" justify="space-between">
                 <Text fontWeight="600" fontSize={{ base: "14px", md: "16px" }}>
-                  Judul Kursus
+                  Nama Produk
                 </Text>
                 <HStack
                   display={editName ? "none" : "flex"}
@@ -692,7 +680,7 @@ function CourseSetup() {
                 >
                   <Icon as={FaPencil} fontSize={{ base: "14px", md: "16px" }} />
                   <Text fontSize={{ base: "12px", md: "14px" }}>
-                    Atur Judul
+                    Ubah Judul
                   </Text>
                 </HStack>
                 <Center
@@ -715,12 +703,12 @@ function CourseSetup() {
                 fontSize={{ base: "12px", md: "14px" }}
                 alignItems="center"
               >
-                {selectedCourse.name ? selectedCourse.name : "Belum ada nama"}
+                {selectedEfile.name ? selectedEfile.name : "Belum ada nama"}
               </Text>
               <Input
                 display={editName ? "flex" : "none"}
                 h="35px"
-                value={selectedCourse.name}
+                value={selectedEfile.name}
                 fontSize={{ base: "12px", md: "14px" }}
                 onChange={(e) => setName(e.target.value, parseInt(id))}
               />
@@ -738,9 +726,12 @@ function CourseSetup() {
                   _hover={{ bg: midblue1, cursor: "pointer" }}
                   transition="background-color 0.2s ease"
                 >
-                  <Icon as={FaPencil} fontSize={{ base: "14px", md: "16px" }} />
+                  <Icon
+                    as={LuPlusCircle}
+                    fontSize={{ base: "14px", md: "16px" }}
+                  />
                   <Text fontSize={{ base: "12px", md: "14px" }}>
-                    Atur gambar
+                    Tambah gambar
                   </Text>
                 </HStack>
               </HStack>
@@ -755,4 +746,4 @@ function CourseSetup() {
   );
 }
 
-export default CourseSetup;
+export default EfileSetup;

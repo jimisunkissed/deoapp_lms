@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  Box,
   Center,
   Flex,
   FormControl,
@@ -15,11 +14,11 @@ import {
   NumberIncrementStepper,
   NumberDecrementStepper,
   Select,
-  SimpleGrid,
   Text,
   Textarea,
   VStack,
 } from "@chakra-ui/react";
+import newCourse from "../../hooks/newCourse";
 import { LuX } from "react-icons/lu";
 import { TbHelpCircleFilled } from "react-icons/tb";
 
@@ -31,6 +30,9 @@ function CreateCourseStep3() {
 
   // Navigate
   const navigate = useNavigate();
+
+  // Zustand
+  const { course, reset } = newCourse();
 
   // Select useState
   const [editPlan, setEditPlan] = useState(false);
@@ -85,7 +87,7 @@ function CreateCourseStep3() {
           </Text>
           <Center
             _hover={{ cursor: "pointer" }}
-            onClick={() => navigate("/courses")}
+            onClick={() => {navigate("/courses"); reset()}}
           >
             <Icon as={LuX} />
           </Center>
@@ -247,8 +249,8 @@ function CreateCourseStep3() {
                 ? () => navigate("/courses/1/setup")
                 : type === "UNC"
                 ? () => navigate("/courses/1/setup")
-                : type === null ?
-                undefined
+                : type === null
+                ? undefined
                 : () => setEditPlan(true)
             }
             transition="background-color 0.2s ease"
