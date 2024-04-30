@@ -141,6 +141,11 @@ function CourseSetup() {
           return temp;
         });
       } else {
+        setLessonList((prev) => {
+          const temp = [...prev];
+          temp.push([null]);
+          return temp;
+        });
         console.log("No such document exists!");
       }
     } catch (error) {
@@ -187,6 +192,7 @@ function CourseSetup() {
     }
     setIsLessonSorted(newState);
     sortLessonList();
+    console.log(lessonList);
   }, [lessonList]);
 
   // useState
@@ -269,6 +275,10 @@ function CourseSetup() {
       detail: "Pelanggan mendapat akses tanpa membayar",
     },
   ];
+
+  const handleChangeImage = (value) => {
+    console.log(value);
+  };
 
   // Page Interface
   return (
@@ -384,37 +394,39 @@ function CourseSetup() {
                             {data.sectionTitle}
                           </Text>
                         </Flex>
-                        {lessonList && lessonSorted()
-                          ? lessonList.length === 0
-                            ? undefined
-                            : lessonList[sectIdx].map((child, lesIdx) => (
-                                <Flex
-                                  key={lesIdx}
-                                  flexDirection="column"
-                                  h="50px"
-                                  w="100%"
-                                  bg="white"
-                                  borderBottomWidth={
-                                    sectIdx === sectionList.length - 1 &&
-                                    lesIdx === lessonList[sectIdx].length - 1
-                                      ? "0px"
-                                      : "1px"
-                                  }
-                                  borderColor={midgray}
-                                  fontSize="13px"
-                                  align="baseline"
-                                  justify="center"
-                                  p="10px"
-                                >
-                                  <Text w="100%" fontWeight="600">
-                                    {child.lessonTitle}
-                                  </Text>
-                                  <Text w="100%">
-                                    {displayContent(child.content)}
-                                  </Text>
-                                </Flex>
-                              ))
-                          : undefined}
+                        {lessonList && lessonSorted() ? (
+                          lessonList.length === 0 ? undefined : lessonList[sectIdx][0] === null ? (
+                            <Text>Belum ada materi</Text>
+                          ) : (
+                            lessonList[sectIdx].map((child, lesIdx) => (
+                              <Flex
+                                key={lesIdx}
+                                flexDirection="column"
+                                h="50px"
+                                w="100%"
+                                bg="white"
+                                borderBottomWidth={
+                                  sectIdx === sectionList.length - 1 &&
+                                  lesIdx === lessonList[sectIdx].length - 1
+                                    ? "0px"
+                                    : "1px"
+                                }
+                                borderColor={midgray}
+                                fontSize="13px"
+                                align="baseline"
+                                justify="center"
+                                p="10px"
+                              >
+                                <Text w="100%" fontWeight="600">
+                                  {child.lessonTitle}
+                                </Text>
+                                <Text w="100%">
+                                  {displayContent(child.content)}
+                                </Text>
+                              </Flex>
+                            ))
+                          )
+                        ) : undefined}
                       </VStack>
                     ))
                   )}
@@ -919,6 +931,10 @@ function CourseSetup() {
                   </Text>
                 </HStack>
               </HStack>
+              <Input
+                type="file"
+                onChange={(e) => handleChangeImage(e.target.files)}
+              />
               {course ? (
                 <Center w="100%" aspectRatio="1.77" bg={lightgray}>
                   <Icon as={FcGallery} fontSize="50px" />

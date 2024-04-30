@@ -8,6 +8,8 @@ import {
   HStack,
   Icon,
   Input,
+  InputGroup,
+  InputLeftElement,
   NumberInput,
   NumberInputField,
   NumberInputStepper,
@@ -26,7 +28,8 @@ import Color from "../../Color";
 
 function CreateCourseStep3() {
   // Color Palette
-  const { lightgray, midgray, darkgray, lightblue1, midblue1 } = Color;
+  const { lightgray, midgray, darkgray, lightblue1, midblue1, midblue2 } =
+    Color;
 
   // Navigate
   const navigate = useNavigate();
@@ -37,15 +40,27 @@ function CreateCourseStep3() {
   // Select useState
   const [editPlan, setEditPlan] = useState(false);
   const [type, setType] = useState(null);
+  const [plan, setPlan] = useState(false);
+
+  // Create Empty Plan
+  const createPlan = (type) => {
+    if (type === "OTP") {
+      setPlan({ type: "OTP", price: 5000, name: "", desc: "" });
+    } else if (type === "SUB") {
+      setPlan({ type: "SUB", price: 0, freq: "", name: "", desc: "" });
+    } else if (type === "FRE") {
+      setPlan({ type: "FRE", name: "", desc: "" });
+    }
+  };
 
   // Price Plan
   const pricePlan = [
     { type: "OTP", head: "Sekali bayar", detail: "Pelanggan membayar sekali" },
-    {
-      type: "INS",
-      head: "Angsur",
-      detail: "Bayar secara berangsur untuk jangka waktu yang tetap",
-    },
+    // {
+    //   type: "INS",
+    //   head: "Angsur",
+    //   detail: "Bayar secara berangsur untuk jangka waktu yang tetap",
+    // },
     {
       type: "SUB",
       head: "Langganan",
@@ -63,6 +78,7 @@ function CreateCourseStep3() {
     },
   ];
 
+  // Page Interface
   return (
     <VStack
       minH="100%"
@@ -87,7 +103,10 @@ function CreateCourseStep3() {
           </Text>
           <Center
             _hover={{ cursor: "pointer" }}
-            onClick={() => {navigate("/courses"); reset()}}
+            onClick={() => {
+              navigate("/courses");
+              reset();
+            }}
           >
             <Icon as={LuX} />
           </Center>
@@ -112,8 +131,8 @@ function CreateCourseStep3() {
               w="100%"
               bg={lightgray}
               borderRadius="8px"
-              borderWidth="1px"
-              borderColor={data.type === type ? "black" : midgray}
+              borderWidth={data.type === type ? "3px" : "1px"}
+              borderColor={data.type === type ? midblue2 : midgray}
               textAlign="center"
               justify="center"
               spacing="0px"
@@ -151,17 +170,17 @@ function CreateCourseStep3() {
               ? "Pelanggan mendapat akses tanpa membayar"
               : undefined}
           </Text>
-          <HStack w="100%" align="end">
-            <FormControl w="80%">
+          <FormControl display={type === "FRE" ? "none" : "flex"}>
+            <VStack w="100%" align="baseline" spacing={0}>
               <FormLabel>
-                <HStack w="100%">
+                <HStack>
                   <Text fontSize={{ base: "14px", md: "16px" }}>Harga</Text>
                   <Center>
                     <Icon as={TbHelpCircleFilled} />
                   </Center>
                 </HStack>
               </FormLabel>
-              <Select
+              {/* <Select
                 h="35px"
                 flexGrow={1}
                 placeholder="Pilih Mata Uang"
@@ -170,20 +189,36 @@ function CreateCourseStep3() {
                 <option value="option1">IDR</option>
                 <option value="option2">USD</option>
                 <option value="option3">EUR</option>
-              </Select>
-            </FormControl>
-            <NumberInput w="30%">
-              <NumberInputField
-                h="35px"
-                fontSize={{ base: "14px", md: "16px" }}
-              />
-              <NumberInputStepper>
-                <NumberIncrementStepper />
-                <NumberDecrementStepper />
-              </NumberInputStepper>
-            </NumberInput>
-          </HStack>
-          <FormControl display={type === "INS" ? "flow" : "none"} w="100%">
+              </Select> */}
+              <InputGroup>
+                <NumberInput
+                  w="100%"
+                  min={0}
+                  step={5000}
+                  value={plan.price}
+                  // onChange={(e) =>
+                  //   setPlan((prev) => ({
+                  //     ...prev,
+                  //     price: e.target.value,
+                  //   }))
+                  // }
+                >
+                  <InputLeftElement h="100%" color="gray.600" children="Rp." />
+                  <NumberInputField
+                    h="35px"
+                    fontSize={{ base: "14px", md: "16px" }}
+                    color="gray.600"
+                    textIndent="20px"
+                  />
+                  <NumberInputStepper>
+                    <NumberIncrementStepper />
+                    <NumberDecrementStepper />
+                  </NumberInputStepper>
+                </NumberInput>
+              </InputGroup>
+            </VStack>
+          </FormControl>
+          {/* <FormControl display={type === "INS" ? "flow" : "none"} w="100%">
             <FormLabel fontSize={{ base: "14px", md: "16px" }}>
               Banyak Pembayaran
             </FormLabel>
@@ -197,26 +232,37 @@ function CreateCourseStep3() {
                 <NumberDecrementStepper />
               </NumberInputStepper>
             </NumberInput>
-          </FormControl>
+          </FormControl> */}
           <FormControl display={type === "SUB" ? "flow" : "none"} w="100%">
             <FormLabel fontSize={{ base: "14px", md: "16px" }}>
               Frekuensi
             </FormLabel>
-            <Select h="35px" placeholder="">
-              <option value="option1">Every 2 weeks</option>
-              <option value="option2">Every month</option>
-              <option value="option3">Every 3 months</option>
+            <Select h="35px" placeholder="" color="gray.600">
+              <option value="option1">Setiap 2 minggu</option>
+              <option value="option2">Setiap bulan</option>
+              <option value="option3">Setiap 3 bulan</option>
             </Select>
           </FormControl>
           <FormControl w="100%">
             <FormLabel fontSize={{ base: "14px", md: "16px" }}>Nama</FormLabel>
-            <Input h="35px" w="100%" />
+            <Input
+              h="35px"
+              w="100%"
+              value={plan.name}
+              color="gray.600"
+              onChange={(e) =>
+                setPlan((prev) => ({
+                  ...prev,
+                  name: e.target.value,
+                }))
+              }
+            />
           </FormControl>
           <FormControl w="100%">
             <FormLabel fontSize={{ base: "14px", md: "16px" }}>
               Deskripsi
             </FormLabel>
-            <Textarea h="120px" w="100%" resize="none" />
+            <Textarea h="120px" w="100%" color="gray.600" resize="none" />
           </FormControl>
         </VStack>
         {/* Navigate Button */}
@@ -251,7 +297,10 @@ function CreateCourseStep3() {
                 ? () => navigate("/courses/1/setup")
                 : type === null
                 ? undefined
-                : () => setEditPlan(true)
+                : () => {
+                    setEditPlan(true);
+                    createPlan(type);
+                  }
             }
             transition="background-color 0.2s ease"
           >

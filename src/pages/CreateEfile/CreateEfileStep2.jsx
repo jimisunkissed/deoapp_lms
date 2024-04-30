@@ -16,7 +16,8 @@ import Color from "../../Color";
 
 function CreateEfileStep2() {
   // Color Palette
-  const { lightgray, midgray, darkgray, lightblue1, midblue1 } = Color;
+  const { lightgray, midgray, darkgray, lightblue1, midblue1, midblue2 } =
+    Color;
 
   // Navigate
   const navigate = useNavigate();
@@ -65,14 +66,14 @@ function CreateEfileStep2() {
           Gambar akan ditampilkan saat checkout dan selama pelanggan melihat
           produk Unggah satu atau tentukan nanti saja.
         </Text>
-        <SimpleGrid columns={{ base: 1, md: 2 }} w="100%" spacing="15px">
+        <SimpleGrid columns={{ base: 1, md: 2 }} minH='200px' w="100%" spacing="15px">
           <VStack
             w="100%"
             h="100%"
             bg={lightgray}
             borderRadius="10px"
-            borderWidth="1px"
-            borderColor={select === 1 ? "black" : midgray}
+            borderWidth={select === 1 ? "3px" : "1px"}
+            borderColor={select === 1 ? midblue2 : midgray}
             textAlign="center"
             justify="center"
             spacing={1}
@@ -95,8 +96,8 @@ function CreateEfileStep2() {
             h="100%"
             bg={lightgray}
             borderRadius="10px"
-            borderWidth="1px"
-            borderColor={select == 2 ? "black" : midgray}
+            borderWidth={select === 2 ? "3px" : "1px"}
+            borderColor={select === 2 ? midblue2 : midgray}
             textAlign="center"
             justify="center"
             spacing={1}

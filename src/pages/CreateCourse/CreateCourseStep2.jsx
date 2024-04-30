@@ -8,16 +8,14 @@ import { FcGallery } from "react-icons/fc";
 
 function CreateCourseStep2() {
   // Color Palette
-  const { lightgray, midgray, darkgray, lightblue1, midblue1 } = Color;
+  const { lightgray, midgray, darkgray, lightblue1, midblue1, midblue2 } =
+    Color;
 
   // Navigate
   const navigate = useNavigate();
 
   // Zustand
-  const { course, reset } = newCourse();
-
-  // Select
-  const [select, setSelect] = useState(0);
+  const { course, setImageChoice, setImageData, reset } = newCourse();
 
   return (
     <VStack
@@ -43,7 +41,10 @@ function CreateCourseStep2() {
           </Text>
           <Center
             _hover={{ cursor: "pointer" }}
-            onClick={() => {navigate("/courses"); reset()}}
+            onClick={() => {
+              navigate("/courses");
+              reset();
+            }}
           >
             <Icon as={LuX} />
           </Center>
@@ -60,20 +61,37 @@ function CreateCourseStep2() {
           Gambar akan ditampilkan saat checkout dan selama pelanggan melihat
           produk Unggah satu atau tentukan nanti saja.
         </Text>
-        <SimpleGrid columns={{ base: 1, md: 2 }} w="100%" spacing="15px">
+        <SimpleGrid
+          columns={{ base: 1, md: 2 }}
+          minH="200px"
+          w="100%"
+          spacing="15px"
+        >
           <VStack
             w="100%"
             h="100%"
             bg={lightgray}
             borderRadius="10px"
-            borderWidth="1px"
-            borderColor={select === 1 ? "black" : midgray}
+            borderWidth={
+              course && course.image
+                ? course.image.choice === "upload"
+                  ? "3px"
+                  : "1px"
+                : "1px"
+            }
+            borderColor={
+              course && course.image
+                ? course.image.choice === "upload"
+                  ? midblue2
+                  : midgray
+                : midgray
+            }
             textAlign="center"
             justify="center"
             spacing={1}
             p="20px"
             _hover={{ cursor: "pointer" }}
-            onClick={() => setSelect(1)}
+            onClick={() => setImageChoice("upload")}
           >
             <Icon as={FcGallery} fontSize="30px" />
             <Text fontSize="14px" fontWeight="600">
@@ -90,14 +108,22 @@ function CreateCourseStep2() {
             h="100%"
             bg={lightgray}
             borderRadius="10px"
-            borderWidth="1px"
-            borderColor={select == 2 ? "black" : midgray}
+            borderWidth={
+              course && course.image ? (course.image.choice === "skip" ? "3px" : "1px") : "1px"
+            }
+            borderColor={
+              course && course.image
+                ? course.image.choice === "skip"
+                  ? midblue2
+                  : midgray
+                : "1px"
+            }
             textAlign="center"
             justify="center"
             spacing={1}
             p="20px"
             _hover={{ cursor: "pointer" }}
-            onClick={() => setSelect(2)}
+            onClick={() => setImageChoice("skip")}
           >
             <Text fontSize="16px" fontWeight="500">
               Saya tidak punya gambar
@@ -126,8 +152,26 @@ function CreateCourseStep2() {
             bg={lightblue1}
             borderRadius="8px"
             fontSize="13px"
-            _hover={{ bg: midblue1, cursor: "pointer" }}
-            onClick={() => navigate("/courses/create/step-3")}
+            userSelect="none"
+            _hover={{
+              bg: course && course.image
+                ? course.image.choice
+                  ? midblue1
+                  : lightblue1
+                : lightblue1,
+              cursor: course && course.image
+                ? course.image.choice
+                  ? "pointer"
+                  : "not-allowed"
+                : "not-allowed",
+            }}
+            onClick={
+              course && course.image
+                ? course.image.choice
+                  ? () => navigate("/courses/create/step-3")
+                  : undefined
+                : undefined
+            }
             transition="background-color 0.2s ease"
           >
             Selanjutnya

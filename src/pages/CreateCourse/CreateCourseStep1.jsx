@@ -28,10 +28,16 @@ function CreateCourseStep1() {
   const navigate = useNavigate();
 
   // Zustand
-  const {course, setName, reset} = newCourse()
+  const { course, setName, reset } = newCourse();
 
   return (
-    <VStack h="100%" w="100%" bg={lightgray} justify="center" p={{base:'15px', md:"25px"}}>
+    <VStack
+      h="100%"
+      w="100%"
+      bg={lightgray}
+      justify="center"
+      p={{ base: "15px", md: "25px" }}
+    >
       <VStack
         w="100%"
         maxW="750px"
@@ -40,7 +46,7 @@ function CreateCourseStep1() {
         borderWidth="1px"
         borderColor={midgray}
         spacing={1}
-        p={{base:'15px', md:"25px"}}
+        p={{ base: "15px", md: "25px" }}
       >
         <Flex w="100%" justify="space-between">
           <Text fontSize="15px" fontWeight="500">
@@ -48,7 +54,10 @@ function CreateCourseStep1() {
           </Text>
           <Center
             _hover={{ cursor: "pointer" }}
-            onClick={() => {navigate("/courses"); reset()}}
+            onClick={() => {
+              navigate("/courses");
+              reset();
+            }}
           >
             <Icon as={LuX} />
           </Center>
@@ -67,11 +76,18 @@ function CreateCourseStep1() {
           color={darkgray}
           textAlign="center"
         >
-          Kami menggunakan informasi ini untuk mengkustomisasi kursus anda. Anda bisa mengubahnya nanti
+          Kami menggunakan informasi ini untuk mengkustomisasi kursus anda. Anda
+          bisa mengubahnya nanti
         </Text>
         <FormControl w="100%">
-          <FormLabel fontSize='14px'>Nama Kursus</FormLabel>
-          <Input h="35px" w="100%" placeholder="Berikan nama" value={course.name} onChange={(e) => setName(e.target.value)}/>
+          <FormLabel fontSize="14px">Nama Kursus</FormLabel>
+          <Input
+            h="35px"
+            w="100%"
+            placeholder="Berikan nama"
+            value={course.name}
+            onChange={(e) => setName(e.target.value)}
+          />
         </FormControl>
         <Flex w="100%" justify="space-between" mt="25px">
           <Center
@@ -80,8 +96,12 @@ function CreateCourseStep1() {
             bg={lightblue1}
             borderRadius="8px"
             fontSize="13px"
+            userSelect="none"
             _hover={{ bg: midblue1, cursor: "pointer" }}
-            onClick={() => {navigate("/courses"); reset()}}
+            onClick={() => {
+              navigate("/courses");
+              reset();
+            }}
             transition="background-color 0.2s ease"
           >
             Sebelumnya
@@ -92,8 +112,16 @@ function CreateCourseStep1() {
             bg={lightblue1}
             borderRadius="8px"
             fontSize="13px"
-            _hover={{ bg: midblue1, cursor: "pointer" }}
-            onClick={() => navigate("/courses/create/step-2")}
+            userSelect="none"
+            _hover={{
+              bg: course.name === "" ? "lightblue1" : "midblue1",
+              cursor: course.name === "" ? "not-allowed" : "pointer",
+            }}
+            onClick={
+              course.name != ""
+                ? () => navigate("/courses/create/step-2")
+                : undefined
+            }
             transition="background-color 0.2s ease"
           >
             Selanjutnya
