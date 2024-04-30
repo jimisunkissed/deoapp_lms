@@ -396,7 +396,7 @@ function CourseSetup() {
                         </Flex>
                         {lessonList && lessonSorted() ? (
                           lessonList.length === 0 ? undefined : lessonList[sectIdx][0] === null ? (
-                            <Text>Belum ada materi</Text>
+                            <Flex h='50px' w='100%' fontSize='13px' align='center' p='10px' fontWeight='600'>Belum ada materi</Flex>
                           ) : (
                             lessonList[sectIdx].map((child, lesIdx) => (
                               <Flex
