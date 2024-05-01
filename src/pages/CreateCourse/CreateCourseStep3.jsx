@@ -127,9 +127,7 @@ function CreateCourseStep3() {
   };
 
   useEffect(() => {
-    if (type === "SKP") {
-      createCourse("lms_course");
-    } else if (editPlan) {
+    if (editPlan) {
       if (course.pricePlan[0].name === plan.name) {
         createCourse("lms_course");
       }
@@ -371,7 +369,9 @@ function CreateCourseStep3() {
             fontSize="13px"
             _hover={{ bg: midblue1, cursor: "pointer" }}
             onClick={async () => {
-              if ((editPlan && checkForm(plan) === true) || type === "SKP") {
+              if (type === "SKP") {
+                createCourse("lms_course");
+              } else if (editPlan && checkForm(plan) === true) {
                 setPricePlan(plan);
               } else if (editPlan && checkForm(plan) === false) {
                 toast({

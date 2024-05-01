@@ -66,7 +66,14 @@ function CreateCourse() {
   const { reset } = newCourse();
 
   // Table header
-  const heading = ["Nama", "Tanggal", "Penjualan", "Siswa", "Status", "Tindakan"];
+  const heading = [
+    "Nama",
+    "Tanggal",
+    "Penjualan",
+    "Siswa",
+    "Status",
+    "Tindakan",
+  ];
 
   // Date Function
   const displayDate = (timestamp) => {
@@ -128,7 +135,7 @@ function CreateCourse() {
           <HStack
             h="40px"
             w="100%"
-            minW='580px'
+            minW="580px"
             bg={lightblue1}
             borderRadius="8px"
             spacing={0}
@@ -234,7 +241,9 @@ function CreateCourse() {
                     color={darkblue2}
                     p="0px 8px 0px 8px"
                   >
-                    <Text whiteSpace='nowrap'>{data.isPublished ? "Ditampilkan" : "Disembunyikan"}</Text>
+                    <Text whiteSpace="nowrap">
+                      {data.isPublished ? "Ditampilkan" : "Disembunyikan"}
+                    </Text>
                   </Center>
                 </Box>
                 {/* Table Fill Action */}
@@ -293,20 +302,18 @@ function CreateCourse() {
                 : "white"
             }
             borderRadius="8px"
+            color={darkgray}
             spacing={0}
             p="2px 0px 2px 0px"
+            _hover={{ color: "black", cursor: "pointer" }}
+            onClick={() => {
+              reset();
+              navigate("/courses/create/step-1");
+            }}
+            transition="color 0.2s ease"
           >
-            <Icon
-              as={LuPlusCircle}
-              fontSize="20px"
-              color={darkgray}
-              _hover={{ color: "black", cursor: "pointer" }}
-              onClick={() => {
-                reset();
-                navigate("/courses/create/step-1");
-              }}
-              transition="color 0.2s ease"
-            />
+            <Icon as={LuPlusCircle} />
+            <Text fontSize='14px' ml='10px'>Kursus Baru</Text>
           </Center>
         </VStack>
       </Box>
