@@ -111,7 +111,7 @@ function CreateCourseStep1() {
             fontSize="13px"
             userSelect="none"
             _hover={{
-              bg: "midblue1",
+              bg: midblue1,
               cursor: "pointer",
             }}
             onClick={

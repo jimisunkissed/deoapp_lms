@@ -64,9 +64,10 @@ function CourseSetup() {
       if (docSnapshot.exists()) {
         const courseData = docSnapshot.data();
         setCourse(courseData);
-      } else {
-        console.log("No such document exists!");
-      }
+      } 
+      // else {
+      //   console.log("No such document exists!");
+      // }
     } catch (error) {
       console.error("Error fetching product: ", error);
     }
@@ -95,7 +96,7 @@ function CourseSetup() {
         setSectionList(sections);
       } else {
         setSectionList([]);
-        console.log("No such document exists!");
+        // console.log("No such document exists!");
       }
     } catch (error) {
       console.error("Error getting sections:", error);
@@ -123,7 +124,7 @@ function CourseSetup() {
   // Fetch Data Lesson
   const [lessonList, setLessonList] = useState([]);
   const [isLessonElementSorted, setIsLessonElementSorted] = useState(null);
-  const [isLessonSorted, setIsLessonSorted] = useState(false)
+  const [isLessonSorted, setIsLessonSorted] = useState(false);
 
   const getLessonById = async (collectionName, key) => {
     try {
@@ -148,7 +149,7 @@ function CourseSetup() {
           temp.push([]);
           return temp;
         });
-        console.log("No such document exists!");
+        // console.log("No such document exists!");
       }
     } catch (error) {
       console.error("Error getting lessons:", error);
@@ -194,7 +195,7 @@ function CourseSetup() {
     }
     setIsLessonElementSorted(newState);
     sortLessonList();
-    setIsLessonSorted(lessonSorted())
+    setIsLessonSorted(lessonSorted());
   }, [lessonList]);
 
   // useState
@@ -280,6 +281,18 @@ function CourseSetup() {
 
   const handleChangeImage = (value) => {
     console.log(value);
+  };
+
+  // Price Displayer
+  const priceStr = (price) => {
+    let priceArr = price.toString().split("");
+    let i = -3;
+    while (i > -priceArr.length) {
+      priceArr.splice(i, 0, ".");
+      i = i - 4;
+    }
+    priceArr.splice(0, 0);
+    return priceArr.join("");
   };
 
   // Page Interface
@@ -498,13 +511,22 @@ function CourseSetup() {
                         <Flex
                           flexDirection="column"
                           h="100%"
-                          w="50%"
                           fontSize="13px"
                           align="baseline"
                           justify="center"
                         >
+                          <HStack w="100%">
+                            <Text fontWeight="600" whiteSpace="nowrap">
+                              {data.name}
+                            </Text>
+                            <Text display={{ base: "none", sm: "flex" }}>
+                              {data.desc.length > 35
+                                ? `${data.desc.slice(0, 35)}...`
+                                : data.desc}
+                            </Text>
+                          </HStack>
                           <HStack>
-                            <Text fontWeight="600">
+                            <Text>
                               {data.type === "OTP"
                                 ? "Sekali Bayar"
                                 : data.type === "INS"
@@ -515,44 +537,19 @@ function CourseSetup() {
                                 ? "Gratis"
                                 : undefined}{" "}
                             </Text>
-                            <Text display={{ base: "none", sm: "flex" }}>
+                            <Text>
                               {data.type === "INS"
                                 ? `${data.nPay} x `
                                 : undefined}
+
                               {data.type === "FRE"
                                 ? undefined
-                                : data.currency === "USD"
-                                ? "$"
-                                : data.currency === "IDR"
-                                ? "Rp"
-                                : undefined}
-                              {data.type != "FRE" ? data.price : undefined}
+                                : `Rp ${priceStr(data.price)}`}
                               {data.type === "SUB"
                                 ? ` setiap ${data.freq}`
                                 : undefined}
                             </Text>
                           </HStack>
-                          <Text display={{ base: "none", sm: "flex" }}>
-                            {data.desc.length > 30
-                              ? `${data.desc.slice(0, 30)}...`
-                              : data.desc}
-                          </Text>
-                          <Text display={{ base: "flex", sm: "none" }}>
-                            {data.type === "INS"
-                              ? `${data.nPay} x `
-                              : undefined}
-                            {data.type === "FRE"
-                              ? undefined
-                              : data.currency === "USD"
-                              ? "$"
-                              : data.currency === "IDR"
-                              ? "Rp"
-                              : undefined}
-                            {data.type != "FRE" ? data.price : undefined}
-                            {data.type === "SUB"
-                              ? ` per ${data.freq}`
-                              : undefined}
-                          </Text>
                         </Flex>
                         <Menu>
                           <MenuButton
@@ -942,32 +939,10 @@ function CourseSetup() {
                   w="100%"
                   aspectRatio="1.77"
                   bg={lightgray}
+                  borderRadius='10px'
                   justify="center"
                 >
                   <Icon as={FcGallery} fontSize="50px" />
-                  {/* <Box position="relative">
-                    <Input
-                      type="file"
-                      h="35px"
-                      w="210px"
-                      borderWidth="0px"
-                      p="2px"
-                      opacity="0"
-                      onChange={(e) => handleChangeImage(e.target.files)}
-                      position="absolute"
-                      zIndex="-1"
-                    />
-                    <Button
-                      as="label"
-                      htmlFor="fileInput"
-                      h="35px"
-                      w="210px"
-                      borderWidth="0px"
-                      p="2px"
-                    >
-                      {"Choose File"}
-                    </Button>
-                  </Box> */}
                   <Input
                     type="file"
                     h="35px"

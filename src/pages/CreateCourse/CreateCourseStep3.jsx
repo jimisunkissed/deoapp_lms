@@ -58,11 +58,6 @@ function CreateCourseStep3() {
   // Price Plan
   const pricePlan = [
     { type: "OTP", head: "Sekali bayar", detail: "Pelanggan membayar sekali" },
-    // {
-    //   type: "INS",
-    //   head: "Angsur",
-    //   detail: "Bayar secara berangsur untuk jangka waktu yang tetap",
-    // },
     {
       type: "SUB",
       head: "Langganan",
@@ -136,7 +131,7 @@ function CreateCourseStep3() {
       createCourse("lms_course");
     } else if (editPlan) {
       if (course.pricePlan[0].name === plan.name) {
-        createCourse('lms_course')
+        createCourse("lms_course");
       }
     }
   }, [course.pricePlan]);
@@ -231,9 +226,7 @@ function CreateCourseStep3() {
           <Text fontSize={{ base: "14px", md: "16px" }}>
             {type === "OTP"
               ? "Pelanggan membayar sekali"
-              : // : type === "INS"
-              // ? "Bayar secara berangsur untuk jangka waktu yang tetap"
-              type === "SUB"
+              : type === "SUB"
               ? "Bayar setiap jangka waktu tertentu untuk mendapatkan akses"
               : type === "FRE"
               ? "Pelanggan mendapat akses tanpa membayar"
@@ -296,21 +289,6 @@ function CreateCourseStep3() {
               )}
             </VStack>
           </FormControl>
-          {/* <FormControl display={type === "INS" ? "flow" : "none"} w="100%">
-            <FormLabel fontSize={{ base: "14px", md: "16px" }}>
-              Banyak Pembayaran
-            </FormLabel>
-            <NumberInput>
-              <NumberInputField
-                h="35px"
-                fontSize={{ base: "14px", md: "16px" }}
-              />
-              <NumberInputStepper>
-                <NumberIncrementStepper />
-                <NumberDecrementStepper />
-              </NumberInputStepper>
-            </NumberInput>
-          </FormControl> */}
           {plan && plan.freq !== undefined && plan.freq !== null ? (
             <FormControl display={type === "SUB" ? "flow" : "none"} w="100%">
               <FormLabel fontSize={{ base: "14px", md: "16px" }}>
@@ -366,18 +344,6 @@ function CreateCourseStep3() {
               />
             </FormControl>
           )}
-          {/* <Text>
-            {plan && plan.name} {plan && plan.price} {plan && plan.freq}{" "}
-            {plan && plan.desc}
-          </Text>
-          {course.pricePlan &&
-            course.pricePlan.map((data, index) => (
-              <Text key={index}>
-                {data.name}
-                {data.price}
-                {data.desc}
-              </Text>
-            ))} */}
         </VStack>
         {/* Navigate Button */}
         <Flex w="100%" justify="space-between" mt="25px">
@@ -397,15 +363,6 @@ function CreateCourseStep3() {
           >
             Sebelumnya
           </Center>
-          {/* <Center
-            h="35px"
-            w="90px"
-            bg={lightblue1}
-            borderRadius="8px"
-            onClick={() => setPricePlan(plan)}
-          >
-            Test Zustand
-          </Center> */}
           <Center
             h="35px"
             w="90px"

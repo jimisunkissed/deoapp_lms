@@ -13,8 +13,8 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { db } from "../../../firebaseconfig";
-import { collection, getDocs } from "firebase/firestore";
-import newCourse from "../../hooks/newCourse"
+import { collection, doc, getDocs, updateDoc } from "firebase/firestore";
+import newCourse from "../../hooks/newCourse";
 import { LuPlusCircle, LuMoreVertical } from "react-icons/lu";
 import Color from "../../Color";
 
@@ -46,11 +46,27 @@ function CreateCourse() {
     getCourseList("lms_course");
   }, []);
 
+  // Change Publish Status
+  const changePublish = async (id, index, pubStatus) => {
+    try {
+      const docRef = doc(db, "lms_course", id);
+      await updateDoc(docRef, { isPublished: !pubStatus });
+      console.log("Document updated with ID: ", id);
+      setCourseList((prev) => {
+        const newState = [...prev];
+        newState[index].isPublished = !pubStatus;
+        return newState;
+      });
+    } catch (e) {
+      console.error("Error updating document: ", e);
+    }
+  };
+
   // Zustand Course
-  const {reset} = newCourse()
+  const { reset } = newCourse();
 
   // Table header
-  const heading = ["Name", "Date", "Sales", "Enrollments", "Status", "Actions"];
+  const heading = ["Nama", "Tanggal", "Penjualan", "Siswa", "Status", "Tindakan"];
 
   // Date Function
   const displayDate = (timestamp) => {
@@ -64,6 +80,18 @@ function CreateCourse() {
     });
 
     return formattedDate;
+  };
+
+  // Price Displayer
+  const priceStr = (price) => {
+    let priceArr = price.toString().split("");
+    let i = -3;
+    while (i > -priceArr.length) {
+      priceArr.splice(i, 0, ".");
+      i = i - 4;
+    }
+    priceArr.splice(0, 0);
+    return priceArr.join("");
   };
 
   // Page Interface
@@ -88,18 +116,19 @@ function CreateCourse() {
         <VStack
           h="100%"
           w="100%"
-          minW="600px"
+          minW="610px"
           spacing="2px"
           p={{ base: "15px", md: "25px" }}
         >
           {/* Course Header */}
           <Text w="100%" fontSize="24px" fontWeight="600" mb="10px">
-            Courses
+            Kursus
           </Text>
           {/* Table Header */}
           <HStack
             h="40px"
             w="100%"
+            minW='580px'
             bg={lightblue1}
             borderRadius="8px"
             spacing={0}
@@ -108,7 +137,21 @@ function CreateCourse() {
               <Box
                 key={index}
                 w={`${100 / heading.length}%`}
-                minW={head === "Name" ? "150px" : undefined}
+                minW={
+                  head === "Nama"
+                    ? "150px"
+                    : head === "Tanggal"
+                    ? "90px"
+                    : head === "Penjualan"
+                    ? "90px"
+                    : head === "Siswa"
+                    ? "60px"
+                    : head === "Status"
+                    ? "110px"
+                    : head === "Tindakan"
+                    ? "80px"
+                    : undefined
+                }
                 fontSize="12px"
                 fontWeight="600"
                 color={darkgray}
@@ -151,22 +194,37 @@ function CreateCourse() {
                 {/* Table Fill Date */}
                 <Box
                   w={`${100 / heading.length}%`}
-                  minW=""
+                  minW="90px"
                   fontSize="13px"
                   pl="10px"
                 >
-                  <Text>{displayDate(data.date)}</Text>
+                  <Text>{data.date ? displayDate(data.date) : "-"}</Text>
                 </Box>
                 {/* Table Fill Sales */}
-                <Box w={`${100 / heading.length}%`} fontSize="13px" pl="10px">
-                  <Text>{data.sale ? data.sale : "-"}</Text>
+                <Box
+                  w={`${100 / heading.length}%`}
+                  minW="90px"
+                  fontSize="13px"
+                  pl="10px"
+                >
+                  <Text>{data.sale ? `Rp ${priceStr(data.sale)}` : "-"}</Text>
                 </Box>
                 {/* Table Fill Enrollment */}
-                <Box w={`${100 / heading.length}%`} fontSize="13px" pl="10px">
+                <Box
+                  w={`${100 / heading.length}%`}
+                  minW="60px"
+                  fontSize="13px"
+                  pl="10px"
+                >
                   <Text>{data.enrollment ? data.enrollment : "-"}</Text>
                 </Box>
                 {/* Table Fill Publish Status */}
-                <Box w={`${100 / heading.length}%`} fontSize="13px" pl="10px">
+                <Box
+                  w={`${100 / heading.length}%`}
+                  minW="110px"
+                  fontSize="13px"
+                  pl="10px"
+                >
                   <Center
                     h="24px"
                     w="min-content"
@@ -176,11 +234,11 @@ function CreateCourse() {
                     color={darkblue2}
                     p="0px 8px 0px 8px"
                   >
-                    {data.isPublished ? "Published" : "Unpublished"}
+                    <Text whiteSpace='nowrap'>{data.isPublished ? "Ditampilkan" : "Disembunyikan"}</Text>
                   </Center>
                 </Box>
                 {/* Table Fill Action */}
-                <Box w={`${100 / heading.length}%`} pl="10px">
+                <Box w={`${100 / heading.length}%`} minW="80px" pl="10px">
                   <Menu>
                     <MenuButton
                       h="24px"
@@ -198,25 +256,24 @@ function CreateCourse() {
                         h="30px"
                         borderRadius="5px"
                         p={0}
+                        onClick={() =>
+                          changePublish(data.id, index, data.isPublished)
+                        }
                       >
                         <Text fontSize="12px" pl="10px">
                           {data.isPublished
-                            ? "Unpublish Course"
-                            : "Publish Course"}
+                            ? "Sembunyikan kursus"
+                            : "Tampilkan kursus"}
                         </Text>
                       </MenuItem>
                       <MenuItem h="30px" borderRadius="5px" p={0}>
                         <Text fontSize="12px" pl="10px">
-                          Duplicate Course
+                          Duplikat kursus
                         </Text>
                       </MenuItem>
-                      <MenuItem
-                        h="30px"
-                        borderRadius="5px"
-                        p={0}
-                      >
+                      <MenuItem h="30px" borderRadius="5px" p={0}>
                         <Text fontSize="12px" color="red.600" pl="10px">
-                          Delete Course
+                          Hapus kursus
                         </Text>
                       </MenuItem>
                     </MenuList>
