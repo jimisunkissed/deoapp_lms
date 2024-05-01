@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { Center, Flex, Icon, SimpleGrid, Text, VStack, useToast } from "@chakra-ui/react";
+import { Center, Flex, Icon, SimpleGrid, Text, VStack } from "@chakra-ui/react";
 import newCourse from "../../hooks/newCourse";
 import { LuX } from "react-icons/lu";
 import Color from "../../Color";
@@ -15,9 +15,6 @@ function CreateCourseStep2() {
 
   // Zustand
   const { course, setImageChoice, reset } = newCourse();
-
-  // Toast
-  const toast = useToast()
 
   // Page Interface
   return (
@@ -112,7 +109,11 @@ function CreateCourseStep2() {
             bg={lightgray}
             borderRadius="10px"
             borderWidth={
-              course && course.image ? (course.image.choice === "skip" ? "3px" : "1px") : "1px"
+              course && course.image
+                ? course.image.choice === "skip"
+                  ? "3px"
+                  : "1px"
+                : "1px"
             }
             borderColor={
               course && course.image
@@ -157,16 +158,18 @@ function CreateCourseStep2() {
             fontSize="13px"
             userSelect="none"
             _hover={{
-              bg: course && course.image
-                ? course.image.choice
-                  ? midblue1
-                  : lightblue1
-                : lightblue1,
-              cursor: course && course.image
-                ? course.image.choice
-                  ? "pointer"
-                  : "not-allowed"
-                : "not-allowed",
+              bg:
+                course && course.image
+                  ? course.image.choice
+                    ? midblue1
+                    : lightblue1
+                  : lightblue1,
+              cursor:
+                course && course.image
+                  ? course.image.choice
+                    ? "pointer"
+                    : "not-allowed"
+                  : "not-allowed",
             }}
             onClick={
               course && course.image
