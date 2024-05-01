@@ -34,7 +34,7 @@ const newCourse = create((set) => ({
     set((state) => ({
       course: {
         ...state.course,
-        pricePlan: [...state.course.pricePlan, value],
+        pricePlan: [value],
       },
     })),
   reset: () =>
@@ -45,7 +45,7 @@ const newCourse = create((set) => ({
         sale: 0,
         enrollment: 0,
         isPublished: false,
-        image: null,
+        image: { choice: null, data: null },
         pricePlan: [],
         projectId: "djisamsoe",
         section: [],

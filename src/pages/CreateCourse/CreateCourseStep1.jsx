@@ -1,20 +1,14 @@
-import React from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
-  Box,
   Center,
   Flex,
-  HStack,
   FormControl,
   FormLabel,
   Icon,
   Input,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
   Text,
   VStack,
+  useToast
 } from "@chakra-ui/react";
 import newCourse from "../../hooks/newCourse";
 import { LuX } from "react-icons/lu";
@@ -30,6 +24,9 @@ function CreateCourseStep1() {
   // Zustand
   const { course, setName, reset } = newCourse();
 
+  // Toast
+  const toast = useToast()
+  // Page Interface
   return (
     <VStack
       h="100%"
@@ -114,13 +111,18 @@ function CreateCourseStep1() {
             fontSize="13px"
             userSelect="none"
             _hover={{
-              bg: course.name === "" ? "lightblue1" : "midblue1",
-              cursor: course.name === "" ? "not-allowed" : "pointer",
+              bg: "midblue1",
+              cursor: "pointer",
             }}
             onClick={
               course.name != ""
                 ? () => navigate("/courses/create/step-2")
-                : undefined
+                : () => toast({
+                  title: "Nama kursus belum diisi",
+                  status: "warning",
+                  duration: "3000",
+                  isClosable: true,
+                })
             }
             transition="background-color 0.2s ease"
           >

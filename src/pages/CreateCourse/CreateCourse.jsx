@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Box,
@@ -14,6 +14,7 @@ import {
 } from "@chakra-ui/react";
 import { db } from "../../../firebaseconfig";
 import { collection, getDocs } from "firebase/firestore";
+import newCourse from "../../hooks/newCourse"
 import { LuPlusCircle, LuMoreVertical } from "react-icons/lu";
 import Color from "../../Color";
 
@@ -45,6 +46,9 @@ function CreateCourse() {
     getCourseList("lms_course");
   }, []);
 
+  // Zustand Course
+  const {reset} = newCourse()
+
   // Table header
   const heading = ["Name", "Date", "Sales", "Enrollments", "Status", "Actions"];
 
@@ -54,9 +58,9 @@ function CreateCourse() {
 
     // Extract components
     const formattedDate = dateObject.toLocaleDateString("en-US", {
-      month: "short", // Short month name (e.g., "Apr")
-      day: "2-digit", // Two-digit day (e.g., "18")
-      year: "numeric", // Full year (e.g., "2024")
+      month: "short",
+      day: "2-digit",
+      year: "numeric",
     });
 
     return formattedDate;
@@ -194,7 +198,6 @@ function CreateCourse() {
                         h="30px"
                         borderRadius="5px"
                         p={0}
-                        // onClick={() => setPublish(data.id)}
                       >
                         <Text fontSize="12px" pl="10px">
                           {data.isPublished
@@ -211,7 +214,6 @@ function CreateCourse() {
                         h="30px"
                         borderRadius="5px"
                         p={0}
-                        // onClick={() => deleteCourse(data.id)}
                       >
                         <Text fontSize="12px" color="red.600" pl="10px">
                           Delete Course
@@ -243,7 +245,7 @@ function CreateCourse() {
               color={darkgray}
               _hover={{ color: "black", cursor: "pointer" }}
               onClick={() => {
-                // addCourse();
+                reset();
                 navigate("/courses/create/step-1");
               }}
               transition="color 0.2s ease"

@@ -1,6 +1,5 @@
-import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Center, Flex, Icon, SimpleGrid, Text, VStack } from "@chakra-ui/react";
+import { Center, Flex, Icon, SimpleGrid, Text, VStack, useToast } from "@chakra-ui/react";
 import newCourse from "../../hooks/newCourse";
 import { LuX } from "react-icons/lu";
 import Color from "../../Color";
@@ -15,8 +14,12 @@ function CreateCourseStep2() {
   const navigate = useNavigate();
 
   // Zustand
-  const { course, setImageChoice, setImageData, reset } = newCourse();
+  const { course, setImageChoice, reset } = newCourse();
 
+  // Toast
+  const toast = useToast()
+
+  // Page Interface
   return (
     <VStack
       h="100%"

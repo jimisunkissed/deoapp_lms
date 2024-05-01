@@ -528,7 +528,7 @@ function CourseSetup() {
                                 : undefined}
                               {data.type != "FRE" ? data.price : undefined}
                               {data.type === "SUB"
-                                ? ` per ${data.freq}`
+                                ? ` setiap ${data.freq}`
                                 : undefined}
                             </Text>
                           </HStack>
