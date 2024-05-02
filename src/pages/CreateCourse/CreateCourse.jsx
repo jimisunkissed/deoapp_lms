@@ -13,7 +13,15 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { db } from "../../../firebaseconfig";
-import { collection, doc, getDocs, updateDoc } from "firebase/firestore";
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
 import newCourse from "../../hooks/newCourse";
 import { LuPlusCircle, LuMoreVertical } from "react-icons/lu";
 import Color from "../../Color";
@@ -59,6 +67,50 @@ function CreateCourse() {
       });
     } catch (e) {
       console.error("Error updating document: ", e);
+    }
+  };
+
+  // Delete Course
+  const [sectionIds, setSectionIds] = useState([]);
+
+  const deleteParent = async (collectionName, id) => {
+    try {
+      const docRef = doc(db, collectionName, id);
+      await deleteDoc(docRef);
+      console.log("Document deleted with ID: ", id);
+      setCourseList((prev) => prev.filter((course) => course.id !== id));
+    } catch (e) {
+      console.error("Error deleting document: ", e);
+    }
+  };
+
+  const deleteChildren = async (collectionName, prop, id) => {
+    try {
+      const q = query(collection(db, collectionName), where(prop, "==", id));
+      const querySnapshot = await getDocs(q);
+
+      querySnapshot.forEach(async (doc) => {
+        await deleteDoc(doc.ref);
+        if (collectionName === "lms_section") {
+          setSectionIds((prev) => [...prev, doc.id]);
+        }
+        console.log(`Document deleted with ${prop}: `, id);
+        console.log("Document deleted with ID: ", doc.id);
+      });
+    } catch (e) {
+      console.error("Error deleting documents: ", e);
+    }
+  };
+
+  const deleteFamily = async (courseId) => {
+    try {
+      await deleteParent("lms_course", courseId);
+      await deleteChildren("lms_section", "courseId", courseId);
+      sectionIds.forEach(async (sectionId) => {
+        await deleteChildren("lms_lesson", "sectionId", sectionId);
+      });
+    } catch (e) {
+      console.error("Error deleting course and children: ", e);
     }
   };
 
@@ -281,7 +333,12 @@ function CreateCourse() {
                         </Text>
                       </MenuItem>
                       <MenuItem h="30px" borderRadius="5px" p={0}>
-                        <Text fontSize="12px" color="red.600" pl="10px">
+                        <Text
+                          fontSize="12px"
+                          color="red.600"
+                          pl="10px"
+                          onClick={() => deleteFamily(data.id)}
+                        >
                           Hapus kursus
                         </Text>
                       </MenuItem>
@@ -313,8 +370,16 @@ function CreateCourse() {
             transition="color 0.2s ease"
           >
             <Icon as={LuPlusCircle} />
-            <Text fontSize='14px' ml='10px'>Kursus Baru</Text>
+            <Text fontSize="14px" ml="10px">
+              Kursus Baru
+            </Text>
           </Center>
+          {/* <Center h='50px' w='50px' bg='pink' onClick={() => setSectionIds((prev) => [...prev, 'Kambing'])}>
+            Press
+          </Center>
+          {sectionIds.map((data, index) => (
+            <Text key={index}>{data}</Text>
+          ))} */}
         </VStack>
       </Box>
     </VStack>

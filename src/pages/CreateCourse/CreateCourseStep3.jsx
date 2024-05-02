@@ -269,7 +269,7 @@ function CreateCourseStep3() {
                         onClick={() =>
                           setPlan((prev) => ({
                             ...prev,
-                            price: prev.price + 5000,
+                            price: prev.price + 25000,
                           }))
                         }
                       />
@@ -277,7 +277,7 @@ function CreateCourseStep3() {
                         onClick={() =>
                           setPlan((prev) => ({
                             ...prev,
-                            price: prev.price - 5000,
+                            price: prev.price - 25000,
                           }))
                         }
                       />
